@@ -1,0 +1,7 @@
+#section_geografiya .crm-entity-widget-content-block:nth-child(n+2) {
+  display:none;
+}
+
+div.show-field {
+  display: block!important;
+}
