@@ -109,6 +109,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		
 		showGeoFields : function() {
 
+	  if(document.querySelector('[data-cid="UF_CRM_1540202667"]')) {
+
 			const geoControl   = document.querySelector('[data-cid="UF_CRM_1540202667"]'),  
 						geoTextValue = geoControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent,
 						geoFields    = document.querySelectorAll('#section_geografiya .crm-entity-widget-content-block'),
@@ -142,9 +144,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 document.querySelector('[data-cid="' + this.HIDDEN_FIELDS.AREA + '"]').classList.remove("show-field");
 
 			 }
-      console.log('запуск отображение');
-		 }	
-
+   
+		  }	
+	 	 }
 		},
 
 		onRegionChange : function() {
@@ -842,8 +844,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			setTimeout(function() {
 
 				self.initializeGeoFields();
+				self.showGeoFields();
 				 
-			},800);
+			},600);
 
 		},
 		unregisterActiveControl: function(control)
