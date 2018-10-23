@@ -104,10 +104,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						regionFields = document.querySelectorAll('#section_geografiya .crm-entity-widget-content-block'),
 						
-						HIDDEN_FIELDS = {
-							INNER : 'UF_CRM_1540203144',
-							AREA  : 'UF_CRM_1540203111'
-						},
+						HIDDEN_FIELDS = Object.create({}, {
+
+							INNER : { value :'UF_CRM_1540203144', writable: false }, 
+							AREA  : { value : 'UF_CRM_1540203111',writable: false },
+							 
+						});
 
 		        REGIONS = Object.create({}, {
 
@@ -141,12 +143,10 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				if(regionValue == REGIONS.SUB_MOSCOW) {
 
-					console.log('подмосквье');
 					document.querySelector('[data-cid="' + HIDDEN_FIELDS.AREA + '"]').classList.remove("show-field");
+
 				}
-
-
-				
+		
 		 } 
 
 		},
