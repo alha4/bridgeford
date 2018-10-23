@@ -104,7 +104,10 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						regionFields = document.querySelectorAll('#section_geografiya .crm-entity-widget-content-block'),
 						
-						hideSubMoscow = ['UF_CRM_1540203144','UF_CRM_1540203111'];
+						HIDDEN_FIELDS = {
+							INNER : 'UF_CRM_1540203144',
+							AREA  : 'UF_CRM_1540203111'
+						},
 
 		        REGIONS = Object.create({}, {
 
@@ -122,26 +125,21 @@ if(typeof BX.Crm.EntityEditor === "undefined")
         console.log('скрыли..');
 			}
 			
-			if(regionValue == REGIONS.SUB_MOSCOW || regionValue == REGIONS.NEW_MOSKOW) {
+			if(regionValue) {
 
-         for(node of regionFields) {
-          
-						if(hideSubMoscow.indexOf(node.dataset.cid) == -1 && regionValue != REGIONS.SUB_MOSKOW) {
+        for(node of regionFields) {
+        
+					  node.classList.add("show-field");
+					
+				} 
+				
+				if(regionValue == REGIONS.NEW_MOSKOW) {
 
-						 	 node.classList.add("show-field");
-							
-					  } else if(hideSubMoscow.indexOf(node.dataset.cid) != -1 && regionValue == REGIONS.NEW_MOSKOW) {
-							
-							 node.classList.add("show-field");
+					 document.querySelector('[data-cid="' + HIDDEN_FIELDS.INNER + '"]').classList.remove("show-field");
 
-						}
-				 } 
+				}
 				 
-		  } else if(regionValue == REGIONS.MOSCOW) {
-
-		    	hideSubMoscow.map(uf => document.querySelector('[data-cid="' + uf + '"]').classList.add("show-field") );
-          console.log('москва');
-	   } 
+		 } 
 
 		},
 
