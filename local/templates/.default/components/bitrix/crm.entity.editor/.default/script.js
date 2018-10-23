@@ -80,16 +80,24 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		this._dragConfig = {};
 
-		this._geoSection = BX('section_geografiya');
-
 		this.HIDDEN_FIELDS = Object.create({}, {
 
 			INNER : { value : 'UF_CRM_1540203144', writable: false }, 
-			AREA  : { value : 'UF_CRM_1540203111', writable: false },
-
+			AREA  : { value : 'UF_CRM_1540203111', writable: false }
+			 
 		});
 
+		this.FIELDS_MOSCOW = ['UF_CRM_1540202889',
+													'UF_CRM_1540202900',
+													'UF_CRM_1540202908',
+												  'UF_CRM_1540202947',
+													'UF_CRM_1540203015',
+													'UF_CRM_1540203144',
+													'UF_CRM_1540203111'
+												];
+
 	};
+
 	BX.Crm.EntityEditor.prototype =
 	{
 		
@@ -124,27 +132,40 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		
 		 if(geoTextValue != REGIONS.EMPTY) {
 
+		   if(geoTextValue == REGIONS.MOSCOW) {
+
+				 for(uf of this.FIELDS_MOSCOW) {
+
+						document.querySelector('[data-cid="' + uf + '"]').classList.add("show-field");
+
+				 }
+
+			 } else {
+
 		    for(node of geoFields) {
 
 				   node.classList.add("show-field"); 
 
 				}
 				
-       if(geoTextValue != REGIONS.MOSCOW) {
+        if(geoTextValue != REGIONS.MOSCOW) {
 
 					document.querySelector('[data-cid="' + this.HIDDEN_FIELDS.INNER + '"]').classList.remove("show-field");
 
-			 }
+			  }
 
-			 if(geoTextValue == REGIONS.SUB_MOSCOW) {
+			  if(geoTextValue == REGIONS.SUB_MOSCOW) {
 
 				 document.querySelector('[data-cid="' + this.HIDDEN_FIELDS.AREA + '"]').classList.remove("show-field");
 
 			 }
    
-		  }	
+		   }
+			}		
 	 	 } else {
+
 				console.log('не доступен контрол гео');
+
 			}
 		},
 
@@ -172,9 +193,21 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			
 			if(regionValue) {
 
+			if(regionValue == REGIONS.MOSCOW) {
+
+				 for(uf of this.FIELDS_MOSCOW) {
+
+					  document.querySelector('[data-cid="' + uf + '"]').classList.add("show-field");
+
+				 }
+
+
+			} else {
+
         for(node of regionFields) {
-        
-					  node.classList.add("show-field");
+				
+				
+					 node.classList.add("show-field");
 					
 				} 
 				
@@ -190,6 +223,25 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				}
 			} 
+		 }
+		},
+
+		getGeoData : function() {
+
+		 const geoMap    = document.querySelector('#section_karta .crm-entity-widget-content-block'),
+
+					 codeFields = ['UF_CRM_1540202667','UF_CRM_1540203111','UF_CRM_1540202766','UF_CRM_1540202817','UF_CRM_1540202900','UF_CRM_1540202908'],
+
+					 geoFields = codeFields.filter( uf => { return !!document.querySelector('[data-cid="' + uf + '"] .crm-entity-widget-content-block-inner .field-item') } ),
+					 
+					 locationAddress = (geoFields.map(
+
+							codeUF => { return document.querySelector('[data-cid="' + codeUF + '"] .crm-entity-widget-content-block-inner .field-item').textContent }
+							
+					 )).slice(0,-1).join(",");
+
+					 //console.log( locationAddress );
+
 		},
 
 		initialize: function(id, settings)
@@ -420,7 +472,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 
 			  self.showGeoFields();
-
+        self.getGeoData();
 
 			}, 600);
 
