@@ -144,12 +144,18 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		    for(node of geoFields) {
 
-				   node.classList.add("show-field"); 
+					if(node.dataset.cid != this.HIDDEN_FIELDS.INNER) {
+    
+						node.classList.add("show-field");
+
+				  } else {
+
+						node.classList.remove("show-field");
+					 
+				 }
 
 				}
 				
-				document.querySelector('[data-cid="' + this.HIDDEN_FIELDS.INNER + '"]').classList.remove("show-field");
-
 			  if(geoTextValue == REGIONS.SUB_MOSCOW) {
 
 				   document.querySelector('[data-cid="' + this.HIDDEN_FIELDS.AREA + '"]').classList.remove("show-field");
@@ -189,13 +195,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						 
 				  }
 	 
-			  }
+			 }
 			
-			  for(uf of this.FIELDS_MOSCOW) {
+			 for(uf of this.FIELDS_MOSCOW) {
 
-					  document.querySelector('[data-cid="' + uf + '"]').classList.add("show-field");
+				  document.querySelector('[data-cid="' + uf + '"]').classList.add("show-field");
 
-				}
+			 }
 
 			} else {
 
