@@ -112,7 +112,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		        REGIONS = Object.create({}, {
 
 			       	SUB_MOSCOW : { value : 28, writable: false }, 
-			      	NEW_MOSKOW : { value : 27, writable: false }, 
+			      	NEW_MOSCOW : { value : 27, writable: false }, 
 							MOSCOW     : { value : 26, writable: false }, 
 							 
 	         });
@@ -133,12 +133,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					
 				} 
 				
-				if(regionValue == REGIONS.NEW_MOSKOW) {
+				if(regionValue != REGIONS.MOSCOW) {
 
 					 document.querySelector('[data-cid="' + HIDDEN_FIELDS.INNER + '"]').classList.remove("show-field");
 
 				}
-				 
+
+				if(regionValue == REGIONS.SUB_MOSCOW) {
+
+					console.log('подмосквье');
+					document.querySelector('[data-cid="' + HIDDEN_FIELDS.AREA + '"]').classList.remove("show-field");
+				}
+
+
+				
 		 } 
 
 		},
