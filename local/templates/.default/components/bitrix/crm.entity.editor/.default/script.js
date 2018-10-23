@@ -101,8 +101,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				BX.bind(this._regionSelect, 'change', BX.delegate(this.onRegionChange, this) );
 
-				console.log('init geo...');
-
 			}
 			
 		},
@@ -169,7 +167,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		 		for(node of regionFields) {
 			    	node.classList.remove("show-field"); 
 		  	}
-        console.log('скрыли..');
+  
 			}
 			
 			if(regionValue) {
@@ -1418,8 +1416,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
       setTimeout(function() {
 
 				self.showGeoFields();
-
-				console.log('сохраняем..');
 
 			},600);
 

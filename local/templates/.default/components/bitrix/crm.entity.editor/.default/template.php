@@ -12,7 +12,7 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED!==true)die();
  */
 
 use \Bitrix\Main;
-CJSCore::Init(array('ajax', 'uf', 'uploader', 'avatar_editor', 'core_money_editor', 'tooltip', 'phone_number', 'spotlight', 'userfield_resourcebooking'));
+CJSCore::Init(array('translit','ajax', 'uf', 'uploader', 'avatar_editor', 'core_money_editor', 'tooltip', 'phone_number', 'spotlight', 'userfield_resourcebooking'));
 Main\UI\Extension::load('ui.buttons');
 Main\UI\Extension::load('ui.notification');
 
