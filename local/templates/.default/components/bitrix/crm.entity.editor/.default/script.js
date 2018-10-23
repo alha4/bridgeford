@@ -123,7 +123,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						  MOSCOW     : { value : 'Москва',       writable: false }
 							
 					  });
-     
+		
 		 if(geoTextValue != REGIONS.EMPTY) {
 
 		    for(node of geoFields) {
@@ -132,7 +132,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				}
 				
-
        if(geoTextValue != REGIONS.MOSCOW) {
 
 					document.querySelector('[data-cid="' + this.HIDDEN_FIELDS.INNER + '"]').classList.remove("show-field");
@@ -146,7 +145,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			 }
    
 		  }	
-	 	 }
+	 	 } else {
+				console.log('не доступен контрол гео');
+			}
 		},
 
 		onRegionChange : function() {
@@ -159,7 +160,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			       	SUB_MOSCOW : { value : 28, writable: false }, 
 			      	NEW_MOSCOW : { value : 27, writable: false }, 
-							MOSCOW     : { value : 26, writable: false }, 
+							MOSCOW     : { value : 26, writable: false } 
 							 
 	         });
 			
@@ -844,8 +845,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			setTimeout(function() {
 
 				self.initializeGeoFields();
-				self.showGeoFields();
-				 
+			
 			},600);
 
 		},
@@ -1412,7 +1412,19 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._modeSwitch.reset();
 				this._modeSwitch.getQueue().addBatch(this._activeControls, BX.Crm.EntityEditorMode.view);
 				this._modeSwitch.run();
+
+				const self = this;
+
+      setTimeout(function() {
+
+				self.showGeoFields();
+
+				console.log('сохраняем..');
+
+			},600);
+
 			}
+			
 		},
 		saveDelayed: function(delay)
 		{
@@ -1908,6 +1920,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		{
 			this._isRequestRunning = true;
 			this._toolPanel.processSaveBegin();
+			
 		},
 		//region Duplicate Control
 		isDuplicateControlEnabled: function()
