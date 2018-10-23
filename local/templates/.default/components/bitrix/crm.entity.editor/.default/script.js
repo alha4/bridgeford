@@ -181,15 +181,17 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			if(regionValue == REGIONS.MOSCOW) {
 
-				if(document.querySelector(".show-field")) {
-		
-					for(node of geoFields) {
-						 node.classList.remove("show-field"); 
+       if(document.querySelector(".show-field")) {
+				
+				  for(node of geoFields) {
+
+						 node.classList.remove("show-field");
+						 
 				  }
 	 
 			  }
-
-				for(uf of this.FIELDS_MOSCOW) {
+			
+			  for(uf of this.FIELDS_MOSCOW) {
 
 					  document.querySelector('[data-cid="' + uf + '"]').classList.add("show-field");
 
