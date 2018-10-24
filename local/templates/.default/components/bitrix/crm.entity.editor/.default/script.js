@@ -239,13 +239,58 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		initializeBuildingEvent : function() {
 
 			this._buildingSelect = document.querySelector('select[name="UF_CRM_1540371261836"]');
+			this._house = document.querySelector('[data-cid="UF_CRM_1540371563"]');
 
       if(this._buildingSelect) {
 
 		    BX.bind(this._buildingSelect, 'change', BX.delegate(this.onBuildingChange, this) );
 
 			}
+
+			if(this._house) {
+				
+		    BX.bind(this._house, 'click', BX.delegate(this.onHouseChange, this) );
+
+			}
 			
+		},
+
+		onHouseChange : function(e) {
+    
+		if(e.target.nodeName == 'INPUT') {
+
+		const	modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
+
+		      datepicker = document.querySelector('[data-cid="UF_CRM_1540371802"]'),
+
+		      houseValue = e.target.value,
+			
+			    viewType = { 'edit' :  Object.create({}, {
+
+										   DATE_FROM  : { value : 85, writable: false }
+									
+									    }),
+
+									   'view' : Object.create({}, {
+
+									     DATE_FROM     : { value : 'С даты', writable: false }
+										
+									   })
+								},
+
+			viewModel = viewType[modeName];
+
+			if(houseValue == viewModel.DATE_FROM) {
+
+				datepicker.classList.add("show-field");
+
+
+			} else {
+
+				datepicker.classList.remove("show-field");
+
+			}
+		 }
 		},
 		
 		onBuildingChange : function() {
@@ -263,7 +308,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			const	Fields = document.querySelectorAll('#section_zdanie .crm-entity-widget-content-block'),
 
-			      mansion = document.querySelector('[data-cid="UF_CRM_1540371938"]'),
+						mansion = document.querySelector('[data-cid="UF_CRM_1540371938"]'),
+						
+						mansionInput =  document.querySelector('input[name="UF_CRM_1540371938"]'),
 	 
 						modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
 			
@@ -290,7 +337,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			 } else {
 				
 				  mansion.classList.remove("show-field");
-
+					mansionInput.checked = false;
+					
 			 }
 	
 		}, 
