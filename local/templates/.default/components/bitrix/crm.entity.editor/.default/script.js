@@ -115,117 +115,97 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		
 		showGeoFields : function() {
 
-	  if(document.querySelector('[data-cid="UF_CRM_1540202667"]')) {
+	    if(document.querySelector('[data-cid="UF_CRM_1540202667"]')) {
 
-			const geoControl   = document.querySelector('[data-cid="UF_CRM_1540202667"]'),  
-						geoTextValue = geoControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent,
-						geoFields    = document.querySelectorAll('#section_geografiya .crm-entity-widget-content-block'),
+			const geoControl      = document.querySelector('[data-cid="UF_CRM_1540202667"]'),  
+			      regionTextValue = geoControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent;
 						
-						REGIONS = Object.create({}, {
+		  if(regionTextValue)
 
-						  EMPTY      : { value : 'не заполнено', writable: false }, 
-						  SUB_MOSCOW : { value : 'Подмосковье',  writable: false }, 
-						  NEW_MOSCOW : { value : 'Новая Москва', writable: false }, 
-						  MOSCOW     : { value : 'Москва',       writable: false }
-							
-					  });
-		
-		 if(geoTextValue != REGIONS.EMPTY) {
-
-		   if(geoTextValue == REGIONS.MOSCOW) {
-
-				 for(uf of this.FIELDS_MOSCOW) {
-
-						document.querySelector('[data-cid="' + uf + '"]').classList.add("show-field");
-
-				 }
-
-			 } else {
-
-		    for(node of geoFields) {
-
-					if(node.dataset.cid != this.HIDDEN_FIELDS.INNER) {
-    
-						node.classList.add("show-field");
-
-				  } else {
-
-						node.classList.remove("show-field");
-					 
-				 }
-
-				}
-				
-			  if(geoTextValue == REGIONS.SUB_MOSCOW) {
-
-				   document.querySelector('[data-cid="' + this.HIDDEN_FIELDS.AREA + '"]').classList.remove("show-field");
-
-			  }
-		   }
-			}		
-	 	 } else {
-
-			  console.log('не готов раздел география');
-
-		 }
+				 this.geoView(regionTextValue);
+						  
+	 	  }
 		},
 
 		onRegionChange : function() {
 
-			const regionValue = this._regionSelect.options[ this._regionSelect.selectedIndex ].value,
-		       	geoFields   = document.querySelectorAll('#section_geografiya .crm-entity-widget-content-block'),
-		        REGIONS = Object.create({}, {
-
-			       	SUB_MOSCOW : { value : 28, writable: false }, 
-			      	NEW_MOSCOW : { value : 27, writable: false }, 
-							MOSCOW     : { value : 26, writable: false } 
-							 
-	         });
-			
-      
+			const regionValue = this._regionSelect.options[ this._regionSelect.selectedIndex ].value;
+		        
 			if(regionValue) {
 
-			if(regionValue == REGIONS.MOSCOW) {
-
-       if(document.querySelector(".show-field")) {
+				 this.geoView(regionValue);
 				
-				  for(node of geoFields) {
+		  }
+		},
 
-						 node.classList.remove("show-field");
-						 
-				  }
-	 
-			 }
+		geoView : function(regionValue) {
+
+		const	geoFields = document.querySelectorAll('#section_geografiya .crm-entity-widget-content-block'),
+
+		      modeCode  = BX.Crm.EntityEditorMode.getName(this._mode),
+		
+		      viewMode = { 'edit' :  Object.create({}, {
+
+					             	EMPTY      : { value : '', writable: false }, 
+		                  	SUB_MOSCOW : { value : 28, writable: false }, 
+		                    NEW_MOSCOW : { value : 27, writable: false }, 
+		                    MOSCOW     : { value : 26, writable: false } 
 			
-			 for(uf of this.FIELDS_MOSCOW) {
+											}),
 
-				  document.querySelector('[data-cid="' + uf + '"]').classList.add("show-field");
+											'view' : Object.create({}, {
 
-			 }
+												EMPTY      : { value : 'не заполнено', writable: false }, 
+												SUB_MOSCOW : { value : 'Подмосковье',  writable: false }, 
+												NEW_MOSCOW : { value : 'Новая Москва', writable: false }, 
+												MOSCOW     : { value : 'Москва',       writable: false }
+												
+											})
+											
+										},
 
-			} else {
+					regions = viewMode[modeCode];
+		   
+			if(regionValue == regions.MOSCOW) {
 
-        for(node of geoFields) {
+				if(document.querySelector(".show-field")) {
 				 
-					 if(node.dataset.cid != this.HIDDEN_FIELDS.INNER) {
-    
-							node.classList.add("show-field");
-
-					 } else {
-
-					  	node.classList.remove("show-field");
-						 
+					 for(node of geoFields) {
+ 
+							node.classList.remove("show-field");
+							
 					 }
-					
-				} 
-				
-				if(regionValue == REGIONS.SUB_MOSCOW) {
-
-					document.querySelector('[data-cid="' + this.HIDDEN_FIELDS.AREA + '"]').classList.remove("show-field");
-
+		
 				}
-			} 
-		 }
+			 
+				for(uf of this.FIELDS_MOSCOW) {
+ 
+					 document.querySelector('[data-cid="' + uf + '"]').classList.add("show-field");
+ 
+				}
+ 
+			 } else {
+ 
+				 for(node of geoFields) {
+					
+						if(node.dataset.cid != this.HIDDEN_FIELDS.INNER) {
+		 
+							 node.classList.add("show-field");
+ 
+						} else {
+ 
+							 node.classList.remove("show-field");
+							
+						}
+					 
+				 } 
+				 
+				 if(regionValue == regions.SUB_MOSCOW) {
+ 
+					 document.querySelector('[data-cid="' + this.HIDDEN_FIELDS.AREA + '"]').classList.remove("show-field");
+ 
+				 }
+			 } 
 		},
 
 		getGeoData : function() {
