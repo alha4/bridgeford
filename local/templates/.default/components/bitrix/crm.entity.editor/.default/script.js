@@ -255,6 +255,146 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			
 		},
 
+		onHouseChange : function(e) {
+    
+			if(e.target.nodeName == 'INPUT') {
+	
+			const	modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
+	
+						datepicker = document.querySelector('[data-cid="UF_CRM_1540371802"]'),
+						datepickerInput = document.querySelector('input[name="UF_CRM_1540371802"]'),
+	
+						houseValue = e.target.value,
+				
+						viewType = { 'edit' :  Object.create({}, {
+	
+												 DATE_FROM  : { value : 85, writable: false }
+										
+												}),
+	
+											 'view' : Object.create({}, {
+	
+												 DATE_FROM     : { value : 'С даты', writable: false }
+											
+											 })
+									},
+	
+				viewModel = viewType[modeName];
+	
+				if(houseValue == viewModel.DATE_FROM) {
+	
+					datepicker.classList.add("show-field");
+	
+	
+				} else {
+	
+					datepicker.classList.remove("show-field");
+	
+					if(datepickerInput) {
+	
+						datepickerInput.value = '';
+	
+					}
+				}
+			 }
+		},
+			
+		onBuildingChange : function() {
+	
+				const buildingValue = this._buildingSelect.options[ this._buildingSelect.selectedIndex ].value;
+		 
+				if(buildingValue) {
+	
+					 this.buildingView(buildingValue);
+					
+				}
+		},
+	
+		showBuildingFields : function() {
+	
+			if(document.querySelector('[data-cid="UF_CRM_1540371261836"]')) {
+	
+			  	const buildingControl = document.querySelector('[data-cid="UF_CRM_1540371261836"]'),  
+					
+								 buildingNode  = buildingControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
+																	buildingControl.querySelector(".crm-entity-widget-content-block-inner"),
+															
+		
+								buildingTextValue = buildingNode.textContent;
+	
+						
+					if(buildingTextValue) {
+		
+						 this.buildingView(buildingTextValue);
+	
+					}						 			  
+				}
+				 
+				if(document.querySelector('[data-cid="UF_CRM_1540371563"]')) {
+	
+					const houseControl = document.querySelector('[data-cid="UF_CRM_1540371563"]'),
+								houseNode    = houseControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
+															 houseControl.querySelector(".crm-entity-widget-content-block-inner"),
+																	
+								houseTextValue = houseNode.textContent;
+					
+					if(houseTextValue) {
+	
+						const	e = {
+										target : {
+											nodeName : 'INPUT',
+											value :  houseTextValue
+									 }
+									};
+				
+									this.onHouseChange(e);
+				
+					}	 	 
+				}
+		 },
+	
+		 buildingView : function(buildingValue) {
+	
+		 const mansion = document.querySelector('[data-cid="UF_CRM_1540371938"]'),
+							
+				  	mansionInput = document.querySelectorAll('input[name="UF_CRM_1540371938"]')[1],
+	
+						mansionText  =  mansion.querySelector('.crm-entity-widget-content-block-inner .field-item'),
+		 
+						modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
+				
+						viewType = { 'edit' :  Object.create({}, {
+		
+														OSZ      : { value : 76, writable: false }
+													
+													}),
+		
+													'view' : Object.create({}, {
+		
+														OSZ      : { value : 'ОСЗ', writable: false }
+														
+													})
+										
+												},
+	
+						viewModel = viewType[modeName];	
+							
+				if(buildingValue == viewModel.OSZ) {
+	
+					 mansion.classList.add("show-field");
+	
+				} else {
+					
+					mansion.classList.remove("show-field");
+	
+					if(mansionInput) {
+	
+						 mansionInput.checked = false;
+						 
+					}
+				}
+		}, 
+
 		initializeLandEvent : function() {
 
 			this._landSelect = document.querySelector('select[name="UF_CRM_1540381458431"]');
@@ -265,7 +405,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			}
 		
-
 		},
 
 		onLandChange : function() {
@@ -283,7 +422,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		const	modeName = BX.Crm.EntityEditorMode.getName(this._mode),
 
-		      yearRental = document.querySelector('[data-cid="UF_CRM_1540381635335"]'),
+					yearRental = document.querySelector('[data-cid="UF_CRM_1540381635335"]'),
+					
+					yearRentalInput = document.querySelector('input[name="UF_CRM_1540381635335"]'),
 		      
           viewType = { 
 						
@@ -311,8 +452,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				yearRental.classList.remove("show-field");
 
-		 }
-				 
+				if(yearRentalInput)
+
+			  	yearRentalInput.value = '';
+
+		 }		 
 		},
 
 		showLandFields : function() {
@@ -328,147 +472,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 	 	  }
 		},
-
-		onHouseChange : function(e) {
-    
-		if(e.target.nodeName == 'INPUT') {
-
-		const	modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
-
-					datepicker = document.querySelector('[data-cid="UF_CRM_1540371802"]'),
-					datepickerInput = document.querySelector('input[name="UF_CRM_1540371802"]'),
-
-		      houseValue = e.target.value,
-			
-			    viewType = { 'edit' :  Object.create({}, {
-
-										   DATE_FROM  : { value : 85, writable: false }
-									
-									    }),
-
-									   'view' : Object.create({}, {
-
-									     DATE_FROM     : { value : 'С даты', writable: false }
-										
-									   })
-								},
-
-			viewModel = viewType[modeName];
-
-			if(houseValue == viewModel.DATE_FROM) {
-
-				datepicker.classList.add("show-field");
-
-
-			} else {
-
-				datepicker.classList.remove("show-field");
-
-				if(datepickerInput) {
-
-					datepickerInput.value = '';
-
-				}
-			}
-		 }
-		},
-		
-		onBuildingChange : function() {
-
-			const buildingValue = this._buildingSelect.options[ this._buildingSelect.selectedIndex ].value;
-   
-			if(buildingValue) {
-
-				 this.buildingView(buildingValue);
-				
-		  }
-		},
-
-		showBuildingFields : function() {
-
-		  if(document.querySelector('[data-cid="UF_CRM_1540371261836"]')) {
-
-				const buildingControl = document.querySelector('[data-cid="UF_CRM_1540371261836"]'),  
-				
-				       buildingNode  = buildingControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
-													   	 buildingControl.querySelector(".crm-entity-widget-content-block-inner"),
-														
-  
-							buildingTextValue = buildingNode.textContent;
-
-					
-				if(buildingTextValue) {
-	
-					 this.buildingView(buildingTextValue);
-
-				}						 			  
-			}
-			 
-			if(document.querySelector('[data-cid="UF_CRM_1540371563"]')) {
-
-				const houseControl = document.querySelector('[data-cid="UF_CRM_1540371563"]'),
-							houseNode    = houseControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
-														 houseControl.querySelector(".crm-entity-widget-content-block-inner"),
-																
-						  houseTextValue = houseNode.textContent;
-				
-				if(houseTextValue) {
-
-				  const	e = {
-							  	target : {
-										nodeName : 'INPUT',
-										value :  houseTextValue
-								 }
-							  };
-			
-								this.onHouseChange(e);
-			
-				}	 	 
-			}
-		},
-
-		buildingView : function(buildingValue) {
-
-			const mansion = document.querySelector('[data-cid="UF_CRM_1540371938"]'),
-						
-						mansionInput = document.querySelectorAll('input[name="UF_CRM_1540371938"]')[1],
-
-						mansionText  =  mansion.querySelector('.crm-entity-widget-content-block-inner .field-item'),
-	 
-						modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
-			
-						viewType = { 'edit' :  Object.create({}, {
-	
-												  OSZ      : { value : 76, writable: false }
-												
-												}),
-	
-												'view' : Object.create({}, {
-	
-													OSZ      : { value : 'ОСЗ', writable: false }
-													
-												})
-									
-											},
-
-						viewModel = viewType[modeName];	
-						
-			if(buildingValue == viewModel.OSZ) {
-
-				 mansion.classList.add("show-field");
-
-			} else {
-				
-				mansion.classList.remove("show-field");
-
-				if(mansionInput) {
-
-					 mansionInput.checked = false;
-					 
-				}
-			}
-	
-		}, 
 
 		initialize: function(id, settings)
 		{
