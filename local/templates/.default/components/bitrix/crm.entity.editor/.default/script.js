@@ -261,7 +261,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		const	modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
 
-		      datepicker = document.querySelector('[data-cid="UF_CRM_1540371802"]'),
+					datepicker = document.querySelector('[data-cid="UF_CRM_1540371802"]'),
+					datepickerInput = document.querySelector('input[name="UF_CRM_1540371802"]'),
 
 		      houseValue = e.target.value,
 			
@@ -289,6 +290,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				datepicker.classList.remove("show-field");
 
+				if(datepickerInput) {
+
+					datepickerInput.value = '';
+
+				}
 			}
 		 }
 		},
@@ -308,11 +314,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		  if(document.querySelector('[data-cid="UF_CRM_1540371261836"]')) {
 
-				const buildingControl   = document.querySelector('[data-cid="UF_CRM_1540371261836"]'),  
-							buildingTextValue = buildingControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent;
-							 
-							
-							
+				const buildingControl = document.querySelector('[data-cid="UF_CRM_1540371261836"]'),  
+				
+				       buildingNode  = buildingControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
+													   	 buildingControl.querySelector(".crm-entity-widget-content-block-inner"),
+														
+  
+							buildingTextValue = buildingNode.textContent;
+
+					
 				if(buildingTextValue) {
 	
 					 this.buildingView(buildingTextValue);
@@ -322,8 +332,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			 
 			if(document.querySelector('[data-cid="UF_CRM_1540371563"]')) {
 
-			  const houseControl   = document.querySelector('[data-cid="UF_CRM_1540371563"]'),
-						  houseTextValue = houseControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent;
+				const houseControl = document.querySelector('[data-cid="UF_CRM_1540371563"]'),
+							houseNode    = houseControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
+														 houseControl.querySelector(".crm-entity-widget-content-block-inner"),
+																
+						  houseTextValue = houseNode.textContent;
 				
 				if(houseTextValue) {
 
