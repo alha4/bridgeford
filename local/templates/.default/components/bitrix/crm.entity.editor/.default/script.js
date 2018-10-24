@@ -465,8 +465,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 	    if(document.querySelector('[data-cid="UF_CRM_1540381458431"]')) {
 
-			const landControl   = document.querySelector('[data-cid="UF_CRM_1540381458431"]'),  
-			      landTextValue = landControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent;
+			const landControl  = document.querySelector('[data-cid="UF_CRM_1540381458431"]'),  
+						landNode     = landControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
+													 landControl.querySelector(".crm-entity-widget-content-block-inner"),
+														
+						landTextValue = landNode.textContent;
 						
 		  if(landTextValue)
 
