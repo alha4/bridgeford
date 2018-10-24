@@ -126,7 +126,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		const	geoFields = document.querySelectorAll('#section_geografiya .crm-entity-widget-content-block'),
 
-		      modeCode  = BX.Crm.EntityEditorMode.getName(this._mode),
+		      modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
 		
 		      viewMode = { 'edit' :  Object.create({}, {
 
@@ -164,12 +164,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 														'UF_CRM_1540203111'
 													],
 
-
-					 regions = viewMode[modeCode];
-		   
+					 regions = viewMode[modeName];
+		   console.log(modeName);
 			if(regionValue == regions.MOSCOW) {
 
-				if(document.querySelector(".show-field")) {
+				if(document.querySelector(".show-field") && modeName == 'edit') {
 				 
 					 for(node of geoFields) {
  
@@ -221,10 +220,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 							codeUF => { return document.querySelector('[data-cid="' + codeUF + '"] .crm-entity-widget-content-block-inner .field-item').textContent }
 							
-					 )).slice(0,-1).join(",");
+					 )).join(",");
 
-					 //console.log( locationAddress );
+					 if(BX.Crm.EntityEditorMode.getName(this._mode) == 'edit') {
 
+						const map = document.querySelector('[name="UF_CRM_1540293801"]');
+						
+						      map.value = locationAddress;
+
+							console.log( 	map.value );
+
+					 } else {
+						   //console.log(locationAddress);
+					 }
+					 
 		},
 
 		initialize: function(id, settings)
