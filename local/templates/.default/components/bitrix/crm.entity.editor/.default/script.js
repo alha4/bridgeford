@@ -236,6 +236,65 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 
 		},
 
+		initializeBuildingEvent : function() {
+
+			this._buildingSelect = document.querySelector('select[name="UF_CRM_1540371261836"]');
+
+      if(this._buildingSelect) {
+
+		    BX.bind(this._buildingSelect, 'change', BX.delegate(this.onBuildingChange, this) );
+
+			}
+			
+		},
+		
+		onBuildingChange : function() {
+
+			const buildingValue = this._buildingSelect.options[ this._buildingSelect.selectedIndex ].value;
+   
+			if(buildingValue) {
+
+				 this.buildingView(buildingValue);
+				
+		  }
+		},
+
+		buildingView : function(buildingValue) {
+
+			const	Fields = document.querySelectorAll('#section_zdanie .crm-entity-widget-content-block'),
+
+			      mansion = document.querySelector('[data-cid="UF_CRM_1540371938"]'),
+	 
+						modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
+			
+						viewType = { 'edit' :  Object.create({}, {
+	
+												  OSZ      : { value : 76, writable: false }
+												
+												}),
+	
+												'view' : Object.create({}, {
+	
+													OSZ      : { value : 'ОСЗ', writable: false }
+													
+												})
+									
+											},
+
+						viewModel = viewType[modeName];	
+						
+			 if(buildingValue == viewModel.OSZ) {
+
+				  mansion.classList.add("show-field");
+
+			 } else {
+				
+				  mansion.classList.remove("show-field");
+
+			 }
+	
+		}, 
+
 		initialize: function(id, settings)
 		{
 			this._id = BX.type.isNotEmptyString(id) ? id : BX.util.getRandomString(4);
@@ -887,7 +946,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			setTimeout(function() {
 
 				self.initializeGeoEvent();
-			
+				self.initializeBuildingEvent();
+				
 			},600);
 
 		},
