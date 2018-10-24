@@ -309,14 +309,35 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		  if(document.querySelector('[data-cid="UF_CRM_1540371261836"]')) {
 
 				const buildingControl   = document.querySelector('[data-cid="UF_CRM_1540371261836"]'),  
-			      	buildingTextValue = buildingControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent;
+							buildingTextValue = buildingControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent;
+							 
 							
-				if(buildingTextValue)
+							
+				if(buildingTextValue) {
 	
 					 this.buildingView(buildingTextValue);
-								
-				}	
 
+				}						 			  
+			}
+			 
+			if(document.querySelector('[data-cid="UF_CRM_1540371563"]')) {
+
+			  const houseControl   = document.querySelector('[data-cid="UF_CRM_1540371563"]'),
+						  houseTextValue = houseControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent;
+				
+				if(houseTextValue) {
+
+				  const	e = {
+							  	target : {
+										nodeName : 'INPUT',
+										value :  houseTextValue
+								 }
+							  };
+			
+								this.onHouseChange(e);
+			
+				}	 	 
+			}
 		},
 
 		buildingView : function(buildingValue) {
