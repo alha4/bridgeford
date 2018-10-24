@@ -315,6 +315,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 
 		},
 
+		showLandFields : function() {
+
+	    if(document.querySelector('[data-cid="UF_CRM_1540381458431"]')) {
+
+			const landControl   = document.querySelector('[data-cid="UF_CRM_1540381458431"]'),  
+			      landTextValue = landControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent;
+						
+		  if(landTextValue)
+
+				 this.landView(landTextValue);
+
+	 	  }
+		},
+
 		onHouseChange : function(e) {
     
 		if(e.target.nodeName == 'INPUT') {
@@ -686,7 +700,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			  self.showGeoFields();
 				self.getGeoData();
 				self.showBuildingFields();
-
+				self.showLandFields();
+				
 			}, 600);
 
 		},
@@ -1684,7 +1699,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				self.showGeoFields();
 				self.showBuildingFields();
-
+				self.showLandFields();
+				
 			},600);
 
 			}
