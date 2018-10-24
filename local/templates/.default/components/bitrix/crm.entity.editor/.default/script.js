@@ -310,7 +310,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						mansion = document.querySelector('[data-cid="UF_CRM_1540371938"]'),
 						
-						mansionInput =  document.querySelector('input[name="UF_CRM_1540371938"]'),
+						mansionInput =  document.querySelectorAll('input[name="UF_CRM_1540371938"]')[1],
 	 
 						modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
 			
@@ -330,16 +330,16 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						viewModel = viewType[modeName];	
 						
-			 if(buildingValue == viewModel.OSZ) {
+			if(buildingValue == viewModel.OSZ) {
 
-				  mansion.classList.add("show-field");
+				 mansion.classList.add("show-field");
 
-			 } else {
+			} else {
 				
-				  mansion.classList.remove("show-field");
-					mansionInput.checked = false;
-					
-			 }
+				mansion.classList.remove("show-field");
+				mansionInput.checked = false;
+	
+			}
 	
 		}, 
 
