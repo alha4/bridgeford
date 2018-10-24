@@ -80,22 +80,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		this._dragConfig = {};
 
-		this.HIDDEN_FIELDS = Object.create({}, {
-
-			INNER : { value : 'UF_CRM_1540203144', writable: false }, 
-			AREA  : { value : 'UF_CRM_1540203111', writable: false }
-			 
-		});
-
-		this.FIELDS_MOSCOW = ['UF_CRM_1540202889',
-													'UF_CRM_1540202900',
-													'UF_CRM_1540202908',
-												  'UF_CRM_1540202947',
-													'UF_CRM_1540203015',
-													'UF_CRM_1540203144',
-													'UF_CRM_1540203111'
-												];
-
 	};
 
 	BX.Crm.EntityEditor.prototype =
@@ -107,12 +91,23 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
       if(this._regionSelect) {
 
-				BX.bind(this._regionSelect, 'change', BX.delegate(this.onRegionChange, this) );
+		    BX.bind(this._regionSelect, 'change', BX.delegate(this.onRegionChange, this) );
 
 			}
 			
 		},
 		
+		onRegionChange : function() {
+
+			const regionValue = this._regionSelect.options[ this._regionSelect.selectedIndex ].value;
+		        
+			if(regionValue) {
+
+				 this.geoView(regionValue);
+				
+		  }
+		},
+
 		showGeoFields : function() {
 
 	    if(document.querySelector('[data-cid="UF_CRM_1540202667"]')) {
@@ -125,17 +120,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 this.geoView(regionTextValue);
 						  
 	 	  }
-		},
-
-		onRegionChange : function() {
-
-			const regionValue = this._regionSelect.options[ this._regionSelect.selectedIndex ].value;
-		        
-			if(regionValue) {
-
-				 this.geoView(regionValue);
-				
-		  }
 		},
 
 		geoView : function(regionValue) {
@@ -164,7 +148,24 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 											
 										},
 
-					regions = viewMode[modeCode];
+					 HIDDEN_FIELDS = Object.create({}, {
+
+											INNER : { value : 'UF_CRM_1540203144', writable: false }, 
+											AREA  : { value : 'UF_CRM_1540203111', writable: false }
+											 
+										}),
+								
+					 FIELDS_MOSCOW = ['UF_CRM_1540202889',
+														'UF_CRM_1540202900',
+														'UF_CRM_1540202908',
+														'UF_CRM_1540202947',
+														'UF_CRM_1540203015',
+														'UF_CRM_1540203144',
+														'UF_CRM_1540203111'
+													],
+
+
+					 regions = viewMode[modeCode];
 		   
 			if(regionValue == regions.MOSCOW) {
 
@@ -178,7 +179,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		
 				}
 			 
-				for(uf of this.FIELDS_MOSCOW) {
+				for(uf of FIELDS_MOSCOW) {
  
 					 document.querySelector('[data-cid="' + uf + '"]').classList.add("show-field");
  
@@ -188,7 +189,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
  
 				 for(node of geoFields) {
 					
-						if(node.dataset.cid != this.HIDDEN_FIELDS.INNER) {
+						if(node.dataset.cid != HIDDEN_FIELDS.INNER) {
 		 
 							 node.classList.add("show-field");
  
@@ -202,7 +203,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 
 				 if(regionValue == regions.SUB_MOSCOW) {
  
-					 document.querySelector('[data-cid="' + this.HIDDEN_FIELDS.AREA + '"]').classList.remove("show-field");
+					 document.querySelector('[data-cid="' + HIDDEN_FIELDS.AREA + '"]').classList.remove("show-field");
  
 				 }
 			 } 
