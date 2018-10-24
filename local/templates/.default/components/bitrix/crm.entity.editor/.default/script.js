@@ -255,6 +255,66 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			
 		},
 
+		initializeLandEvent : function() {
+
+			this._landSelect = document.querySelector('select[name="UF_CRM_1540381458431"]');
+
+			if(this._landSelect) {
+				
+		    BX.bind(this._landSelect, 'change', BX.delegate(this.onLandChange, this) );
+
+			}
+		
+
+		},
+
+		onLandChange : function() {
+
+			const landValue = this._landSelect.options[this._landSelect.selectedIndex].value;
+			
+			if(landValue) {
+
+				 this.landView(landValue);
+			}
+
+		},
+
+		landView : function(landValue) {
+
+		const	modeName = BX.Crm.EntityEditorMode.getName(this._mode),
+
+		      yearRental = document.querySelector('[data-cid="UF_CRM_1540381635335"]'),
+		      
+          viewType = { 
+						
+						'edit' :  Object.create({}, {
+
+		      	   RENTAL  : { value : 87, writable: false }
+ 
+		      }),
+
+		        'view' : Object.create({}, {
+
+			         RENTAL    : { value : 'Аренда', writable: false }
+	 
+		       })
+         },
+
+				 viewModel = viewType[modeName];
+
+ 		 if(landValue == viewModel.RENTAL) {
+
+
+				yearRental.classList.add("show-field");
+
+ 		  } else {
+
+				yearRental.classList.remove("show-field");
+
+		 }
+				 
+		},
+
 		onHouseChange : function(e) {
     
 		if(e.target.nodeName == 'INPUT') {
@@ -357,7 +417,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			const mansion = document.querySelector('[data-cid="UF_CRM_1540371938"]'),
 						
-						mansionInput =  document.querySelectorAll('input[name="UF_CRM_1540371938"]')[1],
+						mansionInput = document.querySelectorAll('input[name="UF_CRM_1540371938"]')[1],
+
+						mansionText  =  mansion.querySelector('.crm-entity-widget-content-block-inner .field-item'),
 	 
 						modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
 			
@@ -1047,6 +1109,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				self.initializeGeoEvent();
 				self.initializeBuildingEvent();
+				self.initializeLandEvent();
 				
 			},600);
 
