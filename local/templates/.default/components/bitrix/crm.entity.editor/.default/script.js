@@ -165,7 +165,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 													],
 
 					 regions = viewMode[modeName];
-		   console.log(modeName);
+		
 			if(regionValue == regions.MOSCOW) {
 
 				if(document.querySelector(".show-field") && modeName == 'edit') {
@@ -304,11 +304,24 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		  }
 		},
 
+		showBuildingFields : function() {
+
+		  if(document.querySelector('[data-cid="UF_CRM_1540371261836"]')) {
+
+				const buildingControl   = document.querySelector('[data-cid="UF_CRM_1540371261836"]'),  
+			      	buildingTextValue = buildingControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent;
+							
+				if(buildingTextValue)
+	
+					 this.buildingView(buildingTextValue);
+								
+				}	
+
+		},
+
 		buildingView : function(buildingValue) {
 
-			const	Fields = document.querySelectorAll('#section_zdanie .crm-entity-widget-content-block'),
-
-						mansion = document.querySelector('[data-cid="UF_CRM_1540371938"]'),
+			const mansion = document.querySelector('[data-cid="UF_CRM_1540371938"]'),
 						
 						mansionInput =  document.querySelectorAll('input[name="UF_CRM_1540371938"]')[1],
 	 
@@ -337,8 +350,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			} else {
 				
 				mansion.classList.remove("show-field");
-				mansionInput.checked = false;
-	
+
+				if(mansionInput) {
+
+					 mansionInput.checked = false;
+					 
+				}
 			}
 	
 		}, 
@@ -571,7 +588,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 
 			  self.showGeoFields();
-        self.getGeoData();
+				self.getGeoData();
+				self.showBuildingFields();
 
 			}, 600);
 
@@ -1568,6 +1586,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
       setTimeout(function() {
 
 				self.showGeoFields();
+				self.showBuildingFields();
 
 			},600);
 
