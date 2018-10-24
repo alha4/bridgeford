@@ -112,8 +112,10 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 	    if(document.querySelector('[data-cid="UF_CRM_1540202667"]')) {
 
-			const geoControl      = document.querySelector('[data-cid="UF_CRM_1540202667"]'),  
-			      regionTextValue = geoControl.querySelector(".crm-entity-widget-content-block-inner .field-item").textContent;
+			const geoControl     = document.querySelector('[data-cid="UF_CRM_1540202667"]'),  
+						regionControl  = geoControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
+													   geoControl.querySelector(".crm-entity-widget-content-block-inner"),
+					  regionTextValue = regionControl.textContent;
 						
 		  if(regionTextValue)
 

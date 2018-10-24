@@ -12,14 +12,19 @@ div.show-field {
 
 div[data-cid="UF_CRM_1540392018"],
 div[data-cid="UF_CRM_1540392118"],
-div[data-cid="UF_CRM_1540393032"] {
+div[data-cid="UF_CRM_1540393032"],
+div[data-cid="UF_CRM_1540397194"],
+div[data-cid="UF_CRM_1540397421"] {
   padding: 11px 0;
   border-bottom: 1px solid #e8ecee;
 }
 
 div[data-cid="UF_CRM_1540392018"] .crm-entity-widget-content-block-title-text,
 div[data-cid="UF_CRM_1540392118"] .crm-entity-widget-content-block-title-text,
-div[data-cid="UF_CRM_1540393032"] .crm-entity-widget-content-block-title-text {
+div[data-cid="UF_CRM_1540393032"] .crm-entity-widget-content-block-title-text,
+div[data-cid="UF_CRM_1540392118"] .crm-entity-widget-content-block-title-text,
+div[data-cid="UF_CRM_1540397194"] .crm-entity-widget-content-block-title-text,
+div[data-cid="UF_CRM_1540397421"] .crm-entity-widget-content-block-title-text{
   display: inline-block;
   height: 23px;
   color: #525c69;
