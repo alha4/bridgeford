@@ -92,10 +92,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		this._inits = [];
 
+		this._views = [];
+
 		for(key in this._CATEGORY) {
 
 			this._inits[this._CATEGORY[key]] = [];
- 
+			this._views[this._CATEGORY[key]] = [];
+			
 		}
 	
 	};
@@ -126,18 +129,46 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		register : function(dealCategoryID, func) {
+		registerEventListener : function(dealCategoryID, func) {
 
 
-			  this._inits[dealCategoryID].push(func);
+			this._inits[dealCategoryID].push(func);
 
-		},
+	  },
 
 		getInits : function() {
 
     	const dealCategoryID = this.getDealCategory();
 
 			return this._inits[dealCategoryID];
+
+		},
+
+		registerView : function(dealCategoryID, func) {
+
+			this._views[dealCategoryID].push(func);
+
+		},
+
+		initializeViews : function() {
+
+			const views = this.getViews(),
+
+						self = this;
+			      
+			for(var func of views) {
+
+					 self[func]();
+					 console.log(func);		
+			}   
+
+		},
+
+		getViews : function() {
+
+    	const dealCategoryID = this.getDealCategory();
+
+			return this._views[dealCategoryID];
 
 		},
 
@@ -762,14 +793,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			const self = this;
 
+			this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
+			this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
+			this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
+			this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
+
       setTimeout(function() {
 
-
-			  self.showGeoFields();
-				self.getGeoData();
-				self.showBuildingFields();
-				self.showLandFields();
-			
+			  self.initializeViews();
+				
 			}, 600);
 
 		},
@@ -1188,15 +1220,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			}
 			const self = this;
 
-			this.register(this._CATEGORY.TO_RENT,'initializeGeoEvent');
-			this.register(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
-			this.register(this._CATEGORY.TO_RENT,'initializeLandEvent');
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeLandEvent');
 			
 			setTimeout(function() {
-
-				/*self.initializeGeoEvent();
-				self.initializeBuildingEvent();
-				self.initializeLandEvent();*/
 
 				self.initializeEventListener();
 				
@@ -1769,14 +1797,17 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				const self = this;
 
-      setTimeout(function() {
+			  this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
+			  this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
+			  this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
+			  this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
 
-				self.showGeoFields();
-				self.showBuildingFields();
-				self.showLandFields();
+        setTimeout(function() {
+
+			     self.initializeViews();
 				
-			},600);
-
+				}, 600);
+				
 			}
 			
 		},
