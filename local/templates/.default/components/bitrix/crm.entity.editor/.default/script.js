@@ -131,8 +131,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		registerEventListener : function(dealCategoryID, func) {
 
-
-			this._inits[dealCategoryID].push(func);
+			if(this._inits[dealCategoryID].indexOf(func) == -1)
+			
+			   this._inits[dealCategoryID].push(func);
 
 	  },
 
@@ -146,7 +147,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		registerView : function(dealCategoryID, func) {
 
-			this._views[dealCategoryID].push(func);
+			if(this._views[dealCategoryID].indexOf(func) == -1)
+
+			   this._views[dealCategoryID].push(func);
 
 		},
 
@@ -1796,11 +1799,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._modeSwitch.run();
 
 				const self = this;
-
-			  this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
-			  this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
-			  this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
-			  this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
 
         setTimeout(function() {
 
