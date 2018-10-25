@@ -796,10 +796,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			const self = this;
 
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeLandEvent');
+
 			this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
 			this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
+
 
       setTimeout(function() {
 
@@ -1223,10 +1228,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			}
 			const self = this;
 
-			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
-			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
-			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeLandEvent');
-			
 			setTimeout(function() {
 
 				self.initializeEventListener();
