@@ -80,22 +80,64 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		this._dragConfig = {};
 
+
 		this._categoryID = null;
 
+    this._CATEGORY =  {
+
+			   TO_BUSSINES :  2,  
+				 TO_SALE     :  1,
+				 TO_RENT     :  0, 
+		};
+
+		this._inits = [];
+
+		for(key in this._CATEGORY) {
+
+			this._inits[this._CATEGORY[key]] = [];
+ 
+		}
+	
 	};
 
 	BX.Crm.EntityEditor.prototype =
 	{
 		
-		setDealCategory : function(ID) {
+		getDealCategory : function() {
 
-			this._categoryID  = ID;
+			return this._categoryID;
 
 		},
 
-		getDealCategoty : function() {
+		initializeEventListener : function() {
 
-			return this._categoryID;
+			const inits = this.getInits(),
+
+						self = this;
+
+						console.log(inits);
+			      
+			for(var func of inits) {
+
+					 self[func]();
+					 
+					
+			}   
+
+		},
+
+		register : function(dealCategoryID, func) {
+
+
+			  this._inits[dealCategoryID].push(func);
+
+		},
+
+		getInits : function() {
+
+    	const dealCategoryID = this.getDealCategory();
+
+			return this._inits[dealCategoryID];
 
 		},
 
@@ -727,7 +769,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				self.getGeoData();
 				self.showBuildingFields();
 				self.showLandFields();
-				console.log( self.getDealCategoty() );
+			
 			}, 600);
 
 		},
@@ -1145,12 +1187,18 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._modeChangeNotifier.notify([ this ]);
 			}
 			const self = this;
-		
+
+			this.register(this._CATEGORY.TO_RENT,'initializeGeoEvent');
+			this.register(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
+			this.register(this._CATEGORY.TO_RENT,'initializeLandEvent');
+			
 			setTimeout(function() {
 
-				self.initializeGeoEvent();
+				/*self.initializeGeoEvent();
 				self.initializeBuildingEvent();
-				self.initializeLandEvent();
+				self.initializeLandEvent();*/
+
+				self.initializeEventListener();
 				
 			},600);
 
