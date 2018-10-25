@@ -80,11 +80,25 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		this._dragConfig = {};
 
+		this._categoryID = null;
+
 	};
 
 	BX.Crm.EntityEditor.prototype =
 	{
 		
+		setDealCategory : function(ID) {
+
+			this._categoryID  = ID;
+
+		},
+
+		getDealCategoty : function() {
+
+			return this._categoryID;
+
+		},
+
 		initializeGeoEvent : function() {
 
 			this._regionSelect = document.querySelector('select[name="UF_CRM_1540202667"]');
@@ -130,7 +144,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		      modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
 		
-		      viewMode = { 'edit' :  Object.create({}, {
+		      viewModel = { 'edit' :  Object.create({}, {
 
 					             	EMPTY      : { value : '', writable: false }, 
 		                  	SUB_MOSCOW : { value : 28, writable: false }, 
@@ -166,7 +180,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 														'UF_CRM_1540203111'
 													],
 
-					 regions = viewMode[modeName];
+					 regions = viewModel[modeName];
 
 		  if(regionValue != regions.EMPTY) {
 
@@ -485,6 +499,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this._id = BX.type.isNotEmptyString(id) ? id : BX.util.getRandomString(4);
 			this._settings = settings ? settings : {};
 
+			this._categoryID = BX.prop.getInteger(this._settings, "categoryID", -1);
+
 			this._serviceUrl = BX.prop.getString(this._settings, "serviceUrl", "");
 			this._entityTypeId = BX.prop.getInteger(this._settings, "entityTypeId", 0);
 			this._entityId = BX.prop.getInteger(this._settings, "entityId", 0);
@@ -711,7 +727,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				self.getGeoData();
 				self.showBuildingFields();
 				self.showLandFields();
-				
+				console.log( self.getDealCategoty() );
 			}, 600);
 
 		},

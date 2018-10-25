@@ -473,6 +473,7 @@ if(!empty($htmlEditorConfigs))
 				BX.Crm.EntityEditor.create(
 					"<?=CUtil::JSEscape($guid)?>",
 					{
+						categoryID  : <?=\CCrmDeal::GetCategoryID($arResult['ENTITY_ID'])?>,
 						entityTypeId: <?=$arResult['ENTITY_TYPE_ID']?>,
 						entityId: <?=$arResult['ENTITY_ID']?>,
 						model: model,
@@ -514,6 +515,8 @@ if(!empty($htmlEditorConfigs))
 					}
 				)
 			);
+
+				
 		}
 	);
 </script>
