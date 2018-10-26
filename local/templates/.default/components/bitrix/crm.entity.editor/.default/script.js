@@ -639,6 +639,60 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			}
 		},
 
+		initializeExploitationEvent : function() {
+
+			 this._exploitation = document.querySelector('select[name="UF_CRM_1540456850"]');
+			 
+			 this.bindEvent(this._exploitation, 'change', this.onExploitationChange);
+
+		},
+
+		onExploitationChange : function() {
+
+			 const exploitationValue = this._exploitation.options[this._exploitation.selectedIndex].value;
+
+			 if(exploitationValue) {
+
+					this.exploitationView(exploitationValue);
+					
+			 }
+
+		},
+
+		exploitationView : function(exploitationValue) {
+
+			const exploitationPrice = document.querySelector('div[data-cid="UF_CRM_1540456969485"]'),
+
+			      viewData = {
+							 'edit' : { PAY_SEPARATELY : { value : 154 } },
+							 'view' : { PAY_SEPARATELY : { value : 'Оплачивается отдельно' } }
+						},
+
+						viewModel = this.prepareModel(viewData);
+
+       if(exploitationValue == viewModel.PAY_SEPARATELY) {
+ 
+				  this.showField(exploitationPrice);
+				  
+			 } else {
+
+				  this.hideField(exploitationPrice);
+			 }
+
+		},
+
+		showField : function(node) {
+
+			 node.classList.add("show-field"); 
+
+		},
+
+		hideField : function(node) {
+
+			node.classList.remove("show-field"); 
+			
+	  },
+
 		prepareModel : function(params) {
 
 		  const	viewModel = {
@@ -905,6 +959,10 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_RENT, 'showReadyToMoveFields');
 			this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showReadyToMoveFields');
+
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
+			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
 
       setTimeout(function() {
 
