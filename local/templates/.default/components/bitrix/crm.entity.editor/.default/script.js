@@ -113,6 +113,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		isFieldShown : function() {
+		
+		  return document.querySelector(".show-field");
+
+		},
+
 		initializeEventListener : function() {
 
 			const inits = this.getInits(),
@@ -175,16 +181,26 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		getTextValue : function(node) {
+
+			const textNode  = node.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
+		                    node.querySelector(".crm-entity-widget-content-block-inner");
+
+			 if(textNode.textContent) {
+			 
+					return textNode.textContent
+			 }
+
+			 return false;
+
+		},
+
 		initializeGeoEvent : function() {
 
 			this._regionSelect = document.querySelector('select[name="UF_CRM_1540202667"]');
 
-      if(this._regionSelect) {
-
-		    BX.bind(this._regionSelect, 'change', BX.delegate(this.onRegionChange, this) );
-
-			}
-			
+		  this.bindEvent(this._regionSelect, 'change', this.onRegionChange );
+	
 		},
 		
 		onRegionChange : function() {
@@ -202,10 +218,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 	    if(document.querySelector('[data-cid="UF_CRM_1540202667"]')) {
 
-			const geoControl     = document.querySelector('[data-cid="UF_CRM_1540202667"]'),  
-						regionControl  = geoControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
-													   geoControl.querySelector(".crm-entity-widget-content-block-inner"),
-					  regionTextValue = regionControl.textContent;
+			const geoControl      = document.querySelector('[data-cid="UF_CRM_1540202667"]'),  
+		
+					  regionTextValue = this.getTextValue(geoControl);
 						
 		  if(regionTextValue)
 
@@ -218,32 +233,29 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		const	geoFields = document.querySelectorAll('#section_geografiya .crm-entity-widget-content-block'),
 
-		      modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
-		
-		      viewModel = { 'edit' :  Object.create({}, {
+		      viewData = { 'edit' :   {
 
-					             	EMPTY      : { value : '', writable: false }, 
-		                  	SUB_MOSCOW : { value : 28, writable: false }, 
-		                    NEW_MOSCOW : { value : 27, writable: false }, 
-		                    MOSCOW     : { value : 26, writable: false } 
+					             	EMPTY      : { value : '' }, 
+		                  	SUB_MOSCOW : { value : 28 }, 
+		                    NEW_MOSCOW : { value : 27 }, 
+		                    MOSCOW     : { value : 26 } 
 			
-											}),
+											},
 
-											'view' : Object.create({}, {
+											'view' : {
 
-												EMPTY      : { value : 'не заполнено', writable: false }, 
-												SUB_MOSCOW : { value : 'Подмосковье',  writable: false }, 
-												NEW_MOSCOW : { value : 'Новая Москва', writable: false }, 
-												MOSCOW     : { value : 'Москва',       writable: false }
+												EMPTY      : { value : 'не заполнено' }, 
+												SUB_MOSCOW : { value : 'Подмосковье' }, 
+												NEW_MOSCOW : { value : 'Новая Москва' }, 
+												MOSCOW     : { value : 'Москва' }
 												
-											})
-											
+											}	
 										},
 
 					 HIDDEN_FIELDS = Object.create({}, {
 
-											INNER : { value : 'UF_CRM_1540203144', writable: false }, 
-											AREA  : { value : 'UF_CRM_1540203111', writable: false }
+											INNER : { value : 'UF_CRM_1540203144' }, 
+											AREA  : { value : 'UF_CRM_1540203111' }
 											 
 										}),
 								
@@ -256,17 +268,17 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 														'UF_CRM_1540203111'
 													],
 
-					 regions = viewModel[modeName];
-
+					 regions = this.prepareModel(viewData);
+					 
 		  if(regionValue != regions.EMPTY) {
 
 			  if(regionValue == regions.MOSCOW) {
 
-			    if(document.querySelector(".show-field") && modeName == 'edit') {
+			    if(this.isFieldShown() && BX.Crm.EntityEditorMode.getName(this._mode) == 'edit') {
 				 
 					  for(node of geoFields) {
- 
-							 node.classList.remove("show-field");
+							
+							  this.hideField(node);
 							
 					  }
 		
@@ -274,7 +286,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			 
 				  for(uf of FIELDS_MOSCOW) {
  
-					   document.querySelector('[data-cid="' + uf + '"]').classList.add("show-field");
+					   this.showField(document.querySelector('[data-cid="' + uf + '"]'));
  
 				  }
  
@@ -284,18 +296,18 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					
 					if(node.dataset.cid != HIDDEN_FIELDS.INNER) {
 		 
-					  node.classList.add("show-field");
+					  this.showField(node);
  
 					} else {
  
-					  node.classList.remove("show-field");
+					  this.hideField(node);
 							
 					}	 
 				 } 
 				 
 				 if(regionValue == regions.SUB_MOSCOW) {
  
-					 document.querySelector('[data-cid="' + HIDDEN_FIELDS.AREA + '"]').classList.remove("show-field");
+					 this.hideField(document.querySelector('[data-cid="' + HIDDEN_FIELDS.AREA + '"]'));
  
 				 }
 			 } 
@@ -304,7 +316,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		getGeoData : function() {
 
-		 const geoMap    = document.querySelector('#section_karta .crm-entity-widget-content-block'),
+		 /*const geoMap    = document.querySelector('#section_karta .crm-entity-widget-content-block'),
 
 					 codeFields = ['UF_CRM_1540202667','UF_CRM_1540203111','UF_CRM_1540202766','UF_CRM_1540202817','UF_CRM_1540202900','UF_CRM_1540202908'],
 
@@ -327,7 +339,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 } else {
 						   //console.log(locationAddress);
 					 }
-					 
+			*/		 
 		},
 
 		initializeBuildingEvent : function() {
@@ -335,54 +347,42 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this._buildingSelect = document.querySelector('select[name="UF_CRM_1540371261836"]');
 			this._house = document.querySelector('[data-cid="UF_CRM_1540371563"]');
 
-      if(this._buildingSelect) {
-
-		    BX.bind(this._buildingSelect, 'change', BX.delegate(this.onBuildingChange, this) );
-
-			}
-
-			if(this._house) {
-				
-		    BX.bind(this._house, 'click', BX.delegate(this.onHouseChange, this) );
-
-			}
-			
+		  this.bindEvent(this._buildingSelect, 'change', this.onBuildingChange);
+		  this.bindEvent(this._house, 'click', this.onHouseChange);
+	
 		},
 
 		onHouseChange : function(e) {
     
 			if(e.target.nodeName == 'INPUT') {
 	
-			const	modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
-	
-						datepicker = document.querySelector('[data-cid="UF_CRM_1540371802"]'),
+			const	datepicker = document.querySelector('[data-cid="UF_CRM_1540371802"]'),
 						datepickerInput = document.querySelector('input[name="UF_CRM_1540371802"]'),
 	
 						houseValue = e.target.value,
 				
-						viewType = { 'edit' :  Object.create({}, {
+						viewData = { 'edit' :   {
 	
-												 DATE_FROM  : { value : 85, writable: false }
+												 DATE_FROM  : { value : 85 }
 										
-												}),
+												},
 	
-											 'view' : Object.create({}, {
+											 'view' : {
 	
-												 DATE_FROM     : { value : 'С даты', writable: false }
+												 DATE_FROM     : { value : 'С даты' }
 											
-											 })
-									},
+											 }
+									    },
 	
-				viewModel = viewType[modeName];
+				    viewModel = this.prepareModel(viewData);
 	
 				if(houseValue == viewModel.DATE_FROM) {
 	
-					datepicker.classList.add("show-field");
-	
+					  this.showField(datepicker);
 	
 				} else {
 	
-					datepicker.classList.remove("show-field");
+					this.hideField(datepicker);
 	
 					if(datepickerInput) {
 	
@@ -408,15 +408,10 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	
 			if(document.querySelector('[data-cid="UF_CRM_1540371261836"]')) {
 	
-			  	const buildingControl = document.querySelector('[data-cid="UF_CRM_1540371261836"]'),  
+			  	const buildingControl = document.querySelector('[data-cid="UF_CRM_1540371261836"]'); 
 					
-								 buildingNode  = buildingControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
-																	buildingControl.querySelector(".crm-entity-widget-content-block-inner"),
-															
+								buildingTextValue = this.getTextValue(buildingControl);
 		
-								buildingTextValue = buildingNode.textContent;
-	
-						
 					if(buildingTextValue) {
 		
 						 this.buildingView(buildingTextValue);
@@ -426,11 +421,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 
 				if(document.querySelector('[data-cid="UF_CRM_1540371563"]')) {
 	
-					const houseControl = document.querySelector('[data-cid="UF_CRM_1540371563"]'),
-								houseNode    = houseControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
-															 houseControl.querySelector(".crm-entity-widget-content-block-inner"),
+					const houseControl = document.querySelector('[data-cid="UF_CRM_1540371563"]');
 																	
-								houseTextValue = houseNode.textContent;
+								houseTextValue = this.getTextValue(houseControl);
 					
 					if(houseTextValue) {
 	
@@ -442,7 +435,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 									};
 				
 									this.onHouseChange(e);
-				
 					}	 	 
 				}
 		 },
@@ -452,34 +444,29 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		 const mansion = document.querySelector('[data-cid="UF_CRM_1540371938"]'),
 							
 				  	mansionInput = document.querySelectorAll('input[name="UF_CRM_1540371938"]')[1],
-	
-						mansionText  =  mansion.querySelector('.crm-entity-widget-content-block-inner .field-item'),
-		 
-						modeName  = BX.Crm.EntityEditorMode.getName(this._mode),
 				
-						viewType = { 'edit' :  Object.create({}, {
+						viewData = { 'edit' :   {
 		
-														OSZ      : { value : 76, writable: false }
+														OSZ  : { value : 76 }
 													
-													}),
+													},
 		
-													'view' : Object.create({}, {
+												  'view' : {
 		
-														OSZ      : { value : 'ОСЗ', writable: false }
+														OSZ  : { value : 'ОСЗ' }
 														
-													})
-										
+													}
 												},
 	
-						viewModel = viewType[modeName];	
+						viewModel = this.prepareModel(viewData);	
 							
 				if(buildingValue == viewModel.OSZ) {
 	
-					 mansion.classList.add("show-field");
+					 this.showField(mansion);
 	
 				} else {
 					
-					mansion.classList.remove("show-field");
+					this.hideField(mansion);
 	
 					if(mansionInput) {
 	
@@ -492,13 +479,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		initializeLandEvent : function() {
 
 			this._landSelect = document.querySelector('select[name="UF_CRM_1540381458431"]');
+	
+		  this.bindEvent(this._landSelect, 'change', this.onLandChange );
 
-			if(this._landSelect) {
-				
-		    BX.bind(this._landSelect, 'change', BX.delegate(this.onLandChange, this) );
-
-			}
-		
 		},
 
 		onLandChange : function() {
@@ -514,37 +497,34 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		landView : function(landValue) {
 
-		const	modeName = BX.Crm.EntityEditorMode.getName(this._mode),
-
-					yearRental = document.querySelector('[data-cid="UF_CRM_1540381635335"]'),
+		const	yearRental = document.querySelector('[data-cid="UF_CRM_1540381635335"]'),
 					
 					yearRentalInput = document.querySelector('input[name="UF_CRM_1540381635335"]'),
 		      
-          viewType = { 
+          viewData = { 
 						
-						'edit' :  Object.create({}, {
+						'edit' :   {
 
-		      	   RENTAL  : { value : 87, writable: false }
+		      	   RENTAL  : { value : 87 }
  
-		      }),
+		        },
 
-		        'view' : Object.create({}, {
+		        'view' : {
 
-			         RENTAL    : { value : 'Аренда', writable: false }
+			         RENTAL    : { value : 'Аренда' }
 	 
-		       })
+		       }
          },
 
-				 viewModel = viewType[modeName];
+				 viewModel = this.prepareModel(viewData);
 
  		 if(landValue == viewModel.RENTAL) {
 
-
-				yearRental.classList.add("show-field");
+				this.showField(yearRental);
 
  		  } else {
 
-				yearRental.classList.remove("show-field");
+				this.hideField(yearRental);
 
 				if(yearRentalInput)
 
@@ -557,11 +537,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 	    if(document.querySelector('[data-cid="UF_CRM_1540381458431"]')) {
 
-			const landControl  = document.querySelector('[data-cid="UF_CRM_1540381458431"]'),  
-						landNode     = landControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
-													 landControl.querySelector(".crm-entity-widget-content-block-inner"),
-														
-						landTextValue = landNode.textContent;
+			const landControl  = document.querySelector('[data-cid="UF_CRM_1540381458431"]'),				
+						landTextValue = this.getTextValue(landControl);
 						
 		  if(landTextValue)
 
@@ -630,10 +607,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		if(document.querySelector('[data-cid="UF_CRM_1540544383"]')) {
 
 				const readyToMovedControl = document.querySelector('[data-cid="UF_CRM_1540544383"]'),  
-				      readyToMovedNode    = readyToMovedControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
-							                      readyToMovedControl.querySelector(".crm-entity-widget-content-block-inner"),
-															
-																		readyToMovedTextValue = readyToMovedNode.textContent;
+				     
+																		readyToMovedTextValue = this.getTextValue(readyToMovedControl);
 							
 				if(readyToMovedTextValue) {
 	
@@ -688,11 +663,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		showExploitationFields : function() {
 
 			const exploitationControl = document.querySelector('div[data-cid="UF_CRM_1540456850"]'),
-
-			exploitationNode = exploitationControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
-		             	       exploitationControl.querySelector(".crm-entity-widget-content-block-inner"),
 															
-					               exploitationTextValue = exploitationNode.textContent;
+					  exploitationTextValue = this.getTextValue(exploitationControl);
 							
 			if(exploitationTextValue) {
 	
@@ -734,11 +706,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						squareNode   = document.querySelector('[data-cid="UF_CRM_1540384944"]'),
 
-	          squareControl = squareNode.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
-													  squareNode.querySelector(".crm-entity-widget-content-block-inner"),
-													 
-													square  = parseInt(squareControl.textContent);
-
+						square  = parseInt(this.getTextValue(squareNode));
 
 						viewData = {
 
