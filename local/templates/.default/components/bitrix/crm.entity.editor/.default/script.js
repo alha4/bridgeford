@@ -80,7 +80,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		this._dragConfig = {};
 
-
+		this._timeout = 300;
+		
 		this._categoryID = null;
 
     this._CATEGORY =  {
@@ -122,9 +123,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			      
 			for(var func of inits) {
 
-					 self[func]();
-					 
-					
+					self[func]();
+						
 			}   
 
 		},
@@ -570,6 +570,98 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	 	  }
 		},
 
+		initializeReadyToMoveEvent : function() {
+
+			this._readyToMoved = document.querySelector('[data-cid="UF_CRM_1540544383"]');
+
+			this.bindEvent(this._readyToMoved, 'click', this.onReadyToMovedChange);
+			
+		},
+
+		onReadyToMovedChange  : function(e) {
+
+      if(e.target.nodeName == 'INPUT') {
+
+				 this.readyMovedView(e.target.value);
+
+			}
+		},
+
+    readyMovedView : function(valueReadyMove) {
+
+		  const dateMoved = document.querySelector('div[data-cid="UF_CRM_1540544416"]'),
+
+						viewData = { 
+						
+							'edit' : {
+		
+									DATE_FROM : { value : 163 }
+		
+						  },
+		
+							'view' : {
+		
+							  	DATE_FROM  : { value : 'С даты'}
+			 
+							 }
+						};
+
+						viewModel = this.prepareModel(viewData);
+						
+		  if(valueReadyMove == viewModel.DATE_FROM) {
+
+			  dateMoved.classList.add('show-field');
+				console.log(valueReadyMove,viewModel.DATE_FROM);
+		  } else {
+			
+			  dateMoved.classList.remove('show-field');
+				console.log('not ready');
+				console.log(valueReadyMove,viewModel.DATE_FROM);
+		  }
+		
+		},
+
+		showReadyToMoveFields : function() {
+
+		if(document.querySelector('[data-cid="UF_CRM_1540544383"]')) {
+
+				const readyToMovedControl = document.querySelector('[data-cid="UF_CRM_1540544383"]'),  
+				      readyToMovedNode    = readyToMovedControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
+							                      readyToMovedControl.querySelector(".crm-entity-widget-content-block-inner"),
+															
+																		readyToMovedTextValue = readyToMovedNode.textContent;
+							
+				if(readyToMovedTextValue) {
+	
+					 this.readyMovedView(readyToMovedTextValue);
+	
+				}
+			}
+		},
+
+		prepareModel : function(params) {
+
+		  const	viewModel = {
+
+					   'view' : Object.create({}, params['view']),
+					   'edit' : Object.create({}, params['edit'])
+					
+					  };
+
+		  return 	viewModel[BX.Crm.EntityEditorMode.getName(this._mode)];
+
+		},
+
+		bindEvent : function(element, eventName, callback) {
+
+			if(element) {
+				
+		    BX.bind(element, eventName, BX.delegate(callback, this) );
+
+			}
+
+		},
+	
 		initialize: function(id, settings)
 		{
 			this._id = BX.type.isNotEmptyString(id) ? id : BX.util.getRandomString(4);
@@ -800,17 +892,25 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeLandEvent');
 
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeReadyToMoveEvent');
+			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
+
+
 			this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
 			this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
 
+			this.registerView(this._CATEGORY.TO_RENT, 'showReadyToMoveFields');
+			this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
+			this.registerView(this._CATEGORY.TO_BUSSINES, 'showReadyToMoveFields');
 
       setTimeout(function() {
 
 			  self.initializeViews();
 				
-			}, 600);
+			}, this._timeout);
 
 		},
 		onSliderOpen: function(event)
@@ -1226,13 +1326,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._mode = BX.Crm.EntityEditorMode.edit;
 				this._modeChangeNotifier.notify([ this ]);
 			}
+			
 			const self = this;
 
 			setTimeout(function() {
 
 				self.initializeEventListener();
 				
-			},600);
+			}, this._timeout);
 
 		},
 		unregisterActiveControl: function(control)
