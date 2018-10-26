@@ -719,11 +719,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 							 }
 						},
 
+						NDS_LIST = { VAT : 152 },
+
 						viewModel = this.prepareModel(viewData);
 
-						if(ndsValue == 152) {
+						if(ndsValue == NDS_LIST.VAT) {
 
-							 nds = (priceRental / 100) * 18;
+							 nds = (priceRental * 18) / 100;
 
 						}
 
