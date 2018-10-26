@@ -595,7 +595,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						
 							'edit' : {
 		
-									DATE_FROM : { value : 163 }
+									DATE_FROM : { value : '163' }
 		
 						  },
 		
@@ -607,16 +607,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						};
 
 						viewModel = this.prepareModel(viewData);
-						
+				
 		  if(valueReadyMove == viewModel.DATE_FROM) {
 
-			  dateMoved.classList.add('show-field');
+				 this.showField(dateMoved);
+				
 				console.log(valueReadyMove,viewModel.DATE_FROM);
+
 		  } else {
 			
-			  dateMoved.classList.remove('show-field');
+				this.hideField(dateMoved);
+				
 				console.log('not ready');
-				console.log(valueReadyMove,viewModel.DATE_FROM);
+				console.log(typeof valueReadyMove, typeof viewModel.DATE_FROM, valueReadyMove, viewModel.DATE_FROM);
+
 		  }
 		
 		},
@@ -679,6 +683,22 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  this.hideField(exploitationPrice);
 			 }
 
+		},
+
+		showExploitationFields : function() {
+
+			const exploitationControl = document.querySelector('div[data-cid="UF_CRM_1540456850"]'),
+
+			exploitationNode = exploitationControl.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
+		             	       exploitationControl.querySelector(".crm-entity-widget-content-block-inner"),
+															
+					               exploitationTextValue = exploitationNode.textContent;
+							
+			if(exploitationTextValue) {
+	
+					this.exploitationView(exploitationTextValue);
+	
+			}
 		},
 
 		showField : function(node) {
@@ -959,6 +979,10 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_RENT, 'showReadyToMoveFields');
 			this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showReadyToMoveFields');
+
+			this.registerView(this._CATEGORY.TO_RENT, 'showExploitationFields');
+			this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
+			this.registerView(this._CATEGORY.TO_BUSSINES, 'showExploitationFields');
 
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
 			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
