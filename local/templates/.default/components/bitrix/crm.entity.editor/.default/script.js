@@ -186,7 +186,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			const textNode  = node.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
 		                    node.querySelector(".crm-entity-widget-content-block-inner");
 
-			 if(textNode.textContent) {
+			 if(textNode && textNode.textContent) {
 			 
 					return textNode.textContent
 			 }
@@ -679,12 +679,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			this.bindEvent(this._caclulateRent, 'change', this.onCaclulateRent);
 
+
+
 		},
 
 		onCaclulateRent : function() {
 
 			const rentValue = this._caclulateRent.options[this._caclulateRent.selectedIndex].value;
-
+    
 			if(rentValue) {
 
 				 this.rentView(rentValue);
@@ -706,7 +708,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						squareNode   = document.querySelector('[data-cid="UF_CRM_1540384944"]'),
 
-						square  = parseInt(this.getTextValue(squareNode));
+						square  = parseInt(this.getTextValue(squareNode)) || 1;
 
 						viewData = {
 
