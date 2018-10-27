@@ -589,14 +589,10 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				 this.showField(dateMoved);
 				
-				console.log(valueReadyMove,viewModel.DATE_FROM);
-
 		  } else {
 			
 				this.hideField(dateMoved);
 				
-				console.log('not ready');
-				console.log(typeof valueReadyMove, typeof viewModel.DATE_FROM, valueReadyMove, viewModel.DATE_FROM);
 
 		  }
 		
