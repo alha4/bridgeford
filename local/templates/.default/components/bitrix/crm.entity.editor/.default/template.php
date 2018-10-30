@@ -474,6 +474,7 @@ if(!empty($htmlEditorConfigs))
 					"<?=CUtil::JSEscape($guid)?>",
 					{
 						categoryID  : <?=\CCrmDeal::GetCategoryID($arResult['ENTITY_ID'])?>,
+						isAdmin     : "<?=$USER->IsAdmin() ? 'YES' : 'NO' ?>",
 						entityTypeId: <?=$arResult['ENTITY_TYPE_ID']?>,
 						entityId: <?=$arResult['ENTITY_ID']?>,
 						model: model,

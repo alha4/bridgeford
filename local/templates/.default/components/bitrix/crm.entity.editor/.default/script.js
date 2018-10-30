@@ -78,6 +78,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		this._closeConfirmationHandler = BX.delegate(this.onCloseConfirmButtonClick, this);
 		this._cancelConfirmationHandler = BX.delegate(this.onCancelConfirmButtonClick, this);
 
+		this._isAdmin = null;
+
 		this._dragConfig = {};
 
 		this._timeout = 300;
@@ -116,6 +118,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		isFieldShown : function() {
 		
 		  return document.querySelector(".show-field");
+
+		},
+
+		isAdmin : function() {
+
+
+			return this._isAdmin == 'YES' ? true : false;
 
 		},
 
@@ -690,6 +699,31 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		showBrokerFileds : function() {
+
+			if(document.querySelector('#section_broker')) {
+
+				 const brokerControl = document.querySelector('#section_broker').previousSibling;
+
+				 if(!this.isAdmin()) {
+
+						brokerControl.classList.add("hide-field");
+
+				 } else {
+
+					 const buttonActionBroker = brokerControl.querySelector(".crm-entity-widget-actions-block .crm-entity-widget-hide-btn");
+
+					 if(buttonActionBroker) {
+					
+						  buttonActionBroker.textContent = 'Передать другому брокеру';
+
+					 }
+				 }
+
+
+			}
+		},
+
 		rentView : function(rentValue) {
 			
 			let nds = 0;
@@ -1017,6 +1051,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				};
 			BX.onCustomEvent(window, "BX.Crm.EntityEditor:onInit", [ this, eventArgs ]);
 
+			this._isAdmin = BX.prop.get(this._settings, "isAdmin");
+
 			const self = this;
 
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
@@ -1040,6 +1076,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_RENT, 'showExploitationFields');
 			this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showExploitationFields');
+
+			this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFileds');
 
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
 			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
