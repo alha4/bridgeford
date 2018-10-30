@@ -800,17 +800,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 const  sobstvennik = document.querySelector('#section_sobstvennik'),
 				        sobstvennikContent = document.querySelector('#section_sobstvennik .crm-entity-widget-content-block');
 				 
-				 if(this.getCustomerID() == this.brokerAssignedID() || 
-						this.brokerAssignedID() == this.getGeneralBrokerID() ||
-						this.isAdmin()) {
-
-					   this.showField(sobstvennikContent);
-
-				 } else {
+				 if(this.getCustomerID() != this.brokerAssignedID() && 
+						this.brokerAssignedID() != this.getGeneralBrokerID() /*&&
+						!this.isAdmin()*/) {
 
 					const sobstvennikAction = sobstvennik.previousSibling.querySelector('.crm-entity-widget-actions-block');
 
-				      	sobstvennikAction.classList.add("hide-field");
+								sobstvennikAction.classList.add("hide-field");
+								
+								sobstvennikContent.classList.add("hide-field");
  
 				 }
  
