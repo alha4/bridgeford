@@ -128,6 +128,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		getSystemInfo : function() {
+
+			return this._systemInfo;
+			
+		},
+
 		initializeEventListener : function() {
 
 			const inits = this.getInits(),
@@ -721,6 +727,69 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 }
 
 
+				  console.log(this.getSystemInfo());
+			}
+		},
+
+		initializeSystemInfoEvent : function() {
+
+      if(document.querySelector('#section_sistemnaya_informatsiya')) {
+
+         this.bindEvent( BX('section_sistemnaya_informatsiya'), 'click', function(e) {
+
+					 e.stopPropagation();
+					 e.preventDefault();
+
+					 return false;
+
+				 });
+			}
+
+		},
+
+		showSystemInfoFields : function() {
+
+			if(document.querySelector('#section_sistemnaya_informatsiya')) {
+
+				 const systemInfoSection = document.querySelector('#section_sistemnaya_informatsiya .crm-entity-widget-content-block'),
+
+							 systemData = this.getSystemInfo(),
+							 
+							 mapFieldsName = {
+                  "CREATED_BY"  : "Кем добавлен",
+									"DATE_CREATE" : "Дата добавления",
+									"DATE_MODIFY" : "Дата обновления"
+							 };
+
+							 
+
+				 var htmlString = '',
+				     overflowNode = document.createElement("div");
+						 overflowNode.className = 'no-edit';
+
+         for(var key in systemData) {
+
+					  
+					 htmlString+= `<div class="crm-entity-widget-content-block-title"><span class="crm-entity-widget-content-block-title-text">${mapFieldsName[key]}</span></div>`;
+					 htmlString+= `<div class="crm-entity-widget-content-block-inner"><span class="fields enumeration field-wrap"><span class="fields enumeration field-item field_${key}">${systemData[key]}</span></span></div>`;
+
+				 }
+				 
+				 systemInfoSection.parentNode.parentNode.appendChild(overflowNode);
+			
+				 setTimeout(function() {
+				
+						systemInfoSection.innerHTML = htmlString;
+						
+						BX.bind(document.querySelector('.field_CREATED_BY'), 'click', function(e) {
+
+							e.stopPropagation();
+						
+
+						});
+
+				 },this._timeout);
+
 			}
 		},
 
@@ -1053,6 +1122,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			this._isAdmin = BX.prop.get(this._settings, "isAdmin");
 
+			this._systemInfo =  BX.prop.get(this._settings, "systemInfo");
+
 			const self = this;
 
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
@@ -1078,6 +1149,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showExploitationFields');
 
 			this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFileds');
+			this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
 
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
 			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
@@ -1086,6 +1158,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_SALE, 'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'initializeCaclulateRentEvent');
+
+			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeSystemInfoEvent'); 
 
       setTimeout(function() {
 

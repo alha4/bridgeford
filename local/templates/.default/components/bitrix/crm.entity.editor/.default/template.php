@@ -34,6 +34,11 @@ $buttonContainerID = "{$prefix}_buttons";
 $createSectionButtonID = "{$prefix}_create_section";
 $configMenuButtonID = "{$prefix}_config_menu";
 
+$systemInfo = [];
+$systemInfo['CREATED_BY']  = "<a target=\"_blank\" href=\"/company/personal/user/{$arResult['ENTITY_DATA']['CREATED_BY_ID']}/\">{$arResult['ENTITY_DATA']['CREATED_BY_LOGIN']}</a>";
+$systemInfo['DATE_CREATE'] = date("d.m.Y",strtotime($arResult['ENTITY_DATA']['DATE_CREATE']));
+$systemInfo['DATE_MODIFY'] = date("d.m.Y",strtotime($arResult['ENTITY_DATA']['DATE_MODIFY']));
+
 if($arResult['REST_USE'])
 {
 	$restSectionButtonID = "{$prefix}_rest_section";
@@ -475,6 +480,7 @@ if(!empty($htmlEditorConfigs))
 					{
 						categoryID  : <?=\CCrmDeal::GetCategoryID($arResult['ENTITY_ID'])?>,
 						isAdmin     : "<?=$USER->IsAdmin() ? 'YES' : 'NO' ?>",
+						systemInfo  : <?=CUtil::PhpToJSObject($systemInfo)?>,
 						entityTypeId: <?=$arResult['ENTITY_TYPE_ID']?>,
 						entityId: <?=$arResult['ENTITY_ID']?>,
 						model: model,
