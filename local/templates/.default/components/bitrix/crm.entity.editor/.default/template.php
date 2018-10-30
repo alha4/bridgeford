@@ -39,6 +39,24 @@ $systemInfo['CREATED_BY']  = "<a target=\"_blank\" href=\"/company/personal/user
 $systemInfo['DATE_CREATE'] = date("d.m.Y",strtotime($arResult['ENTITY_DATA']['DATE_CREATE']));
 $systemInfo['DATE_MODIFY'] = date("d.m.Y",strtotime($arResult['ENTITY_DATA']['DATE_MODIFY']));
 
+const GENERAL_BROKER = 15;
+
+$uf = new CUserTypeManager();
+$estateOwnerID = $uf->GetUserFieldValue('CRM_DEAL','UF_CRM_1540895685', $arResult['ENTITY_ID']);
+
+$brokerAssignedID = GENERAL_BROKER;
+
+if($estateOwnerID) {
+
+    $crm_contact = CCrmContact::GetList(array("ID" => "DESC"),array("ID" => $estateOwnerID,"CHECK_PERMISSONS" => "N"), array("ASSIGNED_BY_ID"));
+
+		 if($result = $crm_contact->Fetch()) {
+
+			  $brokerAssignedID = $result['ASSIGNED_BY_ID'];
+
+		 }
+}
+
 if($arResult['REST_USE'])
 {
 	$restSectionButtonID = "{$prefix}_rest_section";
@@ -481,6 +499,9 @@ if(!empty($htmlEditorConfigs))
 						categoryID  : <?=\CCrmDeal::GetCategoryID($arResult['ENTITY_ID'])?>,
 						isAdmin     : "<?=$USER->IsAdmin() ? 'YES' : 'NO' ?>",
 						systemInfo  : <?=CUtil::PhpToJSObject($systemInfo)?>,
+						brokerAssignedID : <?=$brokerAssignedID?>,
+						generalBrokerID  : <?=GENERAL_BROKER?>,
+						customerID       : <?=$USER->GetID()?>,
 						entityTypeId: <?=$arResult['ENTITY_TYPE_ID']?>,
 						entityId: <?=$arResult['ENTITY_ID']?>,
 						model: model,

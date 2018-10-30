@@ -793,6 +793,49 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			}
 		},
 
+		showRightOwnerFields : function() {
+
+			if(document.querySelector('#section_sobstvennik')) {
+
+				 const  sobstvennik = document.querySelector('#section_sobstvennik'),
+				        sobstvennikContent = document.querySelector('#section_sobstvennik .crm-entity-widget-content-block');
+				 
+				 if(this.getCustomerID() == this.brokerAssignedID() || 
+						this.brokerAssignedID() == this.getGeneralBrokerID() ||
+						this.isAdmin()) {
+
+					   this.showField(sobstvennikContent);
+
+				 } else {
+
+					const sobstvennikAction = sobstvennik.previousSibling.querySelector('.crm-entity-widget-actions-block');
+
+				      	sobstvennikAction.classList.add("hide-field");
+ 
+				 }
+ 
+				console.log(this.getCustomerID(), this.brokerAssignedID(), this.getGeneralBrokerID());
+			}
+		},
+
+		brokerAssignedID : function() {
+
+			 return this._brokerAssignedID; 
+
+		},
+
+		getGeneralBrokerID : function() {
+
+			return this._generalBrokerID;
+			
+		},
+
+		getCustomerID : function() {
+ 
+			return this._customerID;
+
+		},
+
 		rentView : function(rentValue) {
 			
 			let nds = 0;
@@ -1124,6 +1167,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			this._systemInfo =  BX.prop.get(this._settings, "systemInfo");
 
+			this._brokerAssignedID = BX.prop.get(this._settings, "brokerAssignedID", null);
+
+			this._generalBrokerID  = BX.prop.get(this._settings, "generalBrokerID", null);
+
+			this._customerID = BX.prop.get(this._settings, "customerID", null);
+
+
 			const self = this;
 
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
@@ -1150,15 +1200,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFileds');
 			this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
+			this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
+
 
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
 			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
-
 			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_SALE, 'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'initializeCaclulateRentEvent');
-
 			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeSystemInfoEvent'); 
 
       setTimeout(function() {
