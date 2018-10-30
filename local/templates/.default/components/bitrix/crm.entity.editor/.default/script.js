@@ -687,11 +687,22 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		initializeCaclulateRentEvent : function() {
 
 			this._caclulateRent = document.querySelector('select[name="UF_CRM_1540456536"]');
+			this._vatRent       = document.querySelector('select[name="UF_CRM_1540456608"]');
 
 			this.bindEvent(this._caclulateRent, 'change', this.onCaclulateRent);
+			this.bindEvent(this._vatRent, 'change', this.onChangeVatRent);
+		},
 
+		onChangeVatRent : function() {
 
+			const rentValue = this._caclulateRent.options[this._caclulateRent.selectedIndex].value;
+    
+			if(rentValue) {
 
+				 this.rentView(rentValue);
+
+			}
+			
 		},
 
 		onCaclulateRent : function() {
@@ -702,6 +713,74 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				 this.rentView(rentValue);
 			}
+
+		},
+
+		rentView : function(rentValue) {
+			
+			let nds = 0;
+			
+			const priceOnYear  = document.querySelector('input[name="UF_CRM_1540554743072"]'),
+						priceOnMonth = document.querySelector('input[name="UF_CRM_1540456697"]'),
+						priceRental  = parseFloat(document.querySelector('input[name="UF_CRM_1540456417"').value),
+
+						ndsNode      = document.querySelector('select[name="UF_CRM_1540456608"'),
+
+						ndsValue     = this._vatRent.options[this._vatRent.selectedIndex].value,
+
+						squareNode   = document.querySelector('[data-cid="UF_CRM_1540384944"]'),
+
+						square  = parseInt(this.getTextValue(squareNode)) || 1;
+
+						viewData = {
+
+							 'edit' :  {
+
+								 ALL_MONTH : { value : 147},
+								 ALL_YEAR  : { value : 148},
+								 SQ1M_YEAR : { value : 149}
+
+							 }
+						},
+
+						NDS_LIST = { VAT : 152 },
+
+						viewModel = this.prepareModel(viewData);
+
+						if(ndsValue == NDS_LIST.VAT) {
+
+							 nds = (priceRental * 18) / 100;
+
+						}
+
+						switch(parseInt(rentValue)) {
+
+							 case viewModel.ALL_MONTH :
+
+               priceOnYear.value  = (priceRental * 12 / square) + nds;
+							 priceOnMonth.value =  priceRental + nds;
+
+							 console.log('все месяцы',rentValue, priceRental);
+
+							 break;
+
+							 case viewModel.SQ1M_YEAR :
+
+							 priceOnYear.value  = priceRental + nds;
+							 priceOnMonth.value = (priceRental * square / 12) + nds;
+
+							 console.log('за год',rentValue, priceRental);
+							 
+							 break;
+
+							 default :
+ 
+							 console.log('не найдено',rentValue);
+
+
+						}
+
+						console.log(nds);
 
 		},
 
@@ -801,8 +880,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				        sobstvennikContent = document.querySelector('#section_sobstvennik .crm-entity-widget-content-block');
 				 
 				 if(this.getCustomerID() != this.brokerAssignedID() && 
-						this.brokerAssignedID() != this.getGeneralBrokerID() /*&&
-						!this.isAdmin()*/) {
+						this.brokerAssignedID() != this.getGeneralBrokerID() &&
+						!this.isAdmin()) {
 
 					const sobstvennikAction = sobstvennik.previousSibling.querySelector('.crm-entity-widget-actions-block');
 
@@ -812,7 +891,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
  
 				 }
  
-				console.log(this.getCustomerID(), this.brokerAssignedID(), this.getGeneralBrokerID());
+				//console.log(this.getCustomerID(), this.brokerAssignedID(), this.getGeneralBrokerID());
 			}
 		},
 
@@ -834,74 +913,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		rentView : function(rentValue) {
-			
-			let nds = 0;
-			
-			const priceOnYear  = document.querySelector('input[name="UF_CRM_1540554743072"]'),
-						priceOnMonth = document.querySelector('input[name="UF_CRM_1540456697"]'),
-						priceRental  = parseFloat(document.querySelector('input[name="UF_CRM_1540456417"').value),
-
-						ndsNode      = document.querySelector('select[name="UF_CRM_1540456608"'),
-
-						ndsValue     = ndsNode.options[ndsNode.selectedIndex].value,
-
-						squareNode   = document.querySelector('[data-cid="UF_CRM_1540384944"]'),
-
-						square  = parseInt(this.getTextValue(squareNode)) || 1;
-
-						viewData = {
-
-							 'edit' :  {
-
-								 ALL_MONTH : { value : 147},
-								 ALL_YEAR  : { value : 148},
-								 SQ1M_YEAR : { value : 149}
-
-							 }
-						},
-
-						NDS_LIST = { VAT : 152 },
-
-						viewModel = this.prepareModel(viewData);
-
-						if(ndsValue == NDS_LIST.VAT) {
-
-							 nds = (priceRental * 18) / 100;
-
-						}
-
-						switch(parseInt(rentValue)) {
-
-							 case viewModel.ALL_MONTH :
-
-               priceOnYear.value  = (priceRental * 12 / square) + nds;
-							 priceOnMonth.value =  priceRental + nds;
-
-							 console.log('все месяцы',rentValue, priceRental);
-
-							 break;
-
-							 case viewModel.SQ1M_YEAR :
-
-							 priceOnYear.value  = priceRental + nds;
-							 priceOnMonth.value = (priceRental * square / 12) + nds;
-
-							 console.log('за год',rentValue, priceRental);
-							 
-							 break;
-
-							 default :
- 
-							 console.log('не найдено',rentValue);
-
-
-						}
-
-						console.log(nds);
-
-		},
-	
 		showField : function(node) {
 
 			 node.classList.add("show-field"); 
