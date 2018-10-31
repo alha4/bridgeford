@@ -182,8 +182,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			      
 			for(var func of views) {
 
+				if(typeof self[func] == 'function') {
+
 					 self[func]();
-					 console.log(func);		
+					 console.log(func);	
+
+				}
 			}   
 
 		},
@@ -784,7 +788,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		showBrokerFileds : function() {
+		showBrokerFields : function() {
 
 			if(document.querySelector('#section_broker')) {
 
@@ -934,14 +938,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
     duplication1View : function(duplication) {
 
 			const viewFields = ['UF_CRM_1540977530','UF_CRM_1540977227270','UF_CRM_1540977600168'];
-
-			console.log(duplication);
 			
 			if(duplication.value == 1 && duplication.checked) {
 
 			  for(var code of viewFields) {
  
-				 this.showField(document.querySelector(`[data-cid="${code}"`));
+				   this.showField(document.querySelector(`[data-cid="${code}"`));
 				 
 				}
 
@@ -957,7 +959,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
        
 		},
 
-		showDuplication2Fields : function() {
+		showDuplication1Fields : function() {
 
 			if(document.querySelector('[data-cid="UF_CRM_1540976695789"]')) {
 
@@ -997,15 +999,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
     duplication2View : function(duplication) {
 
-			const viewFields = ['UF_CRM_1540977530','UF_CRM_1540977227270','UF_CRM_1540977600168'];
+			const viewFields = ['UF_CRM_1540977306391','UF_CRM_1540977409431','UF_CRM_1540977655471','UF_CRM_1540977795','UF_CRM_1540977921792','UF_CRM_1540978008'];
 
-			console.log(duplication);
-			
 			if(duplication.value == 1 && duplication.checked) {
 
 			  for(var code of viewFields) {
  
-				 this.showField(document.querySelector(`[data-cid="${code}"`));
+				   this.showField(document.querySelector(`[data-cid="${code}"`));
 				 
 				}
 
@@ -1015,19 +1015,19 @@ if(typeof BX.Crm.EntityEditor === "undefined")
  
 					 this.hideField(document.querySelector(`[data-cid="${code}"`));
 					
-				 }
+				}
 
-			}
-       
+			}  
+			console.log('дублирование 2'); 
 		},
 
 		showDuplication2Fields : function() {
 
-			if(document.querySelector('[data-cid="UF_CRM_1540976695789"]')) {
+			if(document.querySelector('[data-cid="UF_CRM_1540976723316"]')) {
 
 				setTimeout( () => {
 
-				const duplicationTextValue = this.getTextValue(document.querySelector('[data-cid="UF_CRM_1540976695789"]'));
+				const duplicationTextValue = this.getTextValue(document.querySelector('[data-cid="UF_CRM_1540976723316"]'));
 
         if(duplicationTextValue == 'да') {
 
@@ -1365,11 +1365,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
 
-			this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFileds');
+			this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
-			this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
 
+			this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
+			this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
+			
 
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
 			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
