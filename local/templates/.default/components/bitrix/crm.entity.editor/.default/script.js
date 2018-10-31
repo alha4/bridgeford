@@ -914,6 +914,46 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		initializeDuplication1Event : function() {
+
+			this.bindEvent(document.querySelector('[data-cid="UF_CRM_1540976695789"]'), 'click', this.onDuplication1Change);
+
+		},
+
+		onDuplication1Change : function(e) {
+
+      if(e.target.nodeName == 'INPUT') {
+
+				 this.duplication1View(e.target);
+
+			}
+
+		},
+
+    duplication1View : function(duplication) {
+
+			const viewFields = ['UF_CRM_1540977530','UF_CRM_1540977227270','UF_CRM_1540977600168'];
+			
+			if(duplication.value == 1 && duplication.checked) {
+
+			  for(var code of viewFields) {
+ 
+				 this.showField(document.querySelector(`[data-cid="${code}"`));
+				 
+				}
+
+			} else {
+
+        for(var code of viewFields) {
+ 
+					 this.hideField(document.querySelector(`[data-cid="${code}"`));
+					
+				 }
+
+			}
+       console.log(status);
+		},
+
 		brokerAssignedID : function() {
 
 			 return this._brokerAssignedID; 
@@ -1242,6 +1282,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_SALE, 'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeSystemInfoEvent'); 
+			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeDuplication1Event');
 
       setTimeout(function() {
 

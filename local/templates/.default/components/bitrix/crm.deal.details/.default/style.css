@@ -7,7 +7,10 @@
 #section_kommercheskie_usloviya div[data-cid="UF_CRM_1540456969485"],
 #section_opisanie div[data-cid="UF_CRM_1540471444329"],
 #section_opisanie div[data-cid="UF_CRM_1540471471728"],
-#section_opisanie div[data-cid="UF_CRM_1540974006"] {
+#section_opisanie div[data-cid="UF_CRM_1540974006"],
+#section_reklama div[data-cid="UF_CRM_1540977530"],
+#section_reklama div[data-cid="UF_CRM_1540977227270"],
+#section_reklama div[data-cid="UF_CRM_1540977600168"] {
   display:none;
 }
 
