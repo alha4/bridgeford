@@ -933,6 +933,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
     duplication1View : function(duplication) {
 
 			const viewFields = ['UF_CRM_1540977530','UF_CRM_1540977227270','UF_CRM_1540977600168'];
+
+			console.log(duplication);
 			
 			if(duplication.value == 1 && duplication.checked) {
 
@@ -951,7 +953,37 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 }
 
 			}
-       console.log(status);
+       
+		},
+
+		showDuplication1Fields : function() {
+
+			if(document.querySelector('[data-cid="UF_CRM_1540976695789"]')) {
+
+				setTimeout( () => {
+
+				const duplicationTextValue = this.getTextValue(document.querySelector('[data-cid="UF_CRM_1540976695789"]'));
+
+				console.log(document.querySelector('[data-cid="UF_CRM_1540976695789"]').querySelector(".crm-entity-widget-content-block-inner"));
+
+        if(duplicationTextValue == 'да') {
+
+           this.duplication1View({
+						 value : 1,
+						 checked : true
+					 });
+
+				} else {
+
+					this.duplication1View({
+						value : 0,
+						checked : false
+					});
+
+				}
+		   }, this._timeout);
+	
+		 }
 		},
 
 		brokerAssignedID : function() {
@@ -1273,6 +1305,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFileds');
 			this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
+			this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
 
 
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
