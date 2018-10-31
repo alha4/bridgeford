@@ -78,32 +78,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		this._closeConfirmationHandler = BX.delegate(this.onCloseConfirmButtonClick, this);
 		this._cancelConfirmationHandler = BX.delegate(this.onCancelConfirmButtonClick, this);
 
-		this._isAdmin = null;
-
 		this._dragConfig = {};
 
-		this._timeout = 300;
-		
-		this._categoryID = null;
-
-    this._CATEGORY =  {
-
-			   TO_BUSSINES :  2,  
-				 TO_SALE     :  1,
-				 TO_RENT     :  0, 
-		};
-
-		this._inits = [];
-
-		this._views = [];
-
-		for(key in this._CATEGORY) {
-
-			this._inits[this._CATEGORY[key]] = [];
-			this._views[this._CATEGORY[key]] = [];
-			
-		}
-	
 	};
 
 	BX.Crm.EntityEditor.prototype =
@@ -122,7 +98,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		},
 
 		isAdmin : function() {
-
 
 			return this._isAdmin == 'YES' ? true : false;
 
@@ -207,7 +182,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			 if(textNode && textNode.textContent) {
 			 
-					return textNode.textContent
+					return textNode.textContent;
 			 }
 
 			 return false;
@@ -612,7 +587,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			
 				this.hideField(dateMoved);
 				
-
 		  }
 		
 		},
@@ -621,9 +595,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		if(document.querySelector('[data-cid="UF_CRM_1540544383"]')) {
 
-				const readyToMovedControl = document.querySelector('[data-cid="UF_CRM_1540544383"]'),  
+				const readyToMovedControl  = document.querySelector('[data-cid="UF_CRM_1540544383"]'),  
 				     
-																		readyToMovedTextValue = this.getTextValue(readyToMovedControl);
+						  readyToMovedTextValue = this.getTextValue(readyToMovedControl);
 							
 				if(readyToMovedTextValue) {
 	
@@ -808,9 +782,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 					 }
 				 }
-
-
-				  console.log(this.getSystemInfo());
 			}
 		},
 
@@ -844,15 +815,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 									"DATE_MODIFY" : "Дата обновления"
 							 };
 
-							 
-
+					
 				 var htmlString = '',
 				     overflowNode = document.createElement("div");
 						 overflowNode.className = 'no-edit';
 
          for(var key in systemData) {
-
-					  
+ 
 					 htmlString+= `<div class="crm-entity-widget-content-block-title"><span class="crm-entity-widget-content-block-title-text">${mapFieldsName[key]}</span></div>`;
 					 htmlString+= `<div class="crm-entity-widget-content-block-inner"><span class="fields enumeration field-wrap"><span class="fields enumeration field-item field_${key}">${systemData[key]}</span></span></div>`;
 
@@ -868,7 +837,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 							e.stopPropagation();
 						
-
 						});
 
 				 },this._timeout);
@@ -1018,7 +986,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				}
 
 			}  
-			console.log('дублирование 2'); 
+			
 		},
 
 		showDuplication2Fields : function() {
@@ -1107,13 +1075,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this._id = BX.type.isNotEmptyString(id) ? id : BX.util.getRandomString(4);
 			this._settings = settings ? settings : {};
 
-			this._categoryID = BX.prop.getInteger(this._settings, "categoryID", -1);
-
 			this._serviceUrl = BX.prop.getString(this._settings, "serviceUrl", "");
 			this._entityTypeId = BX.prop.getInteger(this._settings, "entityTypeId", 0);
 			this._entityId = BX.prop.getInteger(this._settings, "entityId", 0);
 			this._isNew = this._entityId <= 0;
-
+   
 			this._container = BX(BX.prop.get(this._settings, "containerId"));
 			this._parentContainer = BX.findParent(this._container, { className: "crm-entity-section" }, false);
 			this._buttonContainer = BX(BX.prop.get(this._settings, "buttonContainerId"));
@@ -1326,6 +1292,36 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				};
 			BX.onCustomEvent(window, "BX.Crm.EntityEditor:onInit", [ this, eventArgs ]);
 
+			if(this._entityTypeId == 2) { 
+
+			/** новый функционал  */
+
+		  this._isAdmin = null;
+
+		  this._categoryID = null;
+
+		  this._timeout = 300;
+
+       this._CATEGORY =  {
+
+			   TO_BUSSINES :  2, //Арендный бизнес 
+				 TO_SALE     :  1, //Помещение на продажу
+				 TO_RENT     :  0, //Помещение в аренду
+		  };
+
+		  this._inits = [];
+
+	  	this._views = [];
+
+		  for(key in this._CATEGORY) {
+
+		  	this._inits[this._CATEGORY[key]] = [];
+			  this._views[this._CATEGORY[key]] = [];
+			
+		  }
+
+			this._categoryID = BX.prop.getInteger(this._settings, "categoryID", -1);
+
 			this._isAdmin = BX.prop.get(this._settings, "isAdmin");
 
 			this._systemInfo =  BX.prop.get(this._settings, "systemInfo");
@@ -1336,58 +1332,50 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			this._customerID = BX.prop.get(this._settings, "customerID", null);
 
-
-			const self = this;
-
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeLandEvent');
-
 			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeReadyToMoveEvent');
-			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
-			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeSystemInfoEvent'); 
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeDuplicationEvent');
+			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeCaclulateRentEvent');
 
+			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
+			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateRentEvent');
+			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
+
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateRentEvent');
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
 
 			this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
 			this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
-
 			this.registerView(this._CATEGORY.TO_RENT, 'showReadyToMoveFields');
-			this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
-			this.registerView(this._CATEGORY.TO_BUSSINES, 'showReadyToMoveFields');
-
 			this.registerView(this._CATEGORY.TO_RENT, 'showExploitationFields');
-			this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
-			this.registerView(this._CATEGORY.TO_BUSSINES, 'showExploitationFields');
-
 			this.registerView(this._CATEGORY.TO_RENT, 'showDescriptionFields');
-			this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
-			this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
-
 			this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
-
 			this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
 			this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
-			
 
-			this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
-			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
-			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
-			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeCaclulateRentEvent');
-			this.registerEventListener(this._CATEGORY.TO_SALE, 'initializeCaclulateRentEvent');
-			this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'initializeCaclulateRentEvent');
-			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeSystemInfoEvent'); 
-			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeDuplicationEvent');
+			this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
+      this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
+			this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 
-      setTimeout(function() {
+			this.registerView(this._CATEGORY.TO_BUSSINES, 'showReadyToMoveFields');
+			this.registerView(this._CATEGORY.TO_BUSSINES, 'showExploitationFields');
+			this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
 
-			  self.initializeViews();
+      setTimeout( () => { 
+				
+				this.initializeViews(); 
 				
 			}, this._timeout);
-
+		 } 
 		},
 		onSliderOpen: function(event)
 		{
