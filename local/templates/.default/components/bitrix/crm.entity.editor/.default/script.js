@@ -914,10 +914,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		initializeDuplication1Event : function() {
+		initializeDuplicationEvent : function() {
 
 			this.bindEvent(document.querySelector('[data-cid="UF_CRM_1540976695789"]'), 'click', this.onDuplication1Change);
-
+			this.bindEvent(document.querySelector('[data-cid="UF_CRM_1540976723316"]'), 'click', this.onDuplication2Change);
+			
 		},
 
 		onDuplication1Change : function(e) {
@@ -956,15 +957,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
        
 		},
 
-		showDuplication1Fields : function() {
+		showDuplication2Fields : function() {
 
 			if(document.querySelector('[data-cid="UF_CRM_1540976695789"]')) {
 
 				setTimeout( () => {
 
 				const duplicationTextValue = this.getTextValue(document.querySelector('[data-cid="UF_CRM_1540976695789"]'));
-
-				console.log(document.querySelector('[data-cid="UF_CRM_1540976695789"]').querySelector(".crm-entity-widget-content-block-inner"));
 
         if(duplicationTextValue == 'да') {
 
@@ -976,6 +975,70 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				} else {
 
 					this.duplication1View({
+						value : 0,
+						checked : false
+					});
+
+				}
+		   }, this._timeout);
+	
+		 }
+		},
+
+		onDuplication2Change : function(e) {
+
+      if(e.target.nodeName == 'INPUT') {
+
+				 this.duplication2View(e.target);
+
+			}
+
+		},
+
+    duplication2View : function(duplication) {
+
+			const viewFields = ['UF_CRM_1540977530','UF_CRM_1540977227270','UF_CRM_1540977600168'];
+
+			console.log(duplication);
+			
+			if(duplication.value == 1 && duplication.checked) {
+
+			  for(var code of viewFields) {
+ 
+				 this.showField(document.querySelector(`[data-cid="${code}"`));
+				 
+				}
+
+			} else {
+
+        for(var code of viewFields) {
+ 
+					 this.hideField(document.querySelector(`[data-cid="${code}"`));
+					
+				 }
+
+			}
+       
+		},
+
+		showDuplication2Fields : function() {
+
+			if(document.querySelector('[data-cid="UF_CRM_1540976695789"]')) {
+
+				setTimeout( () => {
+
+				const duplicationTextValue = this.getTextValue(document.querySelector('[data-cid="UF_CRM_1540976695789"]'));
+
+        if(duplicationTextValue == 'да') {
+
+           this.duplication2View({
+						 value : 1,
+						 checked : true
+					 });
+
+				} else {
+
+					this.duplication2View({
 						value : 0,
 						checked : false
 					});
@@ -1315,7 +1378,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_SALE, 'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeSystemInfoEvent'); 
-			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeDuplication1Event');
+			this.registerEventListener(this._CATEGORY.TO_RENT, 'initializeDuplicationEvent');
 
       setTimeout(function() {
 
