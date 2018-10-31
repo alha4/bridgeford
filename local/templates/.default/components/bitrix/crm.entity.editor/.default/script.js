@@ -895,6 +895,25 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			}
 		},
 
+		showDescriptionFields : function() {
+
+      if(document.querySelector('#section_opisanie')) {
+
+				if(this.isAdmin()) {
+
+					this.showField(document.querySelector('div[data-cid="UF_CRM_1540471444329"]'));
+					this.showField(document.querySelector('div[data-cid="UF_CRM_1540471471728"]'));
+
+					if(this.getDealCategory() == this._CATEGORY.TO_RENT) {
+					
+						this.showField(document.querySelector('div[data-cid="UF_CRM_1540974006"]'));
+					
+					}
+				}
+		 }
+
+		},
+
 		brokerAssignedID : function() {
 
 			 return this._brokerAssignedID; 
@@ -1206,6 +1225,10 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_RENT, 'showExploitationFields');
 			this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showExploitationFields');
+
+			this.registerView(this._CATEGORY.TO_RENT, 'showDescriptionFields');
+			this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
+			this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
 
 			this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFileds');
 			this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
