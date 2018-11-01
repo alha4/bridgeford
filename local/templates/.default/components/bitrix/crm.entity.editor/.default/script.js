@@ -668,11 +668,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		initializeCaclulateArendBussCommersConditionEvent : function() {
+		initializeCaclulateObjectEvent : function() {
 
 			this._caclulateObj = this.nodeSelect("UF_CRM_1541072087");
 			this._vatRent      = this.nodeSelect("UF_CRM_1540456608");
-			this._objCost      =  this.nodeInput("UF_CRM_1541072013901");
+			this._objCost      = this.nodeInput("UF_CRM_1541072013901");
 
 			this.bindEvent(this._caclulateObj, 'change', this.onCaclulateObjectPrice);
 			this.bindEvent(this._vatRent, 'change', this.onCaclulateObjectPrice);
@@ -1668,7 +1668,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
 
-			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateArendBussCommersConditionEvent');
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateObjectEvent');
 
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
