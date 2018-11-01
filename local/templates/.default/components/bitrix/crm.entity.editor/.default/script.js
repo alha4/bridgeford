@@ -1158,6 +1158,58 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		initializePaideExplotationEvent : function() {
+
+			this._paidExplotation = this.nodeSelect('UF_CRM_1541056135');
+			this.bindEvent(this._paidExplotation, 'change', this.onPaidExplotationChange);
+
+		},
+
+		onPaidExplotationChange : function() {
+
+			const explotationValue = this.nodeSelectValue(this._paidExplotation);
+
+			if(explotationValue) {
+
+				 this.paidExplotationView(explotationValue);
+			}
+  
+		},
+
+		paidExplotationView : function(explotationValue) {
+
+			const costExplotation = this.node('UF_CRM_1541056176623'),
+			 
+			      viewModel = this.prepareModel({
+
+							'edit' : { SEPARATE : {value : 281}},
+							'view' : { SEPARATE : {value : 'Оплачивается отдельно'}}
+							
+						});
+
+       if(explotationValue == viewModel.SEPARATE) {
+
+				   this.showField(costExplotation);
+
+			 } else {
+
+					this.hideField(costExplotation);
+					
+			 }
+
+		},
+
+		showPaidExplotationFields : function() {
+
+			const paidExplotationTextValue = this.getTextValue(this.node('UF_CRM_1541056135'));
+
+      if(paidExplotationTextValue) {
+
+				 this.paidExplotationView(paidExplotationTextValue);
+
+		  }
+
+		},
 
 		brokerAssignedID : function() {
 
@@ -1187,7 +1239,25 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			node.classList.remove("show-field"); 
 			
-	  },
+		},
+		
+		node : function(exp) {
+
+			 return document.querySelector(`div[data-cid="${exp}"]`);
+			 
+		},
+
+		nodeSelect : function(exp) {
+ 
+			return document.querySelector(`select[name="${exp}"]`);
+
+		},
+
+		nodeSelectValue : function(node) {
+
+			 return node.options[node.selectedIndex].value;
+
+		},
 
 		prepareModel : function(params) {
 
@@ -1493,6 +1563,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializePaideExplotationEvent');
 
 			this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
@@ -1517,8 +1588,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
+			this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
 		
-
       setTimeout( () => { 
 				
 				this.initializeViews(); 
