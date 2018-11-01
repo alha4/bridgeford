@@ -1017,6 +1017,47 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		 }
 		},
 
+		initializeArendNameEvent : function() {
+
+				this._arendName = document.querySelector('select[name="UF_CRM_1541055237379"]');
+				
+        this.bindEvent(this._arendName, 'change', this.onArendNameChange);
+
+		},
+
+		onArendNameChange : function() {
+
+			 const arendNameValue = this._arendName.options[this._arendName.selectedIndex].value;
+			 
+			 if(arendNameValue) {
+
+				  this.arendNameView(arendNameValue);
+			 }
+
+		},
+
+		arendNameView : function(arendNameValue) {
+
+			const viewModel = this.prepareModel({
+
+				 'edit' : { OTHER : {value : 248} },
+				 'view' : { OTHER : {value : 'Иное'} }
+
+			}),
+
+			otherArendName = document.querySelector('div[data-cid="UF_CRM_1541055274251"]');
+
+			if(arendNameValue == viewModel.OTHER && otherArendName) {
+
+           this.showField(otherArendName);
+
+			} else {
+
+				  this.hideField(otherArendName);
+			}
+		},
+
+
 		brokerAssignedID : function() {
 
 			 return this._brokerAssignedID; 
@@ -1348,6 +1389,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'initializeArendNameEvent');
 
 			this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
@@ -1369,6 +1411,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showReadyToMoveFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showExploitationFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
+		
 
       setTimeout( () => { 
 				
