@@ -191,7 +191,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeGeoEvent : function() {
 
-			this._regionSelect = document.querySelector('select[name="UF_CRM_1540202667"]');
+			this._regionSelect = this.nodeSelect("UF_CRM_1540202667");
 
 		  this.bindEvent(this._regionSelect, 'change', this.onRegionChange );
 	
@@ -199,7 +199,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		
 		onRegionChange : function() {
 
-			const regionValue = this._regionSelect.options[ this._regionSelect.selectedIndex ].value;
+			const regionValue = this.nodeSelectValue(this._regionSelect);
 		        
 			if(regionValue) {
 
@@ -210,9 +210,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		showGeoFields : function() {
 
-	    if(document.querySelector('[data-cid="UF_CRM_1540202667"]')) {
+	    if(this.node("UF_CRM_1540202667")) {
 
-			const geoControl      = document.querySelector('[data-cid="UF_CRM_1540202667"]'),  
+			const geoControl      = this.node("UF_CRM_1540202667"),  
 		
 					  regionTextValue = this.getTextValue(geoControl);
 						
@@ -472,7 +472,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeLandEvent : function() {
 
-			this._landSelect = document.querySelector('select[name="UF_CRM_1540381458431"]');
+			this._landSelect = this.nodeSelect("UF_CRM_1540381458431");
 	
 		  this.bindEvent(this._landSelect, 'change', this.onLandChange );
 
@@ -480,7 +480,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		onLandChange : function() {
 
-			const landValue = this._landSelect.options[this._landSelect.selectedIndex].value;
+			const landValue = this.nodeSelectValue(this._landSelect);
 			
 			if(landValue) {
 
@@ -491,11 +491,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		landView : function(landValue) {
 
-		const	yearRental = document.querySelector('[data-cid="UF_CRM_1540381635335"]'),
+		const	yearRental = this.node("UF_CRM_1540381635335"),
 					
 					yearRentalInput = document.querySelector('input[name="UF_CRM_1540381635335"]'),
 		      
-          viewData = { 
+				  viewModel = this.prepareModel({ 
 						
 						'edit' :   {
 
@@ -508,9 +508,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			         RENTAL    : { value : 'Аренда' }
 	 
 		       }
-         },
-
-				 viewModel = this.prepareModel(viewData);
+         });
 
  		 if(landValue == viewModel.RENTAL) {
 
@@ -543,7 +541,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeReadyToMoveEvent : function() {
 
-			this._readyToMoved = document.querySelector('[data-cid="UF_CRM_1540544383"]');
+			this._readyToMoved = this.node("UF_CRM_1540544383");
 
 			this.bindEvent(this._readyToMoved, 'click', this.onReadyToMovedChange);
 			
@@ -560,9 +558,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
     readyMovedView : function(valueReadyMove) {
 
-		  const dateMoved = document.querySelector('div[data-cid="UF_CRM_1540544416"]'),
+		  const dateMoved = this.node("UF_CRM_1540544416"),
 
-						viewData = { 
+						viewModel = this.prepareModel({ 
 						
 							'edit' : {
 		
@@ -575,9 +573,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 							  	DATE_FROM  : { value : 'С даты'}
 			 
 							 }
-						};
-
-						viewModel = this.prepareModel(viewData);
+						});
 				
 		  if(valueReadyMove == viewModel.DATE_FROM) {
 
@@ -595,7 +591,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		if(document.querySelector('[data-cid="UF_CRM_1540544383"]')) {
 
-				const readyToMovedControl  = document.querySelector('[data-cid="UF_CRM_1540544383"]'),  
+				const readyToMovedControl  = this.node("UF_CRM_1540544383"),  
 				     
 						  readyToMovedTextValue = this.getTextValue(readyToMovedControl);
 							
@@ -609,7 +605,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeExploitationEvent : function() {
 
-			 this._exploitation = document.querySelector('select[name="UF_CRM_1540456850"]');
+			 this._exploitation = this.nodeSelect("UF_CRM_1540456850");
 			 
 			 this.bindEvent(this._exploitation, 'change', this.onExploitationChange);
 
@@ -617,7 +613,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		onExploitationChange : function() {
 
-			 const exploitationValue = this._exploitation.options[this._exploitation.selectedIndex].value;
+			 const exploitationValue = this.nodeSelectValue(this._exploitation);
 
 			 if(exploitationValue) {
 
@@ -629,14 +625,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		exploitationView : function(exploitationValue) {
 
-			const exploitationPrice = document.querySelector('div[data-cid="UF_CRM_1540456969485"]'),
+			const exploitationPrice = this.node("UF_CRM_1540456969485"),
 
-			      viewData = {
-							 'edit' : { PAY_SEPARATELY : { value : 154 } },
-							 'view' : { PAY_SEPARATELY : { value : 'Оплачивается отдельно' } }
-						},
-
-						viewModel = this.prepareModel(viewData);
+						viewModel = this.prepareModel({
+							'edit' : { PAY_SEPARATELY : { value : 154 } },
+							'view' : { PAY_SEPARATELY : { value : 'Оплачивается отдельно'} }
+					  });
 
        if(exploitationValue == viewModel.PAY_SEPARATELY) {
  
@@ -651,7 +645,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		showExploitationFields : function() {
 
-			const exploitationControl = document.querySelector('div[data-cid="UF_CRM_1540456850"]'),
+			const exploitationControl = this.node("UF_CRM_1540456850"),
 															
 					  exploitationTextValue = this.getTextValue(exploitationControl);
 							
@@ -664,8 +658,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeCaclulateRentEvent : function() {
 
-			this._caclulateRent = document.querySelector('select[name="UF_CRM_1540456536"]');
-			this._vatRent       = document.querySelector('select[name="UF_CRM_1540456608"]');
+			this._caclulateRent = this.nodeSelect("UF_CRM_1540456536");
+			this._vatRent       = this.nodeSelect("UF_CRM_1540456608");
 
 			this.bindEvent(this._caclulateRent, 'change', this.onCaclulateRent);
 			this.bindEvent(this._vatRent, 'change', this.onChangeVatRent);
@@ -673,7 +667,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		onChangeVatRent : function() {
 
-			const rentValue = this._caclulateRent.options[this._caclulateRent.selectedIndex].value;
+			const rentValue = this.nodeSelectValue(this._caclulateRent);
     
 			if(rentValue) {
 
