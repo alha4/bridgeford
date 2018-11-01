@@ -1113,6 +1113,51 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		initializeBindingMAPEvent : function() {
+
+			this._bindingMAP = document.querySelector('div[data-cid="UF_CRM_1541055982038"]');
+			
+			this.bindEvent(this._bindingMAP, 'click', this.onBindingMAPChange);
+
+		},
+
+		onBindingMAPChange : function(e) {
+
+			if(e.target.nodeName == 'INPUT') {
+
+				 this.bindingMAPView(e.target);
+
+			}
+		},
+
+		bindingMAPView : function(bindingMAP) {
+
+			const bindingMAPComment = document.querySelector('div[data-cid="UF_CRM_1541056010"]');
+
+			if(bindingMAP.checked) {
+
+				 this.showField(bindingMAPComment);
+
+			} else {
+
+				 this.hideField(bindingMAPComment);
+			}
+		},
+
+		showBindingMAPFields : function() {
+
+			const bindinMAPTextValue = this.getTextValue(document.querySelector('div[data-cid="UF_CRM_1541055982038"]'));
+
+			if(bindinMAPTextValue == 'да') {
+
+				 this.bindingMAPView({
+					 checked : true	  
+				 });
+
+			}
+
+		},
+
 
 		brokerAssignedID : function() {
 
@@ -1447,6 +1492,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
 
 			this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
@@ -1470,6 +1516,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
+			this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
 		
 
       setTimeout( () => { 
