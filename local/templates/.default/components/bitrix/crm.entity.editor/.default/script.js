@@ -660,18 +660,43 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			this._caclulateRent = this.nodeSelect("UF_CRM_1540456536");
 			this._vatRent       = this.nodeSelect("UF_CRM_1540456608");
+			this._rentalCost    = this.nodeInput("UF_CRM_1540456417");
 
-			this.bindEvent(this._caclulateRent, 'change', this.onCaclulateRent);
-			this.bindEvent(this._vatRent, 'change', this.onChangeVatRent);
+			this.bindEvent(this._caclulateRent, 'change',this.onCaclulateRent);
+			this.bindEvent(this._vatRent, 'change',      this.onChangeVatRent);
+			this.bindEvent(this._rentalCost, 'keyup',    this.onRentCostChange);
+
 		},
 
 		initializeCaclulateArendBussCommersConditionEvent : function() {
 
 			this._caclulateObj = this.nodeSelect("UF_CRM_1541072087");
 			this._vatRent      = this.nodeSelect("UF_CRM_1540456608");
+			this._objCost      =  this.nodeInput("UF_CRM_1541072013901");
 
 			this.bindEvent(this._caclulateObj, 'change', this.onCaclulateObjectPrice);
 			this.bindEvent(this._vatRent, 'change', this.onCaclulateObjectPrice);
+			this.bindEvent(this._objCost, 'keyup',  this.onObjCostChange);
+
+		},
+
+		onRentCostChange : function() {
+
+			const rentValue = this.nodeSelectValue(this._caclulateRent);
+
+			if(rentValue)
+
+        this.rentView(rentValue);
+
+		},
+
+		onObjCostChange : function() {
+
+			const objValue = this.nodeSelectValue(this._caclulateObj);
+
+			if(objValue)
+
+         this.objPriceView(objValue);
 
 		},
 
