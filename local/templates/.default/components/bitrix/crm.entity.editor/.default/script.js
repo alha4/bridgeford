@@ -665,6 +665,16 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.bindEvent(this._vatRent, 'change', this.onChangeVatRent);
 		},
 
+		initializeCaclulateArendBussCommersConditionEvent : function() {
+
+			this._caclulateObj = this.nodeSelect("UF_CRM_1541072087");
+			this._vatRent      = this.nodeSelect("UF_CRM_1540456608");
+
+			this.bindEvent(this._caclulateObj, 'change', this.onCaclulateObjectPrice);
+			this.bindEvent(this._vatRent, 'change', this.onCaclulateObjectPrice);
+
+		},
+
 		onChangeVatRent : function() {
 
 			const rentValue = this.nodeSelectValue(this._caclulateRent);
@@ -679,12 +689,83 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		onCaclulateRent : function() {
 
-			const rentValue = this._caclulateRent.options[this._caclulateRent.selectedIndex].value;
+			const rentValue = this.nodeSelectValue(this._caclulateRent);
     
 			if(rentValue) {
 
 				 this.rentView(rentValue);
 			}
+
+		},
+
+		onCaclulateObjectPrice  : function() {
+
+      const objValue = this.nodeSelectValue(this._caclulateObj);
+    
+			if(objValue) {
+
+				 this.objPriceView(objValue);
+			}
+
+		},
+
+		objPriceView : function(costValue) {
+ 
+			 let nds = 0;
+
+			 const NDS_LIST = { VAT : 152 },
+
+						 viewModel = this.prepareModel({
+
+							'edit' :  {
+
+								ALL_OBJ : { value : 285},
+								SQ1M : { value : 286}
+
+							}
+					 }),
+
+					 ndsValue = this.nodeSelectValue(this._vatRent),
+
+					 priceOnAllObj = this.nodeInput('UF_CRM_1541072168373'),
+					 priceOn1SQM   = this.nodeInput('UF_CRM_1541072151310'),
+
+					 payback       = this.nodeInput('UF_CRM_1541067577722'), //окупаемость
+					 cashing       = this.nodeInput('UF_CRM_1541067645026'); //доходность
+
+					 priceObj      = parseFloat( this.nodeInput('UF_CRM_1541072013901').value ),
+
+					 squareNode    = this.node("UF_CRM_1540384944"),
+
+					 square  = parseInt(this.getTextValue(squareNode)) || 1;
+
+			 if(ndsValue == NDS_LIST.VAT) {
+
+						nds = (priceObj * 18) / 100;
+
+			 } 
+			 
+			 switch(parseInt(costValue)) {
+
+
+				case viewModel.ALL_OBJ :
+
+			    	priceOnAllObj.value =  priceObj + nds;
+						priceOn1SQM.value   =  (priceObj * square / 12) + nds;
+
+				break;
+
+				case viewModel.SQ1M :
+
+			    	priceOnAllObj.value =  (priceObj * square / 12) + nds;
+				    priceOn1SQM.value   =  priceObj + nds;
+
+				break;
+
+			 }
+
+			 payback.value = (priceObj + nds) / priceOnAllObj.value;
+		   cashing.value =  priceOnAllObj.value  / (priceObj + nds) + "%";	
 
 		},
 
@@ -751,18 +832,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 
 						}
-
-						if(this.getDealCategory() == this._CATEGORY.TO_BUSSINES) {
-
-              let payback = this.nodeInput('UF_CRM_1541067577722'), //окупаемость
-									cashing = this.nodeInput('UF_CRM_1541067645026'); //доходность
-									
-									payback.value = (priceRental + nds) / priceOnYear.value;
-									cashing.value =  priceOnYear.value / (priceRental + nds) + "%";	
-							     
-						}
-
-						console.log(nds);
 
 		},
 
@@ -1221,13 +1290,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		showArendBussinesCommercialConditionFields : function() {
-
-			this.showField(this.node('UF_CRM_1541067577722')); //окупаемость
-			this.showField(this.node('UF_CRM_1541067645026')); //доходность
-			
-		},
-
 		brokerAssignedID : function() {
 
 			 return this._brokerAssignedID; 
@@ -1582,8 +1644,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
 
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateArendBussCommersConditionEvent');
+
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
-			
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
@@ -1608,14 +1671,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 
 	
-			
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
-			this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendBussinesCommercialConditionFields');
-		
+
       setTimeout( () => { 
 				
 				this.initializeViews(); 
@@ -2042,8 +2103,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			setTimeout(function() {
 
 				self.initializeEventListener();
-				self.showArendBussinesCommercialConditionFields();
-				
+
 			}, this._timeout);
 
 		},
