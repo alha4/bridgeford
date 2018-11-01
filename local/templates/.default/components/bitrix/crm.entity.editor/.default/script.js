@@ -752,6 +752,16 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						}
 
+						if(this.getDealCategory() == this._CATEGORY.TO_BUSSINES) {
+
+              let payback = this.nodeInput('UF_CRM_1541067577722'), //окупаемость
+									cashing = this.nodeInput('UF_CRM_1541067645026'); //доходность
+									
+									payback.value = (priceRental + nds) / priceOnYear.value;
+									cashing.value =  priceOnYear.value / (priceRental + nds) + "%";	
+							     
+						}
+
 						console.log(nds);
 
 		},
@@ -1211,6 +1221,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		showArendBussinesCommercialConditionFields : function() {
+
+			this.showField(this.node('UF_CRM_1541067577722')); //окупаемость
+			this.showField(this.node('UF_CRM_1541067645026')); //доходность
+			
+		},
+
 		brokerAssignedID : function() {
 
 			 return this._brokerAssignedID; 
@@ -1231,7 +1248,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		showField : function(node) {
 
-			 node.classList.add("show-field"); 
+			if(node)
+
+			   node.classList.add("show-field"); 
 
 		},
 
@@ -1256,6 +1275,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		nodeSelectValue : function(node) {
 
 			 return node.options[node.selectedIndex].value;
+
+		},
+
+		nodeInput : function(exp) {
+ 
+			return document.querySelector(`input[name="${exp}"]`);
 
 		},
 
@@ -1558,7 +1583,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
 
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
-			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateRentEvent');
+			
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
@@ -1582,13 +1607,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
       this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
 			this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 
-			this.registerView(this._CATEGORY.TO_BUSSINES, 'showReadyToMoveFields');
-			this.registerView(this._CATEGORY.TO_BUSSINES, 'showExploitationFields');
+	
+			
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
+			this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendBussinesCommercialConditionFields');
 		
       setTimeout( () => { 
 				
@@ -2016,6 +2042,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			setTimeout(function() {
 
 				self.initializeEventListener();
+				self.showArendBussinesCommercialConditionFields();
 				
 			}, this._timeout);
 
