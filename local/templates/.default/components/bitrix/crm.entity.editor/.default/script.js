@@ -1057,6 +1057,48 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			}
 		},
 
+		showArendNameFields : function() {
+
+			const arendNameTextValue = this.getTextValue(document.querySelector('div[data-cid="UF_CRM_1541055237379"]'));
+
+			if(arendNameTextValue) {
+
+				 this.arendNameView(arendNameTextValue);
+			}
+
+		},
+
+		initializeCurrencyMAPEvent : function() {
+
+			this._currencyMAP = document.querySelector('div[data-cid="UF_CRM_1541055747749"]');
+			
+			this.bindEvent(this._currencyMAP, 'click', this.onCurrencyMAPChange);
+
+		},
+
+		onCurrencyMAPChange : function(e) {
+
+			if(e.target.nodeName == 'INPUT') {
+
+				 this.currencyMAPView(e.target);
+
+			}
+		},
+
+		currencyMAPView : function(currencyMAP) {
+
+			const currencyMAPComment = document.querySelector('div[data-cid="UF_CRM_1541055803"]');
+
+			if(currencyMAP.checked) {
+
+				 this.showField(currencyMAPComment);
+
+			} else {
+
+				 this.hideField(currencyMAPComment);
+			}
+		},
+
 
 		brokerAssignedID : function() {
 
@@ -1389,7 +1431,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateRentEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
-			this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'initializeArendNameEvent');
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
+			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
 
 			this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
 			this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
@@ -1411,6 +1454,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showReadyToMoveFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showExploitationFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
+			this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
 		
 
       setTimeout( () => { 
