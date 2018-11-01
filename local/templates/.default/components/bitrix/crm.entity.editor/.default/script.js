@@ -1099,6 +1099,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			}
 		},
 
+		showCurrencyMAPFields : function() {
+
+			const currencyMAPTextValue = this.getTextValue(document.querySelector('div[data-cid="UF_CRM_1541055747749"]'));
+
+			if(currencyMAPTextValue == 'да') {
+
+				 this.currencyMAPView({
+					 checked : true	  
+				 });
+
+			}
+
+		},
+
 
 		brokerAssignedID : function() {
 
@@ -1455,6 +1469,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showExploitationFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
 			this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
+			this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
 		
 
       setTimeout( () => { 
