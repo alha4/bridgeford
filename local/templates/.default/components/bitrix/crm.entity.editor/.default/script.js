@@ -1172,7 +1172,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		paidExplotationView : function(explotationValue) {
 
-			const costExplotation = this.node('UF_CRM_1541056176623'),
+			const arendFields = ['UF_CRM_1541056176623','UF_CRM_1541056221','UF_CRM_1541056258','UF_CRM_1541056313','UF_CRM_1541056338255'],
 			 
 			      viewModel = this.prepareModel({
 
@@ -1183,14 +1183,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
        if(explotationValue == viewModel.SEPARATE) {
 
-				   this.showField(costExplotation);
+          for(var uf of arendFields) {
+					 
+						 this.showField(this.node(uf));
+					}
 
 			 } else {
 
-					this.hideField(costExplotation);
-					
-			 }
+				 for(var uf of arendFields) {
+					 
+					 this.hideField(this.node(uf));
 
+				 }	
+		
+			 }
 		},
 
 		showPaidExplotationFields : function() {

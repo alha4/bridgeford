@@ -1,10 +1,14 @@
 .hide-field,
 #section_geografiya .crm-entity-widget-content-block:nth-child(n+2), 
+
 #section_zdanie .crm-entity-widget-content-block:nth-child(2),
 #section_zdanie .crm-entity-widget-content-block:nth-child(5),
+
 #section_zemelnyy_uchastok .crm-entity-widget-content-block:nth-child(2),
+
 #section_kommercheskie_usloviya div[data-cid="UF_CRM_1540544416"],
 #section_kommercheskie_usloviya div[data-cid="UF_CRM_1540456969485"],
+
 #section_opisanie div[data-cid="UF_CRM_1540471444329"],
 #section_opisanie div[data-cid="UF_CRM_1540471471728"],
 #section_opisanie div[data-cid="UF_CRM_1540974006"],
@@ -22,7 +26,11 @@
 #section_arendator div[data-cid="UF_CRM_1541055274251"],
 #section_arendator div[data-cid="UF_CRM_1541055803"],
 #section_arendator div[data-cid="UF_CRM_1541056010"],
-#section_arendator div[data-cid="UF_CRM_1541056176623"]
+#section_arendator div[data-cid="UF_CRM_1541056176623"],
+#section_arendator div[data-cid="UF_CRM_1541056221"],
+#section_arendator div[data-cid="UF_CRM_1541056258"],
+#section_arendator div[data-cid="UF_CRM_1541056313"],
+#section_arendator div[data-cid="UF_CRM_1541056338255"]
 {
   display:none;
 }
