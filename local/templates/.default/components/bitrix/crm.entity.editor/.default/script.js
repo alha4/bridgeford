@@ -735,9 +735,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 					 priceObj      = parseFloat( this.nodeInput('UF_CRM_1541072013901').value ),
 
-					 squareNode    = this.node("UF_CRM_1540384944"),
+					 squareNode    = this.nodeInput("UF_CRM_1541076330647"),
 
-					 square  = parseInt(this.getTextValue(squareNode)) || 1;
+					 square  = parseInt(squareNode.value) || 1;
 
 			 if(ndsValue == NDS_LIST.VAT) {
 
@@ -747,17 +747,16 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			 
 			 switch(parseInt(costValue)) {
 
-
 				case viewModel.ALL_OBJ :
 
-			    	priceOnAllObj.value =  priceObj + nds;
-						priceOn1SQM.value   =  (priceObj * square / 12) + nds;
+			    	priceOnAllObj.value =  (priceObj) + nds;
+						priceOn1SQM.value   =  (priceObj / square) + nds;
 
 				break;
 
 				case viewModel.SQ1M :
 
-			    	priceOnAllObj.value =  (priceObj * square / 12) + nds;
+			    	priceOnAllObj.value =  (priceObj * square) + nds;
 				    priceOn1SQM.value   =  priceObj + nds;
 
 				break;
@@ -781,9 +780,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						ndsValue     = this._vatRent.options[this._vatRent.selectedIndex].value,
 
-						squareNode   = document.querySelector('[data-cid="UF_CRM_1540384944"]'),
+						squareNode    = this.nodeInput("UF_CRM_1541076330647"),
 
-						square  = parseInt(this.getTextValue(squareNode)) || 1;
+						square  = parseInt(squareNode.value) || 1;
 
 						viewData = {
 
