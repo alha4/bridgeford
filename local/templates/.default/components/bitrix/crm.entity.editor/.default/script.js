@@ -212,15 +212,25 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 	    if(this.node("UF_CRM_1540202667")) {
 
-			const geoControl      = this.node("UF_CRM_1540202667"),  
+			const geoControl      = this.node("UF_CRM_1540202667");
 		
-					  regionTextValue = this.getTextValue(geoControl);
+      setTimeout( () => {
+
+			  const		regionTextValue = this.getTextValue(geoControl);
 						
-		  if(regionTextValue)
+						console.log('получение текста гео блок',geoControl,	regionTextValue );
+						
+		  if(regionTextValue) {
 
 				 this.geoView(regionTextValue);
 						  
-	 	  }
+	 	  } else {
+
+				 console.log(this.node("UF_CRM_1540202667"));
+			 }
+			} , this._timeout + 300);
+
+		 }
 		},
 
 		geoView : function(regionValue) {
@@ -2701,7 +2711,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			     self.initializeViews();
 				
-				}, 600);
+				}, 800);
 				
 			}
 			
