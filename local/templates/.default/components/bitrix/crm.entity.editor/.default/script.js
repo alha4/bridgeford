@@ -212,24 +212,26 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 	    if(this.node("UF_CRM_1540202667")) {
 
-			const geoControl      = this.node("UF_CRM_1540202667");
-		
+			const geoControl  = this.node("UF_CRM_1540202667");
+
+			BX.showWait(geoControl);
+
       setTimeout( () => {
 
 			  const		regionTextValue = this.getTextValue(geoControl);
 						
-						console.log('получение текста гео блок',geoControl,	regionTextValue );
+						//console.log('получение текста гео блок',geoControl,	regionTextValue );
 						
 		  if(regionTextValue) {
 
 				 this.geoView(regionTextValue);
-						  
+			  	BX.closeWait(geoControl );
+	  
 	 	  } else {
 
-				 console.log(this.node("UF_CRM_1540202667"));
+				 console.log('Не готов текстовый узел');
 			 }
 			} , this._timeout + 300);
-
 		 }
 		},
 
@@ -1398,7 +1400,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			if(element) {
 				
 		    BX.bind(element, eventName, BX.delegate(callback, this) );
-
+        
 			}
 
 		},
@@ -1679,7 +1681,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
 
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateObjectEvent');
-
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
 			this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
