@@ -13,7 +13,7 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED!==true)die();
 
 use \Bitrix\Main;
 use \Bitrix\Crm;
-CJSCore::Init(array('ajax', 'uf', 'uploader', 'avatar_editor', 'core_money_editor', 'tooltip', 'phone_number', 'spotlight', 'userfield_resourcebooking', 'helper'));
+CJSCore::Init(array('translit','ajax', 'uf', 'uploader', 'avatar_editor', 'core_money_editor', 'tooltip', 'phone_number', 'spotlight', 'userfield_resourcebooking', 'helper'));
 Main\UI\Extension::load('ui.buttons');
 Main\UI\Extension::load('ui.notification');
 Main\UI\Extension::load("ui.dropdown");
@@ -33,6 +33,12 @@ Main\Page\Asset::getInstance()->addCss('/bitrix/js/disk/css/legacy_uf_common.css
 
 Main\Page\Asset::getInstance()->addJs($this->GetFolder().'/order.js');
 
+if($arResult['ENTITY_TYPE_ID'] == CCrmOwnerType::Deal) {
+
+	Main\Page\Asset::getInstance()->addCss($templateFolder.'/fields.css');
+
+}
+
 $guid = $arResult['GUID'];
 $prefix = strtolower($guid);
 $containerID = "{$prefix}_container";
@@ -40,6 +46,29 @@ $buttonContainerID = "{$prefix}_buttons";
 $createSectionButtonID = "{$prefix}_create_section";
 $configMenuButtonID = "{$prefix}_config_menu";
 $configIconID = "{$prefix}_config_icon";
+
+$systemInfo = [];
+$systemInfo['CREATED_BY']  = "<a target=\"_blank\" href=\"/company/personal/user/{$arResult['ENTITY_DATA']['CREATED_BY_ID']}/\">{$arResult['ENTITY_DATA']['CREATED_BY_LOGIN']}</a>";
+$systemInfo['DATE_CREATE'] = date("d.m.Y",strtotime($arResult['ENTITY_DATA']['DATE_CREATE']));
+$systemInfo['DATE_MODIFY'] = date("d.m.Y",strtotime($arResult['ENTITY_DATA']['DATE_MODIFY']));
+
+const GENERAL_BROKER = 15;
+
+$uf = new CUserTypeManager();
+$estateOwnerID = $uf->GetUserFieldValue('CRM_DEAL','UF_CRM_1540895685', $arResult['ENTITY_ID']);
+
+$brokerAssignedID = GENERAL_BROKER;
+
+if($estateOwnerID) {
+
+    $crm_contact = CCrmContact::GetList(array("ID" => "DESC"),array("ID" => $estateOwnerID,"CHECK_PERMISSONS" => "N"), array("ASSIGNED_BY_ID"));
+
+		 if($result = $crm_contact->Fetch()) {
+
+			  $brokerAssignedID = $result['ASSIGNED_BY_ID'];
+
+		 }
+}
 
 if($arResult['REST_USE'])
 {
@@ -620,6 +649,13 @@ if(!empty($htmlEditorConfigs))
 				BX.Crm.EntityEditor.create(
 					"<?=CUtil::JSEscape($guid)?>",
 					{
+						categoryID  : <?=\CCrmDeal::GetCategoryID($arResult['ENTITY_ID'])?>,
+						isAdmin     : "<?=$USER->IsAdmin() ? 'YES' : 'NO' ?>",
+						systemInfo  : <?=CUtil::PhpToJSObject($systemInfo)?>,
+						brokerAssignedID : <?=$brokerAssignedID?>,
+						generalBrokerID  : <?=GENERAL_BROKER?>,
+						customerID       : <?=$USER->GetID()?>,
+
 						entityTypeId: <?=$arResult['ENTITY_TYPE_ID']?>,
 						entityId: <?=$arResult['ENTITY_ID']?>,
 						model: model,

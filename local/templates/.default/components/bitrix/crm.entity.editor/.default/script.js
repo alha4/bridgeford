@@ -1415,7 +1415,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			}
 
 		},
-		
+
 		initialize: function(id, settings)
 		{
 			this._id = BX.type.isNotEmptyString(id) ? id : BX.util.getRandomString(4);
@@ -1658,6 +1658,101 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					model: this._model
 				};
 			BX.onCustomEvent(window, "BX.Crm.EntityEditor:onInit", [ this, eventArgs ]);
+
+			if(this._entityTypeId == 2) { 
+
+				/** новый функционал  */
+
+				console.log('start init///');
+	
+				this._isAdmin = null;
+	
+				this._categoryID = null;
+	
+				this._timeout = 300;
+	
+				 this._CATEGORY =  {
+	
+					 TO_BUSSINES :  2, //Арендный бизнес 
+					 TO_SALE     :  1, //Помещение на продажу
+					 TO_RENT     :  0, //Помещение в аренду
+				};
+	
+				this._inits = [];
+	
+				this._views = [];
+	
+				for(key in this._CATEGORY) {
+	
+					this._inits[this._CATEGORY[key]] = [];
+					this._views[this._CATEGORY[key]] = [];
+				
+				}
+	
+				this._categoryID = BX.prop.getInteger(this._settings, "categoryID", -1);
+	
+				this._isAdmin = BX.prop.get(this._settings, "isAdmin");
+	
+				this._systemInfo =  BX.prop.get(this._settings, "systemInfo");
+	
+				this._brokerAssignedID = BX.prop.get(this._settings, "brokerAssignedID", null);
+	
+				this._generalBrokerID  = BX.prop.get(this._settings, "generalBrokerID", null);
+	
+				this._customerID = BX.prop.get(this._settings, "customerID", null);
+	
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeLandEvent');
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeReadyToMoveEvent');
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeSystemInfoEvent'); 
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeDuplicationEvent');
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeCaclulateRentEvent');
+	
+				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
+				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateRentEvent');
+				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
+	
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateObjectEvent');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializePaideExplotationEvent');
+	
+				this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
+				this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
+				this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showReadyToMoveFields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showExploitationFields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showDescriptionFields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
+	
+				this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
+				this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
+				this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
+	
+		
+				this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
+				this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
+				this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
+				this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
+				this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
+	
+				setTimeout( () => { 
+					
+					this.initializeViews(); 
+					
+				}, this._timeout);
+			 } 
+			 
 		},
 		release: function()
 		{
@@ -1698,6 +1793,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					model: this._model
 				};
 			BX.onCustomEvent(window, "BX.Crm.EntityEditor:onOpen", [ this, eventArgs ]);
+
 		},
 		onSliderClose: function(event)
 		{
@@ -2220,6 +2316,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._mode = BX.Crm.EntityEditorMode.edit;
 				this._modeChangeNotifier.notify([ this ]);
 			}
+
+			const self = this;
+
+			setTimeout(function() {
+
+				self.initializeEventListener();
+
+			}, this._timeout);
+
 		},
 		unregisterActiveControl: function(control)
 		{
@@ -2880,6 +2985,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._modeSwitch.getQueue().addBatch(this._activeControls, BX.Crm.EntityEditorMode.view);
 				this._modeSwitch.run();
 			}
+
+			const self = this;
+
+      setTimeout(function() {
+
+			     self.initializeViews();
+				
+			}, this._timeout);
+
 		},
 		saveDelayed: function(delay)
 		{
@@ -10092,7 +10206,10 @@ if(typeof BX.Crm.EntityEditorSection === "undefined")
 	{
 		//Create wrapper
 		var title = this._schemeElement.getTitle();
-		this._contentContainer = BX.create("div", {props: { className: 'crm-entity-widget-content' } });
+		//this._contentContainer = BX.create("div", {props: { className: 'crm-entity-widget-content' } });
+		
+		this._contentContainer = BX.create("div", {props: { id : "section_" + BX.translit(title) , className: 'crm-entity-widget-content' } });
+		
 		var isViewMode = this._mode === BX.Crm.EntityEditorMode.view ;
 
 		var wrapperClassName = isViewMode
