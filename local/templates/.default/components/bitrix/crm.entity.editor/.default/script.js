@@ -433,14 +433,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		
 						 this.buildingView(buildingTextValue);
 	
-					}						 			  
+					} 
 				}
 				 
 				if(document.querySelector('[data-cid="UF_CRM_1540371563"]')) {
-	
-					const houseControl = document.querySelector('[data-cid="UF_CRM_1540371563"]');
-																	
-								houseTextValue = this.getTextValue(houseControl);
+		
+					setTimeout(() => {
+
+						const houseControl = document.querySelector('[data-cid="UF_CRM_1540371563"]'),
+					        houseTextValue = this.getTextValue(houseControl);
 					
 					if(houseTextValue) {
 	
@@ -452,8 +453,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 									};
 				
 									this.onHouseChange(e);
-					}	 	 
-				}
+					} else {
+						
+					   console.log('поле с даты здание не готово');	
+					}
+
+				 }, this._timeout + 600);
+			
+			 	}
 		 },
 	
 		 buildingView : function(buildingValue) {
@@ -1752,7 +1759,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					
 				}, this._timeout);
 			 } 
-			 
+
 		},
 		release: function()
 		{
