@@ -12,20 +12,26 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED!==true)die();
  */
 
 use \Bitrix\Main;
-CJSCore::Init(array('translit','ajax', 'uf', 'uploader', 'avatar_editor', 'core_money_editor', 'tooltip', 'phone_number', 'spotlight', 'userfield_resourcebooking'));
+use \Bitrix\Crm;
+CJSCore::Init(array('ajax', 'uf', 'uploader', 'avatar_editor', 'core_money_editor', 'tooltip', 'phone_number', 'spotlight', 'userfield_resourcebooking', 'helper'));
 Main\UI\Extension::load('ui.buttons');
 Main\UI\Extension::load('ui.notification');
+Main\UI\Extension::load("ui.dropdown");
 
 //Main\Page\Asset::getInstance()->addJs('/bitrix/js/main/core/core_dragdrop.js');
 Main\Page\Asset::getInstance()->addJs('/bitrix/js/crm/interface_form.js');
 Main\Page\Asset::getInstance()->addJs('/bitrix/js/crm/common.js');
+Main\Page\Asset::getInstance()->addJs('/bitrix/js/crm/phase.js');
 Main\Page\Asset::getInstance()->addJs('/bitrix/js/main/dd.js');
 Main\Page\Asset::getInstance()->addJs('/bitrix/js/crm/dialog.js');
-
+Main\Page\Asset::getInstance()->addJs('/bitrix/js/crm/entity_event.js');
+Main\Page\Asset::getInstance()->addJs('/bitrix/components/bitrix/crm.entity.editor/templates/.default/js/field-attr.js');
 //region DISK
 Main\Page\Asset::getInstance()->addJs('/bitrix/js/crm/disk_uploader.js');
 Main\Page\Asset::getInstance()->addCss('/bitrix/js/disk/css/legacy_uf_common.css');
 //endregion
+
+Main\Page\Asset::getInstance()->addJs($this->GetFolder().'/order.js');
 
 $guid = $arResult['GUID'];
 $prefix = strtolower($guid);
@@ -33,29 +39,7 @@ $containerID = "{$prefix}_container";
 $buttonContainerID = "{$prefix}_buttons";
 $createSectionButtonID = "{$prefix}_create_section";
 $configMenuButtonID = "{$prefix}_config_menu";
-
-$systemInfo = [];
-$systemInfo['CREATED_BY']  = "<a target=\"_blank\" href=\"/company/personal/user/{$arResult['ENTITY_DATA']['CREATED_BY_ID']}/\">{$arResult['ENTITY_DATA']['CREATED_BY_LOGIN']}</a>";
-$systemInfo['DATE_CREATE'] = date("d.m.Y",strtotime($arResult['ENTITY_DATA']['DATE_CREATE']));
-$systemInfo['DATE_MODIFY'] = date("d.m.Y",strtotime($arResult['ENTITY_DATA']['DATE_MODIFY']));
-
-const GENERAL_BROKER = 15;
-
-$uf = new CUserTypeManager();
-$estateOwnerID = $uf->GetUserFieldValue('CRM_DEAL','UF_CRM_1540895685', $arResult['ENTITY_ID']);
-
-$brokerAssignedID = GENERAL_BROKER;
-
-if($estateOwnerID) {
-
-    $crm_contact = CCrmContact::GetList(array("ID" => "DESC"),array("ID" => $estateOwnerID,"CHECK_PERMISSONS" => "N"), array("ASSIGNED_BY_ID"));
-
-		 if($result = $crm_contact->Fetch()) {
-
-			  $brokerAssignedID = $result['ASSIGNED_BY_ID'];
-
-		 }
-}
+$configIconID = "{$prefix}_config_icon";
 
 if($arResult['REST_USE'])
 {
@@ -125,23 +109,28 @@ if(Main\Loader::includeModule('socialnetwork'))
 	</script><?
 }
 
-?><div class="crm-entity-card-container">
-	<div class="crm-entity-card-container-content" id="<?=htmlspecialcharsbx($containerID)?>">
-	</div>
-	<div class="crm-entity-card-widget-add-btn-container" id="<?=htmlspecialcharsbx($buttonContainerID)?>">
-		<span id="<?=htmlspecialcharsbx($createSectionButtonID)?>" class="crm-entity-add-widget-btn">
-			<?=GetMessage('CRM_ENTITY_ED_CREATE_SECTION')?>
-		</span><?
-	if($arResult['REST_USE'])
-	{
-		?><span id="<?=htmlspecialcharsbx($restSectionButtonID)?>" class="crm-entity-add-widget-btn">
-			<?=GetMessage('CRM_ENTITY_ED_REST_SECTION')?>
-		</span><?
-	}
-		?><span id="<?=htmlspecialcharsbx($configMenuButtonID)?>" class="crm-entity-add-widget-btn">
-			<?=GetMessage('CRM_ENTITY_ED_CONFIG')?>
-		</span><?
-	?></div>
+?><div class="crm-entity-card-container-content" id="<?=htmlspecialcharsbx($containerID)?>"></div>
+<div class="crm-entity-card-widget-add-btn-container" id="<?=htmlspecialcharsbx($buttonContainerID)?>" style="display:none;">
+	<span id="<?=htmlspecialcharsbx($createSectionButtonID)?>" class="crm-entity-add-widget-link">
+		<?=GetMessage('CRM_ENTITY_ED_CREATE_SECTION')?>
+	</span><?
+if($arResult['REST_USE'])
+{
+	?><span id="<?=htmlspecialcharsbx($restSectionButtonID)?>" class="crm-entity-add-app-link">
+		<?=GetMessage('CRM_ENTITY_ED_REST_SECTION')?>
+	</span><?
+}
+
+$configIconClassName = $arResult['ENTITY_CONFIG_SCOPE'] === Crm\Entity\EntityEditorConfigScope::COMMON
+	? 'crm-entity-card-common'
+	: 'crm-entity-card-private';
+
+	?><span id="<?=htmlspecialcharsbx($configIconID)?>" class="<?=$configIconClassName?>" title="<?=Crm\Entity\EntityEditorConfigScope::getCaption($arResult['ENTITY_CONFIG_SCOPE'])?>">
+	</span><?
+
+	?><span id="<?=htmlspecialcharsbx($configMenuButtonID)?>" class="crm-entity-settings-link">
+		<?=GetMessage('CRM_ENTITY_ED_CONFIG')?>
+	</span>
 </div><?
 if(!empty($htmlEditorConfigs))
 {
@@ -200,7 +189,6 @@ if(!empty($htmlEditorConfigs))
 }
 ?>
 
-
 <?if (!empty($arResult['BIZPROC_MANAGER_CONFIG'])):
 	$arResult['BIZPROC_MANAGER_CONFIG']['containerId'] = "{$prefix}_bizproc_manager_container";
 ?><div id="<?=htmlspecialcharsbx($arResult['BIZPROC_MANAGER_CONFIG']['containerId'])?>" style="display:none;"><?
@@ -223,11 +211,27 @@ if(!empty($htmlEditorConfigs))
 			BX.CrmEntityType.setCaptions(<?=CUtil::PhpToJSObject(CCrmOwnerType::GetJavascriptDescriptions())?>);
 			BX.CrmEntityType.setNotFoundMessages(<?=CUtil::PhpToJSObject(CCrmOwnerType::GetNotFoundMessages())?>);
 
+			var userFieldManager = BX.Crm.EntityUserFieldManager.create(
+				"<?=CUtil::JSEscape($guid)?>",
+				{
+					entityId: <?=$arResult['ENTITY_ID']?>,
+					enableCreation: <?=$arResult['ENABLE_USER_FIELD_CREATION'] ? 'true' : 'false'?>,
+					fieldEntityId: "<?=CUtil::JSEscape($arResult['USER_FIELD_ENTITY_ID'])?>",
+					creationSignature: "<?=CUtil::JSEscape($arResult['USER_FIELD_CREATE_SIGNATURE'])?>",
+					creationPageUrl: "<?=CUtil::JSEscape($arResult['USER_FIELD_CREATE_PAGE_URL'])?>",
+					languages: <?=CUtil::PhpToJSObject($arResult['LANGUAGES'])?>
+				}
+			);
+
 			var config = BX.Crm.EntityConfig.create(
 				"<?=CUtil::JSEscape($arResult['CONFIG_ID'])?>",
 				{
 					data: <?=CUtil::PhpToJSObject($arResult['ENTITY_CONFIG'])?>,
-					serviceUrl: "<?='/bitrix/components/bitrix/crm.entity.editor/settings.php?'.bitrix_sessid_get()?>"
+					scope: "<?=CUtil::JSEscape($arResult['ENTITY_CONFIG_SCOPE'])?>",
+					canUpdateConfiguration: <?=$arResult['CAN_UPDATE_CONFIGURATION'] ? 'true' : 'false'?>,
+					options: <?=CUtil::PhpToJSObject($arResult['ENTITY_CONFIG_OPTIONS'])?>,
+					serviceUrl: "<?='/bitrix/components/bitrix/crm.entity.editor/settings.php?'.bitrix_sessid_get()?>",
+					userFieldManager: userFieldManager
 				}
 			);
 
@@ -243,18 +247,6 @@ if(!empty($htmlEditorConfigs))
 				<?=$arResult['ENTITY_TYPE_ID']?>,
 				"",
 				{ data: <?=CUtil::PhpToJSObject($arResult['ENTITY_DATA'])?> }
-			);
-
-			var userFieldManager = BX.Crm.EntityUserFieldManager.create(
-				"<?=CUtil::JSEscape($guid)?>",
-				{
-					entityId: <?=$arResult['ENTITY_ID']?>,
-					enableCreation: <?=$arResult['ENABLE_USER_FIELD_CREATION'] ? 'true' : 'false'?>,
-					fieldEntityId: "<?=CUtil::JSEscape($arResult['USER_FIELD_ENTITY_ID'])?>",
-					creationSignature: "<?=CUtil::JSEscape($arResult['USER_FIELD_CREATE_SIGNATURE'])?>",
-					creationPageUrl: "<?=CUtil::JSEscape($arResult['USER_FIELD_CREATE_PAGE_URL'])?>",
-					languages: <?=CUtil::PhpToJSObject($arResult['LANGUAGES'])?>
-				}
 			);
 
 			BX.CrmDuplicateSummaryPopup.messages =
@@ -275,9 +267,10 @@ if(!empty($htmlEditorConfigs))
 			{
 				newSectionTitle: "<?=GetMessageJS('CRM_ENTITY_ED_NEW_SECTION_TITLE')?>",
 				inlineEditHint: "<?=GetMessageJS('CRM_ENTITY_ED_INLINE_EDIT_HINT')?>",
-				resetConfig: "<?=GetMessageJS('CRM_ENTITY_ED_RESET_CONFIG')?>",
-				resetConfigForAllUsers: "<?=GetMessageJS('CRM_ENTITY_ED_RESET_CONFIG_FOR_ALL')?>",
-				saveConfigForAllUsers: "<?=GetMessageJS('CRM_ENTITY_ED_SAVE_CONFIG_FOR_ALL')?>",
+				resetConfig: "<?=GetMessageJS('CRM_ENTITY_ED_RESET_CONFIG_2')?>",
+				forceCommonConfigForAllUsers: "<?=GetMessageJS('CRM_ENTITY_ED_FORCE_COMMON_CONFIG_FOR_ALL')?>",
+				switchToPersonalConfig: "<?=GetMessageJS('CRM_ENTITY_ED_SWITCH_TO_PERSONAL_CONFIG')?>",
+				switchToCommonConfig: "<?=GetMessageJS('CRM_ENTITY_ED_SWITCH_TO_COMMON_CONFIG')?>",
 				couldNotFindEntityIdError: "<?=GetMessageJS('CRM_ENTITY_ED_COULD_NOT_FIND_ENTITY_ID')?>"
 			};
 
@@ -400,7 +393,20 @@ if(!empty($htmlEditorConfigs))
 			BX.Crm.SecondaryClientEditor.messages =
 			{
 				select: "<?=GetMessageJS('CRM_ENTITY_ED_SELECT')?>",
-				create: "<?=GetMessageJS('CRM_ENTITY_ED_CREATE')?>"
+				create: "<?=GetMessageJS('CRM_ENTITY_ED_CREATE')?>",
+				bind: "<?=GetMessageJS('CRM_ENTITY_ED_BIND')?>",
+				addParticipant: "<?=GetMessageJS('CRM_ENTITY_ED_ADD_PARTICIPANT')?>"
+			};
+
+			BX.Crm.EntityEditorClientSearchBox.messages =
+			{
+				contactToCreateTag: "<?=GetMessageJS('CRM_ENTITY_ED_NEW_CONTACT')?>",
+				companyToCreateTag: "<?=GetMessageJS('CRM_ENTITY_ED_NEW_COMPANY')?>",
+				contactToCreateLegend: "<?=GetMessageJS('CRM_ENTITY_ED_NEW_CONTACT_LEGEND')?>",
+				companyToCreateLegend: "<?=GetMessageJS('CRM_ENTITY_ED_NEW_COMPANY_LEGEND')?>",
+				notFound: "<?=GetMessageJS('CRM_ENTITY_ED_NOT_FOUND')?>",
+				unnamed: "<?=CUtil::JSEscape(\CCrmContact::GetDefaultName())?>",
+				untitled: "<?=CUtil::JSEscape(\CCrmCompany::GetDefaultTitle())?>"
 			};
 
 			BX.Crm.ClientEditorCommunicationButton.messages =
@@ -414,9 +420,17 @@ if(!empty($htmlEditorConfigs))
 				select: "<?=GetMessageJS('CRM_ENTITY_ED_SELECT')?>"
 			};
 
-			BX.Crm.EntityEditorEntity.messages =
+			BX.Crm.EntityEditorClientLight.messages =
 			{
-				select: "<?=GetMessageJS('CRM_ENTITY_ED_SELECT')?>"
+				addParticipant: "<?=GetMessageJS('CRM_ENTITY_ED_ADD_PARTICIPANT')?>",
+				companySearchPlaceholder: "<?=GetMessageJS('CRM_ENTITY_ED_COMPANY_SEARCH_PLACEHOLDER_2')?>",
+				contactSearchPlaceholder: "<?=GetMessageJS('CRM_ENTITY_ED_CONTACT_SEARCH_PLACEHOLDER_2')?>",
+				enableCompany: "<?=GetMessageJS('CRM_ENTITY_ED_ENABLE_CLIENT_COMPANY')?>",
+				disableCompany: "<?=GetMessageJS('CRM_ENTITY_ED_DISABLE_CLIENT_COMPANY')?>",
+				enableContact: "<?=GetMessageJS('CRM_ENTITY_ED_ENABLE_CLIENT_CONTACT')?>",
+				disableContact: "<?=GetMessageJS('CRM_ENTITY_ED_DISABLE_CLIENT_CONTACT')?>",
+				displayContactAtFirst: "<?=GetMessageJS('CRM_ENTITY_ED_DISPLAY_CONTACT_AT_FIRST')?>",
+				displayCompanyAtFirst: "<?=GetMessageJS('CRM_ENTITY_ED_DISPLAY_COMPANY_AT_FIRST')?>"
 			};
 
 			BX.Crm.EntityEditorProductRowSummary.messages =
@@ -436,6 +450,13 @@ if(!empty($htmlEditorConfigs))
 				toggle: "<?=GetMessageJS('CRM_ENTITY_ED_TOGGLE_REQUISITES')?>"
 			};
 
+			BX.Crm.RequisiteNavigator.messages =
+			{
+				next: "<?=GetMessageJS('CRM_ENTITY_ED_NAVIGATION_NEXT')?>",
+				toggle: "<?=GetMessageJS('CRM_ENTITY_ED_TOGGLE_REQUISITES')?>",
+				legend: "<?=GetMessageJS('CRM_ENTITY_ED_NAVIGATION_LEGEND')?>",
+				stub: "<?=GetMessageJS('CRM_ENTITY_ED_NO_REQUISITE_STUB')?>"
+			};
 
 			BX.Crm.EntityEditorRequisiteSelector.messages =
 			{
@@ -455,17 +476,107 @@ if(!empty($htmlEditorConfigs))
 			};
 
 			BX.Crm.EntityEditorRecurring.messages =
-				{
-					createBeforeDate: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_CREATE_BEFORE_DATE')?>",
-					directionSelectorTitle: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_DIRECTION_TITLE')?>",
-					until: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_UNTIL')?>",
-					repeatUntil: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_REPEAT_UNTIL')?>",
-					noLimitDate: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_NO_LIMIT_DATE')?>",
-					dateLimit: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_DATE_LIMIT')?>",
-					finishAfter: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_FINISH_AFTER')?>",
-					repeats: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_REPEATS')?>",
-					notRepeat: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_NOT_REPEAT')?>"
-				};
+			{
+				notRepeat: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_NOT_REPEAT')?>",
+				modeTitle: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_MODE_TITLE')?>"
+			};
+
+			BX.Crm.EntityEditorRecurringSingleField.messages =
+			{
+				until: "<?=GetMessageJS('CRM_ENTITY_ED_RECURRING_UNTIL')?>"
+			};
+
+			BX.Crm.EntityEditorPayment.messages =
+			{
+				paymentWasPaid: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_WAS_PAID')?>",
+				paymentWasNotPaid: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_WAS_NOT_PAID')?>",
+				paymentCancel: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_CANCEL')?>",
+				paymentReturn: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_RETURN')?>",
+				documentTitle: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_DOCUMENT_TITLE')?>",
+				addDocument: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_ADD_DOCUMENT')?>",
+				sum: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_SUM')?>",
+			};
+
+			BX.Crm.EntityEditorOrderController.messages =
+			{
+				saveChanges: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_SAVE_CHANGES')?>",
+				saveConfirm: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_SAVE_CONFIRM')?>",
+				save: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_SAVE')?>",
+				notSave: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_NOT_SAVE')?>"
+			};
+
+			BX.Crm.EntityEditorPaymentStatus.messages =
+			{
+				paymentWasPaid: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_WAS_PAID')?>",
+				paymentWasNotPaid: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_WAS_NOT_PAID')?>",
+				paymentCancel: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_CANCEL')?>",
+				paymentReturn: "<?=GetMessageJS('CRM_ENTITY_ED_PAYMENT_RETURN')?>"
+			};
+
+			BX.Crm.EntityEditorShipment.messages =
+			{
+				deliveryAllowed: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_DELIVERY_ALLOWED')?>",
+				deducted: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_DEDEUCTED')?>",
+				trackingNumberTitle: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_TRACKING_NUMBER_TITLE')?>",
+				documentTitle: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_DOCUMENT_TITLE')?>",
+				addDocument: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_ADD_DOCUMENT')?>",
+				deliveryService: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_DELIVERY_SERVICE')?>",
+				deliveryProfile: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_DELIVERY_PROFILE')?>",
+				price: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_DELIVERY_PRICE')?>",
+				profile: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_PROFILE')?>",
+				deliveryPriceCalculated: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_DELIVERY_PRICE_CALCULATED')?>",
+				deliveryPriceCalculatedHint: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_DELIVERY_PRICE_CALCULATED_HINT')?>",
+				deliveryStore: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_DELIVERY_STORE')?>"
+			};
+
+			BX.Crm.EntityEditorDeliverySelector.messages =
+			{
+				notSelected: "<?=GetMessageJS('CRM_ENTITY_ED_DELIVERY_SELECTOR_NOT_SELECTED')?>",
+				deliveryStore: "<?=GetMessageJS('CRM_ENTITY_ED_SHIPMENT_DELIVERY_STORE')?>"
+			};
+
+			BX.Crm.EntityEditorOrderPropertySubsection.messages =
+			{
+				linkToSettings: "<?=GetMessageJS('CRM_ENTITY_ED_CHILD_ENTITY_MENU_SETTINGS_LINK')?>"
+			};
+			BX.Crm.EntityEditorOrderPropertyWrapper.messages =
+			{
+				createField: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PROPERTY_CREATE')?>",
+				insertField: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PROPERTY_INSERT')?>",
+				selectField: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PROPERTY_SELECT')?>",
+				disabledBlockTitle: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PROPERTY_UNKNOWN_GROUP')?>"
+			};
+
+			BX.Crm.EntityEditorPaymentCheck.messages =
+			{
+				titleFieldSum: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PAYMENT_CHECK_SUM')?>",
+				titleFieldDateCreate: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PAYMENT_CHECK_DATE_CREATE')?>",
+				titleFieldType: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PAYMENT_CHECK_TYPE')?>",
+				titleFieldCashBoxName: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PAYMENT_CHECK_CASHBOX_NAME')?>",
+				titleFieldStatus: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PAYMENT_CHECK_STATUS')?>",
+				titleFieldLink: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PAYMENT_CHECK_LINK')?>",
+				emptyCheckList: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PAYMENT_CHECK_EMPTY')?>"
+			};
+
+			BX.Crm.EntityEditorOrderProductProperty.messages =
+			{
+				addProductProperty: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_ADD_PRODUCT_PROPERTY_LINK')?>",
+				fieldBlockTitle: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PRODUCT_FIELD_BLOCK_TITLE')?>",
+				fieldTitleName: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PRODUCT_FIELD_NAME')?>",
+				fieldTitleValue: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PRODUCT_FIELD_VALUE')?>",
+				fieldTitleCode: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PRODUCT_FIELD_CODE')?>",
+				fieldTitleSort: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_PRODUCT_FIELD_SORT')?>"
+			};
+			BX.Crm.EntityEditorOrderUser.messages =
+			{
+				change: "<?=GetMessageJS('CRM_ENTITY_ED_CHANGE_USER')?>",
+				searchPlaceholder: "<?=GetMessageJS('CRM_ENTITY_ED_ORDER_USER_SEARCH_PLACEHOLDER')?>",
+			};
+
+			BX.Crm.EntityEditorOrderClientSearchBox.messages =
+			{
+				notFound: "<?=GetMessageJS('CRM_ENTITY_ED_NOT_FOUND')?>"
+			};
 
 			BX.message(
 				{
@@ -476,12 +587,25 @@ if(!empty($htmlEditorConfigs))
 					"CRM_EDITOR_ADD": "<?=GetMessageJS('CRM_ENTITY_ED_ADD')?>",
 					"CRM_EDITOR_CONFIRMATION": "<?=GetMessageJS('CRM_EDITOR_CONFIRMATION')?>",
 					"CRM_EDITOR_CLOSE_CONFIRMATION": "<?=GetMessageJS('CRM_EDITOR_CLOSE_CONFIRMATION')?>",
+					"CRM_EDITOR_SAVE_ERROR_TITLE": "<?=GetMessageJS('CRM_EDITOR_SAVE_ERROR_TITLE')?>",
+					"CRM_EDITOR_SAVE_ERROR_CONTENT": "<?=GetMessageJS('CRM_EDITOR_SAVE_ERROR_CONTENT')?>",
+					"CRM_EDITOR_PAYMENT_PAID": "<?=GetMessageJS('CRM_EDITOR_PAYMENT_PAID')?>",
+					"CRM_EDITOR_PAYMENT_NOT_PAID": "<?=GetMessageJS('CRM_EDITOR_PAYMENT_NOT_PAID')?>",
 					"CRM_EDITOR_CANCEL_CONFIRMATION": "<?=GetMessageJS('CRM_EDITOR_CANCEL_CONFIRMATION')?>",
 					"CRM_EDITOR_YES": "<?=GetMessageJS('MAIN_YES')?>",
-					"CRM_EDITOR_NO": "<?=GetMessageJS('MAIN_NO')?>"
-
+					"CRM_EDITOR_NO": "<?=GetMessageJS('MAIN_NO')?>",
+					"CRM_EDITOR_PHONE": "<?=GetMessageJS('CRM_EDITOR_PHONE')?>",
+					"CRM_EDITOR_EMAIL": "<?=GetMessageJS('CRM_EDITOR_EMAIL')?>"
 				}
 			);
+
+			BX.Crm.EntityPhaseLayout.colors =
+				{
+					process: "<?=Bitrix\Crm\Color\PhaseColorScheme::PROCESS_COLOR?>",
+					success: "<?=Bitrix\Crm\Color\PhaseColorScheme::SUCCESS_COLOR?>",
+					failure: "<?=Bitrix\Crm\Color\PhaseColorScheme::FAILURE_COLOR?>",
+					apology: "<?=Bitrix\Crm\Color\PhaseColorScheme::FAILURE_COLOR?>"
+				};
 
 			var bizprocManager = BX.Crm.EntityBizprocManager.create(
 				"<?=CUtil::JSEscape($guid)?>",
@@ -496,12 +620,6 @@ if(!empty($htmlEditorConfigs))
 				BX.Crm.EntityEditor.create(
 					"<?=CUtil::JSEscape($guid)?>",
 					{
-						categoryID  : <?=\CCrmDeal::GetCategoryID($arResult['ENTITY_ID'])?>,
-						isAdmin     : "<?=$USER->IsAdmin() ? 'YES' : 'NO' ?>",
-						systemInfo  : <?=CUtil::PhpToJSObject($systemInfo)?>,
-						brokerAssignedID : <?=$brokerAssignedID?>,
-						generalBrokerID  : <?=GENERAL_BROKER?>,
-						customerID       : <?=$USER->GetID()?>,
 						entityTypeId: <?=$arResult['ENTITY_TYPE_ID']?>,
 						entityId: <?=$arResult['ENTITY_ID']?>,
 						model: model,
@@ -512,11 +630,17 @@ if(!empty($htmlEditorConfigs))
 						userFieldManager: userFieldManager,
 						bizprocManager: bizprocManager,
 						restPlacementTabManager: restPlacementTabManager,
+						canCreateContact: <?=CUtil::PhpToJSObject($arResult['CAN_CREATE_CONTACT'])?>,
+						canCreateCompany: <?=CUtil::PhpToJSObject($arResult['CAN_CREATE_COMPANY'])?>,
 						duplicateControl: <?=CUtil::PhpToJSObject($arResult['DUPLICATE_CONTROL'])?>,
 						initialMode: "<?=CUtil::JSEscape($arResult['INITIAL_MODE'])?>",
 						enableModeToggle: <?=$arResult['ENABLE_MODE_TOGGLE'] ? 'true' : 'false'?>,
+						enableToolPanel: <?=$arResult['ENABLE_TOOL_PANEL'] ? 'true' : 'false'?>,
+						enableBottomPanel: <?=$arResult['ENABLE_BOTTOM_PANEL'] ? 'true' : 'false'?>,
+						enablePageTitleControls: <?=$arResult['ENABLE_PAGE_TITLE_CONTROLS'] ? 'true' : 'false'?>,
 						readOnly: <?=$arResult['READ_ONLY'] ? 'true' : 'false'?>,
 						enableAjaxForm: <?=$arResult['ENABLE_AJAX_FORM'] ? 'true' : 'false'?>,
+						enableRequiredUserFieldCheck: <?=$arResult['ENABLE_REQUIRED_USER_FIELD_CHECK'] ? 'true' : 'false'?>,
 						enableSectionEdit: <?=$arResult['ENABLE_SECTION_EDIT'] ? 'true' : 'false'?>,
 						enableSectionCreation: <?=$arResult['ENABLE_SECTION_CREATION'] ? 'true' : 'false'?>,
 						enableSettingsForAll: <?=$arResult['ENABLE_SETTINGS_FOR_ALL'] ? 'true' : 'false'?>,
@@ -525,6 +649,7 @@ if(!empty($htmlEditorConfigs))
 						buttonContainerId: "<?=CUtil::JSEscape($buttonContainerID)?>",
 						createSectionButtonId: "<?=CUtil::JSEscape($createSectionButtonID)?>",
 						configMenuButtonId: "<?=CUtil::JSEscape($configMenuButtonID)?>",
+						configIconId: "<?=CUtil::JSEscape($configIconID)?>",
 						htmlEditorConfigs: <?=CUtil::PhpToJSObject($htmlEditorConfigs)?>,
 						serviceUrl: "<?=CUtil::JSEscape($arResult['SERVICE_URL'])?>",
 						externalContextId: "<?=CUtil::JSEscape($arResult['EXTERNAL_CONTEXT_ID'])?>",
@@ -535,16 +660,14 @@ if(!empty($htmlEditorConfigs))
 						companyCreateUrl: "<?=CUtil::JSEscape($arResult['PATH_TO_COMPANY_CREATE'])?>",
 						companyRequisiteSelectUrl: "<?=CUtil::JSEscape($arResult['PATH_TO_COMPANY_REQUISITE_SELECT'])?>",
 						requisiteEditUrl: "<?=CUtil::JSEscape($arResult['PATH_TO_REQUISITE_EDIT'])?>",
-						optionId: "<?=CUtil::JSEscape($arResult['OPTION_ID'])?>",
-						options: <?=CUtil::PhpToJSObject($arResult['OPTIONS'])?>,
-						commonOptions: <?=CUtil::PhpToJSObject($arResult['COMMON_OPTIONS'])?>,
+						options: <?=CUtil::PhpToJSObject($arResult['EDITOR_OPTIONS'])?>,
 						inlineEditSpotlightId: "<?=CUtil::JSEscape($arResult['INLINE_EDIT_SPOTLIGHT_ID'])?>",
-						enableInlineEditSpotlight: <?=$arResult['ENABLE_INLINE_EDIT_SPOTLIGHT'] ? 'true' : 'false'?>
+						enableInlineEditSpotlight: <?=$arResult['ENABLE_INLINE_EDIT_SPOTLIGHT'] ? 'true' : 'false'?>,
+						attributeConfig: <?=CUtil::PhpToJSObject($arResult['ATTRIBUTE_CONFIG'])?>,
+						isEmbedded: <?=$arResult['IS_EMBEDDED'] ? 'true' : 'false'?>
 					}
 				)
 			);
-
-				
 		}
 	);
 </script>
