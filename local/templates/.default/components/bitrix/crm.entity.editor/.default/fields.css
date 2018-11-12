@@ -1,16 +1,20 @@
-#section_geografiya .crm-entity-widget-content-block:nth-child(n+2), 
+#section_geografiya .crm-entity-widget-content-block:nth-child(n+2), /* Тип района */
 
-#section_zdanie .crm-entity-widget-content-block:nth-child(2),
-#section_zdanie .crm-entity-widget-content-block:nth-child(5),
+#section_zdanie div[data-cid="UF_CRM_1540371938"], /* Особняк */
+#section_zdanie div[data-cid="UF_CRM_1540371802"], /* Сдан дата */
 
-#section_zemelnyy_uchastok .crm-entity-widget-content-block:nth-child(2),
+#section_zemelnyy_uchastok div[data-cid="UF_CRM_1540381635335"], /* год земельный участок */
 
 #section_kommercheskie_usloviya div[data-cid="UF_CRM_1540544416"],
 #section_kommercheskie_usloviya div[data-cid="UF_CRM_1540456969485"],
+#section_kommercheskie_usloviya div[data-cid="UF_CRM_1540456800018"], /* арендные каникулы */
 
-#section_opisanie div[data-cid="UF_CRM_1540471444329"],
-#section_opisanie div[data-cid="UF_CRM_1540471471728"],
-#section_opisanie div[data-cid="UF_CRM_1540974006"],
+
+#section_opisanie div[data-cid="UF_CRM_1540471444329"], /* Срочная аренда */
+#section_opisanie div[data-cid="UF_CRM_1540471471728"], /* Закрытая аренда */
+#section_opisanie div[data-cid="UF_CRM_1540974006"],   /* Семантика помещения в аренду */
+
+
 #section_reklama div[data-cid="UF_CRM_1540977530"],
 #section_reklama div[data-cid="UF_CRM_1540977227270"],
 #section_reklama div[data-cid="UF_CRM_1540977600168"], 
@@ -20,7 +24,7 @@
 #section_reklama div[data-cid="UF_CRM_1540977655471"],
 #section_reklama div[data-cid="UF_CRM_1540977795"],
 #section_reklama div[data-cid="UF_CRM_1540977921792"],
-#section_reklama div[data-cid="UF_CRM_1540978008"],
+#section_reklama div[data-cid="UF_CRM_1540978008"], /* магазин одежды реклама */
 
 #section_arendator div[data-cid="UF_CRM_1541055274251"],
 #section_arendator div[data-cid="UF_CRM_1541055803"],

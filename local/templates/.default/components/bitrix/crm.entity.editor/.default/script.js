@@ -1108,6 +1108,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
         for(var code of viewFields) {
  
+					 if(!document.querySelector(`[data-cid="${code}"`)) {
+                console.log(code);
+					 }
 					 this.hideField(document.querySelector(`[data-cid="${code}"`));
 					
 				}
