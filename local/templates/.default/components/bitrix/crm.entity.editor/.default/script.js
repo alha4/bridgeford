@@ -1347,6 +1347,60 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		initializeEventCompetitions : function() {
+
+			 this.showCompetitorsFields();
+
+       this.bindEvent(BX('competitions_variant'), 'click', this.onCompetitionsChange);
+
+
+		},
+
+		showCompetitorsFields : function() {
+
+			if(BX('section_strategii_avtomaticheskogo_tsenoobrazovaniya')) {
+
+				 const competitors = this.nodeInput('UF_CRM_1542029126'),
+				       priceStrategies = document.querySelector('#section_strategii_avtomaticheskogo_tsenoobrazovaniya');
+				 
+				 if(competitors) {
+
+						const competitors_list = JSON.parse(competitors.value),
+					        virtual_node = document.createElement('div');
+									virtual_node.id = 'competitions_variant';
+									virtual_node.className = 'crm-entity-widget-content-block crm-entity-widget-content-block-inner crm-entity-widget-content-block-field-custom-text';
+						
+						var   html = '<div class="crm-entity-widget-content-block-title"><span class="crm-entity-widget-content-block-title-text">Главный якорь</span></div>';
+						
+            for(var item of competitors_list) {
+
+							 html+= `<span class="fields enumeration enumeration-checkbox field-item"><label for="item_${item['PRICE']}"><input id="item_${item['PRICE']}" name="comp_item" value="${item['PRICE']}" type="radio">`;
+							 html+= `${item['TITLE']} - ${item['PRICE']}</label>`;
+							 html+= '</span>';
+
+						}
+
+						virtual_node.innerHTML = html;
+
+						setTimeout( ()=> {
+							
+							 priceStrategies.appendChild(virtual_node);
+							 console.log('добавлен список');
+
+						}, this._timeout);
+
+				} else {
+				  console.log('dom not ready');	
+				}
+			}
+		},
+
+		onCompetitionsChange : function(e) {
+
+        alert(e.target);
+
+		},
+
 		brokerAssignedID : function() {
 
 			 return this._brokerAssignedID; 
@@ -1719,6 +1773,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeSystemInfoEvent'); 
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeDuplicationEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeCaclulateRentEvent');
+
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeEventCompetitions');
 	
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateRentEvent');
