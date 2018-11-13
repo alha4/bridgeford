@@ -161,6 +161,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeViews : function() {
 
+			BX.ready(()=> {
+
+
 			const views = this.getViews(),
 
 						self = this;
@@ -173,7 +176,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 console.log(func);	
 
 				}
-			}   
+		 	}   
+		 });
 
 		},
 
@@ -239,7 +243,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	  
 	 	  } else {
 
-				 console.log('Не готов текстовый узел');
+				 console.log('Не готов текстовый узел география');
 				 
 			 }
 			} , this._timeout + 300);
@@ -1075,7 +1079,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						value : 0,
 						checked : false
 					});
-           console.log('рекламные поля не готовы.');
+           console.log('рекламные поля дублирование 1 нет');
 				}
 		   }, this._timeout + 300);
 	
@@ -1378,7 +1382,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
             for(var item of competitors_list) {
 
 							 html+= `<span class="fields enumeration enumeration-checkbox field-item"><label for="item_${item['PRICE']}"><input id="item_${item['PRICE']}" ${mainAnchor.value == item['PRICE'] ? 'checked' : ''} name="comp_item" value="${item['PRICE']}" type="radio">`;
-							 html+= `${item['TITLE']} - ${item['PRICE']}</label>`;
+							 html+= `${item['TITLE']} - ${item['PRICE']} руб.</label>`;
 							 html+= '</span>';
 
 						}
@@ -1395,8 +1399,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						}, this._timeout);
 
-				} else {
-				  console.log('dom not ready');	
 				}
 			}
 		},
@@ -1747,14 +1749,19 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					entityId: this._entityId,
 					model: this._model
 				};
-			BX.onCustomEvent(window, "BX.Crm.EntityEditor:onInit", [ this, eventArgs ]);
 
+			 BX.onCustomEvent(window, "BX.Crm.EntityEditor:onInit", [ this, eventArgs ]);		
+			 
+			 this.initializeCustom();
+
+		},
+
+		initializeCustom : function() {
+   
 			if(this._entityTypeId == 2) { 
 
 				/** новый функционал  */
 
-				console.log('start init///');
-	
 				this._isAdmin = null;
 	
 				this._categoryID = null;
@@ -1837,15 +1844,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
 				this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
 				this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
-	
-				setTimeout( () => { 
-					
-					this.initializeViews(); 
-					
-				}, this._timeout);
-			 } 
 
+				BX.showWait(document.body);
+
+				setTimeout(() => {
+			
+						this.initializeViews(); 
+
+						BX.closeWait(document.body);
+						
+				}, 2000);
+
+			}
 		},
+
 		release: function()
 		{
 			//console.log("EntityEditor::release: %s", this.getId());
@@ -2781,6 +2793,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					userFieldLoaders[key].runBatch();
 				}
 			}
+
+			const self = this;
+
+      setTimeout(function() {
+
+			     self.initializeViews();
+				
+			}, this._timeout);
+
 		},
 		//endregion
 		switchControlMode: function(control, mode, options)
@@ -3077,15 +3098,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._modeSwitch.getQueue().addBatch(this._activeControls, BX.Crm.EntityEditorMode.view);
 				this._modeSwitch.run();
 			}
-
-			const self = this;
-
-      setTimeout(function() {
-
-			     self.initializeViews();
-				
-			}, this._timeout);
-
 		},
 		saveDelayed: function(delay)
 		{
@@ -5968,6 +5980,7 @@ if(typeof BX.Crm.EntityEditorControlFactory === "undefined")
 			}
 
 			this.initialized = true;
+
 		},
 		registerFactoryMethod: function(name, method)
 		{
