@@ -235,7 +235,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		  if(regionTextValue) {
 
 				 this.geoView(regionTextValue);
-			   BX.closeWait(geoControl );
+			   BX.closeWait(geoControl);
 	  
 	 	  } else {
 
@@ -284,7 +284,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 														'UF_CRM_1540203144',
 														'UF_CRM_1540203111'
 													],
-
+   
 					 regions = this.prepareModel(viewData);
 					 
 		  if(regionValue != regions.EMPTY) {
@@ -1033,7 +1033,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
     duplication1View : function(duplication) {
 
 			const viewFields = ['UF_CRM_1540977530','UF_CRM_1540977227270','UF_CRM_1540977600168'];
-			
+
 			if(duplication.value == 1 && duplication.checked) {
 
 			  for(var code of viewFields) {
@@ -1075,9 +1075,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						value : 0,
 						checked : false
 					});
-
+           console.log('рекламные поля не готовы.');
 				}
-		   }, this._timeout);
+		   }, this._timeout + 300);
 	
 		 }
 		},
@@ -1351,9 +1351,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			 this.showCompetitorsFields();
 
-       this.bindEvent(BX('competitions_variant'), 'click', this.onCompetitionsChange);
-
-
+       
 		},
 
 		showCompetitorsFields : function() {
@@ -1361,6 +1359,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			if(BX('section_strategii_avtomaticheskogo_tsenoobrazovaniya')) {
 
 				 const competitors = this.nodeInput('UF_CRM_1542029126'),
+				       mainAnchor  = this.nodeInput('UF_CRM_1542029182'),
 				       priceStrategies = document.querySelector('#section_strategii_avtomaticheskogo_tsenoobrazovaniya');
 				 
 				 if(competitors) {
@@ -1372,9 +1371,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						
 						var   html = '<div class="crm-entity-widget-content-block-title"><span class="crm-entity-widget-content-block-title-text">Главный якорь</span></div>';
 						
+						html+= `<span class="fields enumeration enumeration-checkbox field-item"><label for="item_0"><input id="item_0" ${mainAnchor.value == 0 ? 'checked' : ''} name="comp_item" value="0" type="radio">`;
+						html+= `не выбран</label>`;
+						html+= '</span>';
+            
             for(var item of competitors_list) {
 
-							 html+= `<span class="fields enumeration enumeration-checkbox field-item"><label for="item_${item['PRICE']}"><input id="item_${item['PRICE']}" name="comp_item" value="${item['PRICE']}" type="radio">`;
+							 html+= `<span class="fields enumeration enumeration-checkbox field-item"><label for="item_${item['PRICE']}"><input id="item_${item['PRICE']}" ${mainAnchor.value == item['PRICE'] ? 'checked' : ''} name="comp_item" value="${item['PRICE']}" type="radio">`;
 							 html+= `${item['TITLE']} - ${item['PRICE']}</label>`;
 							 html+= '</span>';
 
@@ -1385,6 +1388,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						setTimeout( ()=> {
 							
 							 priceStrategies.appendChild(virtual_node);
+
+							 this.bindEvent(BX('competitions_variant'), 'click', this.onCompetitionsChange);
+
 							 console.log('добавлен список');
 
 						}, this._timeout);
@@ -1397,8 +1403,28 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		onCompetitionsChange : function(e) {
 
-        alert(e.target);
+			const mainAnchor = this.nodeInput('UF_CRM_1542029182');
 
+      if(e.target.nodeName == 'INPUT') {
+
+				 const price =  e.target.value;
+
+				 BX.showWait(e.target);
+
+				 BX.ajax.post("/local/ajax/anchor_save.php", {'entityId' : this._entityId, 'price' : price }, function(response){
+					 
+					 response = JSON.parse(response);
+
+					 if(response.success) {
+
+					  	mainAnchor.value =  price;
+
+					 }
+
+					 BX.closeWait(e.target);
+					
+				 });	 
+			}
 		},
 
 		brokerAssignedID : function() {

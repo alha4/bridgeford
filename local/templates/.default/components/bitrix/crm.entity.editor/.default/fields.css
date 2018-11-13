@@ -3,9 +3,9 @@
 #section_zdanie div[data-cid="UF_CRM_1540371938"], /* Особняк */
 #section_zdanie div[data-cid="UF_CRM_1540371802"], /* Сдан дата */
 
-#section_strategii_avtomaticheskogo_tsenoobrazovaniya input[name="UF_CRM_1542029126"],
+#section_strategii_avtomaticheskogo_tsenoobrazovaniya input[name="UF_CRM_1542029126"], /* поле json список конкурентов */
 #section_strategii_avtomaticheskogo_tsenoobrazovaniya div[data-cid="UF_CRM_1542029126"],
-#section_strategii_avtomaticheskogo_tsenoobrazovaniya div[data-cid="UF_CRM_1542029182"],
+#section_strategii_avtomaticheskogo_tsenoobrazovaniya div[data-cid="UF_CRM_1542029182"], /* главный ценовой якорь текстовое поле */
 
 #section_zemelnyy_uchastok div[data-cid="UF_CRM_1540381635335"], /* год земельный участок */
 
@@ -81,4 +81,8 @@ div[data-cid="UF_CRM_1540974006"] .crm-entity-widget-content-block-title-text{
   vertical-align: middle;
   text-transform: uppercase;
   font: 600 11px/23px "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+#competitions_variant label {
+  cursor: pointer;
 }
