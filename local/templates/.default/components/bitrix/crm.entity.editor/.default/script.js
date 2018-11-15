@@ -884,6 +884,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 							 
 							 break;
 
+							 case viewModel.ALL_YEAR :
+
+							 priceOnYear.value  = priceRental + nds;
+							 priceOnMonth.value = (priceRental * square / 12) + nds;
+
+							 console.log('за год 1 кв м',rentValue, priceRental);
+							 
+							 break;
+
 							 default :
  
 							 console.log('не найдено',rentValue);
@@ -1751,9 +1760,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				};
 
 			 BX.onCustomEvent(window, "BX.Crm.EntityEditor:onInit", [ this, eventArgs ]);		
-			 
-			 this.initializeCustom();
-
+			  
 		},
 
 		initializeCustom : function() {
@@ -1989,6 +1996,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					this.refreshLayout({ reset: true });
 				}
 			}
+			
 		},
 		initializeAjaxForm: function()
 		{
@@ -2753,6 +2761,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			{
 				this._buttonContainer.style.display = "";
 			}
+			
+			this.initializeCustom();
+			
 		},
 		refreshLayout: function(options)
 		{
