@@ -203,6 +203,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		getRadioValue : function(node) {
+
+			const radioNode  = node.querySelector("input[checked]");
+
+			if(radioNode) {
+
+				return radioNode.value; 
+				
+			}
+
+			return false;
+
+		},
+
 		initializeGeoEvent : function() {
 
 			this._regionSelect = this.nodeSelect("UF_CRM_1540202667");
@@ -578,6 +592,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this._readyToMoved = this.node("UF_CRM_1540544383");
 
 			this.bindEvent(this._readyToMoved, 'click', this.onReadyToMovedChange);
+
+			this.showReadyToMoveFields();
 			
 		},
 
@@ -627,8 +643,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				const readyToMovedControl  = this.node("UF_CRM_1540544383"),  
 				     
-						  readyToMovedTextValue = this.getTextValue(readyToMovedControl);
-							
+							readyToMovedTextValue = this.getRadioValue(readyToMovedControl) || this.getTextValue(readyToMovedControl);
+									
 				if(readyToMovedTextValue) {
 	
 					 this.readyMovedView(readyToMovedTextValue);
@@ -878,7 +894,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 							 case viewModel.SQ1M_YEAR :
 
 							 priceOnYear.value  = priceRental + nds;
-							 priceOnMonth.value = (priceRental * square / 12) + nds;
+							 priceOnMonth.value = (priceRental / square) + nds;
 
 							 console.log('за год',rentValue, priceRental);
 							 
@@ -886,8 +902,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 							 case viewModel.ALL_YEAR :
 
-							 priceOnYear.value  = priceRental + nds;
-							 priceOnMonth.value = (priceRental * square / 12) + nds;
+							 priceOnYear.value  = priceRental  + nds;
+							 priceOnMonth.value = (priceRental / square) + nds;
 
 							 console.log('за год 1 кв м',rentValue, priceRental);
 							 
