@@ -359,8 +359,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		onMapClick : function(e) {
 
-			console.log(e);
-
 		 e.stopPropagation();
 		 e.preventDefault();
 
@@ -370,16 +368,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		getGeoData : function() {
 
-		 const geoMap    = document.querySelector('#section_karta .crm-entity-widget-content-block'),
+		 const geoMap    = document.querySelector('#section_karta'),
 
-		       action    = geoMap.parentNode.parentNode.querySelector(".crm-entity-widget-actions-block");
+		       action    = geoMap.parentNode.querySelector(".crm-entity-widget-actions-block");
 
 					 codeFields = [/*'UF_CRM_1540202667','UF_CRM_1540203111',*/ 'UF_CRM_1540202766','UF_CRM_1540202817','UF_CRM_1540202900','UF_CRM_1540202908'],
 
 					 geoFields = codeFields.filter( uf => { return !!document.querySelector('[data-cid="' + uf + '"] .crm-entity-widget-content-block-inner .field-item') } );
 					 
-
-			let	 locationAddress = 'Москва,',
+		 let	 locationAddress = 'Москва,',
 			
 			     fullAddress = (geoFields.map(
 
@@ -389,22 +386,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 					 locationAddress+= fullAddress ;
 
-					 if(BX.Crm.EntityEditorMode.getName(this._mode) == 'edit') {
-
-						/*const map = document.querySelector('[name="UF_CRM_1540293801"]');
-						
-						      map.value = locationAddress;*/
-
-							console.log( 	locationAddress );
-
-					 } else {
-							
-						geoMap.innerHTML = '';
+					 geoMap.innerHTML = '';
 
 						let overflowNode = document.createElement("div");
 						    overflowNode.className = 'no-edit';
 
-						geoMap.parentNode.appendChild(overflowNode);
+						//geoMap.parentNode.appendChild(overflowNode);
 
 						action.parentNode.removeChild(action);
 
@@ -412,7 +399,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						var myMap = new ymaps.Map(geoMap, {
 							center: [55.753994, 37.622093],
-							zoom: 11
+							zoom: 12
 						});
 						
 						ymaps.geocode(locationAddress, {
@@ -426,7 +413,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 							// Вместе с опцией boundedBy будет искать строго внутри области, указанной в boundedBy.
 							// Если нужен только один результат, экономим трафик пользователей.
 							results: 1
-					}).then(function (res) {
+					 }).then(function (res) {
 									// Выбираем первый результат геокодирования.
 									var firstGeoObject = res.geoObjects.get(0),
 											// Координаты геообъекта.
@@ -445,66 +432,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 											// Проверяем наличие тайлов на данном масштабе.
 											checkZoomRange: true
 									});
-			
-									
 
-									/**
-									 * Все данные в виде javascript-объекта.
-									 */
-									//console.log('Все данные геообъекта: ', firstGeoObject.properties.getAll());
-									/**
-									 * Метаданные запроса и ответа геокодера.
-									 * @see https://api.yandex.ru/maps/doc/geocoder/desc/reference/GeocoderResponseMetaData.xml
-									 */
-									//console.log('Метаданные ответа геокодера: ', res.metaData);
-									/**
-									 * Метаданные геокодера, возвращаемые для найденного объекта.
-									 * @see https://api.yandex.ru/maps/doc/geocoder/desc/reference/GeocoderMetaData.xml
-									 */
-								//	console.log('Метаданные геокодера: ', firstGeoObject.properties.get('metaDataProperty.GeocoderMetaData'));
-									/**
-									 * Точность ответа (precision) возвращается только для домов.
-									 * @see https://api.yandex.ru/maps/doc/geocoder/desc/reference/precision.xml
-									 */
-									//console.log('precision', firstGeoObject.properties.get('metaDataProperty.GeocoderMetaData.precision'));
-									/**
-									 * Тип найденного объекта (kind).
-									 * @see https://api.yandex.ru/maps/doc/geocoder/desc/reference/kind.xml
-									 */
-								//	console.log('Тип геообъекта: %s', firstGeoObject.properties.get('metaDataProperty.GeocoderMetaData.kind'));
-								//	console.log('Название объекта: %s', firstGeoObject.properties.get('name'));
-								//	console.log('Описание объекта: %s', firstGeoObject.properties.get('description'));
-								//	console.log('Полное описание объекта: %s', firstGeoObject.properties.get('text'));
-									/**
-									* Прямые методы для работы с результатами геокодирования.
-									* @see https://tech.yandex.ru/maps/doc/jsapi/2.1/ref/reference/GeocodeResult-docpage/#getAddressLine
-									*/
-								//	console.log('\nГосударство: %s', firstGeoObject.getCountry());
-								//	console.log('Населенный пункт: %s', firstGeoObject.getLocalities().join(', '));
-								//	console.log('Адрес объекта: %s', firstGeoObject.getAddressLine());
-								//	console.log('Наименование здания: %s', firstGeoObject.getPremise() || '-');
-								//	console.log('Номер здания: %s', firstGeoObject.getPremiseNumber() || '-');
-			            
-									/**
-									 * Если нужно добавить по найденным геокодером координатам метку со своими стилями и контентом балуна, создаем новую метку по координатам найденной и добавляем ее на карту вместо найденной.
-									 */
-									/**
-									 var myPlacemark = new ymaps.Placemark(coords, {
-									 iconContent: 'моя метка',
-									 balloonContent: 'Содержимое балуна <strong>моей метки</strong>'
-									 }, {
-									 preset: 'islands#violetStretchyIcon'
-									 });
-			
-									 myMap.geoObjects.add(myPlacemark);
-									 */
 							});
-						});
-
-						console.log(locationAddress);
-
-					 }
-					 
+					});	 
 		},
 
 		initializeBuildingEvent : function() {

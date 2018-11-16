@@ -38,8 +38,8 @@
 #section_arendator div[data-cid="UF_CRM_1541056258"],
 #section_arendator div[data-cid="UF_CRM_1541056313"],
 #section_arendator div[data-cid="UF_CRM_1541056338255"],
-#section_karta .crm-entity-widget-content-nothing-selected,
-#section_karta .crm-entity-widget-content .crm-entity-widget-content-block:last-child
+#section_karta .crm-entity-widget-actions-block,
+#section_karta .crm-entity-widget-content-block
 .hide-field {
   display:none;
 }
@@ -62,7 +62,7 @@ div.show-field {
 .ymaps-2-1-71-zoom {
  position: absolute!important;
 }
-#section_karta .crm-entity-widget-content-block:nth-child(1) {
+#section_karta  {
 
   height:500px;
 }
