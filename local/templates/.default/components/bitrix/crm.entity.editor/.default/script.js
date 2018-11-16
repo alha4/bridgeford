@@ -240,27 +240,19 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 	    if(this.node("UF_CRM_1540202667")) {
 
-			const geoControl  = this.node("UF_CRM_1540202667");
+			const geoControl  = this.node("UF_CRM_1540202667"),
 
-			BX.showWait(geoControl);
-
-      setTimeout( () => {
-
-			  const	regionTextValue = this.getTextValue(geoControl);
-						
-						//console.log('получение текста гео блок',geoControl,	regionTextValue );
+			    	regionTextValue = this.getTextValue(geoControl);
 						
 		  if(regionTextValue) {
 
 				 this.geoView(regionTextValue);
-			   BX.closeWait(geoControl);
 	  
 	 	  } else {
 
-				 console.log('Не готов текстовый узел география');
+				 console.log('Не готов текстовый узел [Регион] география');
 				 
-			 }
-			} , this._timeout + 300);
+			}
 		 }
 		},
 
