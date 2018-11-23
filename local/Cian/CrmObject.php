@@ -1,0 +1,132 @@
+<?php
+
+ namespace Cian;
+
+ use \Bitrix\Main\Loader;
+
+ Loader::IncludeModule("crm");
+ /**
+  * UF_CRM_1541076330647 - Площадь объекта
+  * UF_CRM_1540202900 - улица 
+  * UF_CRM_1540202908 - номер дома
+  * UF_CRM_1540202817 - город
+  * UF_CRM_1540202667 - регион
+  * UF_CRM_1540202766 - район
+  * UF_CRM_1542955977 - геокодированные данные
+  * UF_CRM_1541753539107 - шаг цены
+  * UF_CRM_1541678101879 - активировано автоматическое ценообразование
+  * UF_CRM_1542011568379 - изначальная цена
+  * UF_CRM_1542028303 - стратегии автоматического ценообразования
+  * UF_CRM_1542029182 - главный якорь
+  * UF_CRM_1542089326915 - кол-во конкурентов
+  * OPPORTUNITY - стоимость объекта циан
+  */
+ final class CrmObject {
+
+   const GEODATA_LENGTH = 3;
+
+   public static function getAll(?int $object_id = 0) : array {
+
+      $sort   = ['UF_CRM_1541678101879' => 'DESC'];
+
+      $filter = ['UF_CRM_1541678101879' => 1];
+
+      if($object_id > 0) {
+
+        $filter['ID'] = $object_id;
+
+      }
+
+      $select = ['UF_CRM_1542029182','UF_CRM_1541076330647','UF_CRM_1542955977','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667','UF_CRM_1541753539107','CATEGORY_ID'];
+
+      $arResult = [];
+
+      $crm_object = \CCrmDeal::GetListEx($sort, $filter, false, false, $select);
+
+      while($row = $crm_object->Fetch()) {
+
+        $geodata = json_decode($row['UF_CRM_1542955977'], 1);
+
+        if(count($geodata) >= self::GEODATA_LENGTH) {
+   
+          $arResult[] = [
+
+            'ID'     => $row['ID'],
+            'SQUARE' => (int)$row['UF_CRM_1541076330647'],
+            'STREET' => $geodata['STREET'],
+            'HOUSE'  => $geodata['HOUSE'],
+            'CITY'   => $geodata['CITY'],
+            'REGION' => $row['UF_CRM_1540202667'],
+            'PRICE_STEP' => (float)$row['UF_CRM_1541753539107'],
+            'CATEGORY_ID' => $row['CATEGORY_ID'],
+            'MAIN_ANCHOR' => (int)$row['UF_CRM_1542029182'],
+            'IS_DECODED'  => 'Y'
+          ];
+
+
+        } else {
+
+         $arResult[] = [
+
+           'ID'     => $row['ID'],
+           'SQUARE' => (int)$row['UF_CRM_1541076330647'],
+           'STREET' => $row['UF_CRM_1540202900'],
+           'HOUSE'  => $row['UF_CRM_1540202908'],
+           'CITY'   => $row['UF_CRM_1540202817'],
+           'REGION' => $row['UF_CRM_1540202667'],
+           'PRICE_STEP' => (float)$row['UF_CRM_1541753539107'],
+           'CATEGORY_ID' => $row['CATEGORY_ID'],
+           'MAIN_ANCHOR' => (int)$row['UF_CRM_1542029182'] 
+
+        ];
+
+        }
+      }
+
+      return $arResult;
+
+   }
+
+   public static function setCompetitors(int $id, array $data) : bool {
+
+     $crm_object = new \CCrmDeal(false);
+
+     $fields = [
+        'UF_CRM_1542029126' => json_encode($data, JSON_UNESCAPED_UNICODE),
+        'UF_CRM_1542089326915' => count($data) 
+     ];
+      
+     if($crm_object->Update($id, $fields)) {
+  
+        return true;
+
+     }
+
+     return false;
+     
+   }
+
+   public static function setPrice(int $id, float $price, float $price_step) : bool {
+
+     $deal = new \CCrmDeal(false);
+
+     $price = $price - $price_step;
+
+     $price_field = [
+
+        'OPPORTUNITY' => $price
+
+     ];
+
+     if($deal->Update($id, $price_field)) {
+
+        return true;
+
+     }
+
+     return false;
+
+   }
+
+   private function __construct(){}
+ }
