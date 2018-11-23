@@ -1443,7 +1443,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				       mainAnchor  = this.nodeInput('UF_CRM_1542029182'),
 				       priceStrategies = document.querySelector('#section_strategii_avtomaticheskogo_tsenoobrazovaniya');
 				 
-				 if(competitors) {
+				 if(competitors && competitors.value) {
 
 						const competitors_list = JSON.parse(competitors.value),
 					        virtual_node = document.createElement('div');

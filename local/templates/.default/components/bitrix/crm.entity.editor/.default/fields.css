@@ -40,7 +40,8 @@
 #section_arendator div[data-cid="UF_CRM_1541056338255"],
 #section_karta .crm-entity-widget-actions-block,
 #section_karta .crm-entity-widget-content-block
-.hide-field {
+.hide-field,
+.pagetitle-sub {
   display:none;
 }
 

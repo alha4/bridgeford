@@ -233,7 +233,7 @@ if(!empty($htmlEditorConfigs))
 	);
 ?></div>
 <?endif?>
-<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=d1ba37da-fccc-46b2-ba7e-a22bd531997d" type="text/javascript"></script>
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=5e926399-e46a-4846-a809-c3d370aa399e" type="text/javascript"></script>
 <script type="text/javascript">
 	BX.ready(
 		function()
