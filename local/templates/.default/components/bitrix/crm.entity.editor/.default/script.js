@@ -387,6 +387,10 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						action.parentNode.removeChild(action);
 
+						BX.showWait(geoMap);
+
+						BX.loadScript('https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=5e926399-e46a-4846-a809-c3d370aa399e', function() {
+
 						ymaps.ready(function() {
 
 						var myMap = new ymaps.Map(geoMap, {
@@ -425,8 +429,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 											checkZoomRange: true
 									});
 
+									BX.closeWait(geoMap);
+
 							});
-					});	 
+					});	
+
+				}); 
 		},
 
 		initializeBuildingEvent : function() {
