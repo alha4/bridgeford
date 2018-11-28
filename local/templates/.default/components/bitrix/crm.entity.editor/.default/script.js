@@ -216,7 +216,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			return false;
 
 		},
-
+		
 		initializeGeoEvent : function() {
 
 			this._regionSelect = this.nodeSelect("UF_CRM_1540202667");
@@ -292,7 +292,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 														'UF_CRM_1540202947',
 														'UF_CRM_1540203015',
 														'UF_CRM_1540203144',
-														'UF_CRM_1540203111'
+														'UF_CRM_1540203111',
+														'UF_CRM_1543406565'
 													],
    
 					 regions = this.prepareModel(viewData);
