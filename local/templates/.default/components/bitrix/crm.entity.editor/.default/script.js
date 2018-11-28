@@ -364,7 +364,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		       action    = geoMap.parentNode.querySelector(".crm-entity-widget-actions-block");
 
-					 codeFields = [/*'UF_CRM_1540202667','UF_CRM_1540203111',*/ 'UF_CRM_1540202766','UF_CRM_1540202817','UF_CRM_1540202900','UF_CRM_1540202908'],
+					 codeFields = [/*'UF_CRM_1540202667','UF_CRM_1540203111',*/ 'UF_CRM_1540202766','UF_CRM_1540202817','UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908'],
 
 					 geoFields = codeFields.filter( uf => { return !!document.querySelector('[data-cid="' + uf + '"] .crm-entity-widget-content-block-inner .field-item') } );
 					 
@@ -376,14 +376,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 							
 					 )).join(",");
 
-					 locationAddress+= fullAddress ;
+					  locationAddress+= fullAddress ;
 
-					 geoMap.innerHTML = '';
-
-						let overflowNode = document.createElement("div");
-						    overflowNode.className = 'no-edit';
-
-						//geoMap.parentNode.appendChild(overflowNode);
+					  geoMap.innerHTML = '';
 
 						action.parentNode.removeChild(action);
 

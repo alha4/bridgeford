@@ -317,9 +317,9 @@ final class CianPriceMonitoring {
 
  }
 
- private function isProspekt(string $street) : bool {
+ private function isProspekt(?string $street) : bool {
 
-    return strpos($street, 'проспект') ? : false;
+    return $street && strpos($street, 'проспект') ? : false;
 
  }
 

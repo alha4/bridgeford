@@ -57,7 +57,7 @@ $this->SetViewTarget('inside_pagetitle', 10000);
 <?if($arParams['ENTITY_TYPE_ID'] == CCrmOwnerType::Deal) : ?>
 
  <div class="ui-btn-double ui-btn-primary">
- <button id="update_price" class="ui-btn-main">Обновить цену</button>
+ <button id="update_price" class="ui-btn-main">Обновить цены конкурентов</button>
  </div> 
  <script>
   "use strict";
