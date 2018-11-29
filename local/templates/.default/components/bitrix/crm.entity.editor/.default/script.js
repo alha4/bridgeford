@@ -1485,6 +1485,49 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			}
 		},
 
+		initializeVacationRentalEvent : function() {
+
+			const vacationChekbox = this.node('UF_CRM_1540456737395');
+			
+			this.bindEvent(vacationChekbox, 'click', this.onVacationChekboxChange);
+
+		},
+
+		onVacationChekboxChange : function(e) {
+
+			if(e.target.nodeName == 'INPUT') {
+
+        
+				 this.vacationView(e.target.checked ? 1 : 0);
+				 
+			}
+
+		},
+
+		vacationView : function(state) {
+
+			const vacationDuration = this.node('UF_CRM_1543504475389');
+			
+			if(state == 1) {
+
+				this.showField(vacationDuration);
+
+			} else {
+
+				this.hideField(vacationDuration);
+				
+			}
+
+		},
+
+		showVacationFields : function() {
+
+			const vacationChekbox = this.getTextValue(this.node('UF_CRM_1540456737395'));
+
+			this.vacationView(vacationChekbox == 'да' ? 1 : 0);
+
+		},
+
 		brokerAssignedID : function() {
 
 			 return this._brokerAssignedID; 
@@ -1862,7 +1905,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeSystemInfoEvent'); 
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeDuplicationEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeCaclulateRentEvent');
-
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeVacationRentalEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeEventCompetitions');
 	
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
@@ -1889,6 +1932,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showVacationFields');
 	
 				this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
 				this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
