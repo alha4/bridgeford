@@ -42,7 +42,8 @@
 #section_karta .crm-entity-widget-content-block
 .hide-field,
 .crm-entity-card-widget:nth-child(25),
-div[data-cid="UF_CRM_1542955977"]
+div[data-cid="UF_CRM_1542955977"],
+div[data-cid="UF_CRM_1541076330647"],
 .pagetitle-sub {
   display:none;
 }
