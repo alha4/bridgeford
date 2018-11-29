@@ -870,11 +870,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 					 square  = parseInt(squareNode.value) || 1;
 
-			 if(ndsValue == NDS_LIST.VAT) {
+		//	 if(ndsValue == NDS_LIST.VAT) {
 
-						nds = (priceObj * 18) / 100;
+		//				nds = (priceObj * 18) / 100;
 
-			 } 
+		//	 } 
 			 
 			 switch(parseInt(costValue)) {
 
@@ -901,8 +901,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		rentView : function(rentValue) {
 			
-			let nds = 0;
-			
 			const priceOnYear  = document.querySelector('input[name="UF_CRM_1540554743072"]'),
 						priceOnMonth = document.querySelector('input[name="UF_CRM_1540456697"]'),
 						priceRental  = parseFloat(document.querySelector('input[name="UF_CRM_1540456417"').value),
@@ -926,22 +924,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 							 }
 						},
 
-						NDS_LIST = { VAT : 152 },
-
 						viewModel = this.prepareModel(viewData);
-
-						if(ndsValue == NDS_LIST.VAT) {
-
-							 nds = (priceRental * 18) / 100;
-
-						}
 
 						switch(parseInt(rentValue)) {
 
 							 case viewModel.ALL_MONTH :
 
-               priceOnYear.value  = (priceRental * 12 / square) + nds;
-							 priceOnMonth.value =  priceRental + nds;
+               priceOnYear.value  = (priceRental * 12 / square);
+							 priceOnMonth.value =  priceRental;
 
 							 console.log('все месяцы',rentValue, priceRental);
 
@@ -949,8 +939,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 							 case viewModel.SQ1M_YEAR :
 
-							 priceOnYear.value  = priceRental + nds;
-							 priceOnMonth.value = (priceRental / square) + nds;
+							 priceOnYear.value  = priceRental;
+							 priceOnMonth.value = (priceRental * square / 12);
 
 							 console.log('за год',rentValue, priceRental);
 							 
@@ -958,8 +948,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 							 case viewModel.ALL_YEAR :
 
-							 priceOnYear.value  = priceRental  + nds;
-							 priceOnMonth.value = (priceRental / square) + nds;
+							 priceOnYear.value  = priceRental / 12 ;
+							 priceOnMonth.value = priceRental / square ;
 
 							 console.log('за год 1 кв м',rentValue, priceRental);
 							 
