@@ -49,7 +49,9 @@ div[data-cid="UF_CRM_1542955977"]
 div[data-cid="UF_CRM_1542089326915"] {
   position: relative;
 }
-div[data-cid="UF_CRM_1542089326915"] :before {
+div[data-cid="UF_CRM_1542089326915"] :before,
+div[data-cid="UF_CRM_1540456697"] :before,
+div[data-cid="UF_CRM_1540554743072"] :before {
   content: ' ';
   width: 100%;
   height: 48px;
@@ -59,8 +61,10 @@ div[data-cid="UF_CRM_1542089326915"] :before {
   z-index: 9111;
   background: #e8ecee00;
 }
-div[data-cid="UF_CRM_1542089326915"] .field-item input {
-   border:none!important;
+div[data-cid="UF_CRM_1542089326915"] .field-item input,
+div[data-cid="UF_CRM_1540456697"] .field-item input,
+div[data-cid="UF_CRM_1540554743072"] .field-item input {
+  border:none!important;
   background-color:transparent;
 }
 div.show-field {
