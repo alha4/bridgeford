@@ -765,11 +765,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		initializeCaclulateRentEvent : function() {
 
 			this._caclulateRent = this.nodeSelect("UF_CRM_1540456536");
-			this._vatRent       = this.nodeSelect("UF_CRM_1540456608");
+
 			this._rentalCost    = this.nodeInput("UF_CRM_1540456417");
 
 			this.bindEvent(this._caclulateRent, 'change',this.onCaclulateRent);
-			this.bindEvent(this._vatRent, 'change',      this.onChangeVatRent);
+		
 			this.bindEvent(this._rentalCost, 'keyup',    this.onRentCostChange);
 
 		},
@@ -777,11 +777,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		initializeCaclulateObjectEvent : function() {
 
 			this._caclulateObj = this.nodeSelect("UF_CRM_1541072087");
-			this._vatRent      = this.nodeSelect("UF_CRM_1540456608");
+		
 			this._objCost      = this.nodeInput("UF_CRM_1541072013901");
 
 			this.bindEvent(this._caclulateObj, 'change', this.onCaclulateObjectPrice);
-			this.bindEvent(this._vatRent, 'change', this.onCaclulateObjectPrice);
+		
 			this.bindEvent(this._objCost, 'keyup',  this.onObjCostChange);
 
 		},
@@ -842,11 +842,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		objPriceView : function(costValue) {
  
-			 let nds = 0;
-
-			 const NDS_LIST = { VAT : 152 },
-
-						 viewModel = this.prepareModel({
+			 const  viewModel = this.prepareModel({
 
 							'edit' :  {
 
@@ -856,8 +852,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 							}
 					 }),
 
-					 ndsValue = this.nodeSelectValue(this._vatRent),
-
+	
 					 priceOnAllObj = this.nodeInput('UF_CRM_1541072168373'),
 					 priceOn1SQM   = this.nodeInput('UF_CRM_1541072151310'),
 
@@ -869,33 +864,27 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 squareNode    = this.nodeInput("UF_CRM_1541076330647"),
 
 					 square  = parseInt(squareNode.value) || 1;
-
-		//	 if(ndsValue == NDS_LIST.VAT) {
-
-		//				nds = (priceObj * 18) / 100;
-
-		//	 } 
 			 
 			 switch(parseInt(costValue)) {
 
 				case viewModel.ALL_OBJ :
 
-			    	priceOnAllObj.value =  (priceObj) + nds;
-						priceOn1SQM.value   =  (priceObj / square) + nds;
+			    	priceOnAllObj.value =  (priceObj);
+						priceOn1SQM.value   =  (priceObj / square);
 
 				break;
 
 				case viewModel.SQ1M :
 
-			    	priceOnAllObj.value =  (priceObj * square) + nds;
-				    priceOn1SQM.value   =  priceObj + nds;
+			    	priceOnAllObj.value =  (priceObj * square);
+				    priceOn1SQM.value   =  priceObj;
 
 				break;
 
 			 }
 
-			 payback.value = (priceObj + nds) / priceOnAllObj.value;
-		   cashing.value =  priceOnAllObj.value  / (priceObj + nds) + "%";	
+			 payback.value = (priceObj) / priceOnAllObj.value;
+		   cashing.value =  priceOnAllObj.value  / (priceObj) + "%";	
 
 		},
 
@@ -905,11 +894,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						priceOnMonth = document.querySelector('input[name="UF_CRM_1540456697"]'),
 						priceRental  = parseFloat(document.querySelector('input[name="UF_CRM_1540456417"').value),
 
-						ndsNode      = document.querySelector('select[name="UF_CRM_1540456608"'),
-
-						ndsValue     = this._vatRent.options[this._vatRent.selectedIndex].value,
-
-						squareNode    = this.nodeInput("UF_CRM_1541076330647"),
+						squareNode   = this.nodeInput("UF_CRM_1541076330647"),
 
 						square  = parseInt(squareNode.value) || 1;
 
@@ -918,8 +903,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 							 'edit' :  {
 
 								 ALL_MONTH : { value : 147},
-								 ALL_YEAR  : { value : 148},
-								 SQ1M_YEAR : { value : 149}
+								 ALL_YEAR  : { value : 149},
+								 SQ1M_YEAR : { value : 148}
 
 							 }
 						},
@@ -942,16 +927,16 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 							 priceOnYear.value  = priceRental;
 							 priceOnMonth.value = (priceRental * square / 12);
 
-							 console.log('за год',rentValue, priceRental);
+							 console.log('за год 1 кв м',rentValue, priceRental);
 							 
 							 break;
 
 							 case viewModel.ALL_YEAR :
 
-							 priceOnYear.value  = priceRental / 12 ;
-							 priceOnMonth.value = priceRental / square ;
+							 priceOnYear.value  = priceRental / square ;
+							 priceOnMonth.value = priceRental / 12  ;
 
-							 console.log('за год 1 кв м',rentValue, priceRental);
+							 console.log('за год',rentValue, priceRental);
 							 
 							 break;
 
