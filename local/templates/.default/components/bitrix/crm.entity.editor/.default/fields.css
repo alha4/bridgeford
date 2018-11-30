@@ -41,7 +41,7 @@
 #section_karta .crm-entity-widget-actions-block,
 #section_karta .crm-entity-widget-content-block
 .hide-field,
-.crm-entity-card-widget:nth-child(25),
+.crm-entity-card-container-content form .crm-entity-card-widget:nth-last-child(-n+3),
 div[data-cid="UF_CRM_1542955977"],
 div[data-cid="UF_CRM_1541076330647"],
 div[data-cid="UF_CRM_1543504475389"],
@@ -53,7 +53,8 @@ div[data-cid="UF_CRM_1542089326915"] {
 }
 div[data-cid="UF_CRM_1542089326915"] :before,
 div[data-cid="UF_CRM_1540456697"] :before,
-div[data-cid="UF_CRM_1540554743072"] :before {
+div[data-cid="UF_CRM_1540554743072"] :before,
+div[data-cid="OPPORTUNITY_WITH_CURRENCY"] :before {
   content: ' ';
   width: 100%;
   height: 48px;
@@ -65,7 +66,9 @@ div[data-cid="UF_CRM_1540554743072"] :before {
 }
 div[data-cid="UF_CRM_1542089326915"] .field-item input,
 div[data-cid="UF_CRM_1540456697"] .field-item input,
-div[data-cid="UF_CRM_1540554743072"] .field-item input {
+div[data-cid="UF_CRM_1540554743072"] .field-item input,
+div[data-cid="OPPORTUNITY_WITH_CURRENCY"]  input,
+div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-select {
   border:none!important;
   background-color:transparent;
 }

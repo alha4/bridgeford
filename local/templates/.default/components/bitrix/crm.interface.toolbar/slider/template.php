@@ -77,7 +77,7 @@ $this->SetViewTarget('inside_pagetitle', 10000);
 				} else {
 
            BX.closeWait(BX('update_price'));
-           alert('Нет объявлений, проверьте поля адреса и поле площадь объекта');
+           alert('Нет объявлений, проверьте поля адреса и поле площадь');
 				}
 				
 			});
