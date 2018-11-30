@@ -7,6 +7,7 @@
  Loader::IncludeModule("crm");
  /**
   * UF_CRM_1541076330647 - Площадь объекта
+  * UF_CRM_1540202889 - тип улицы
   * UF_CRM_1540202900 - улица 
   * UF_CRM_1540202908 - номер дома
   * UF_CRM_1540202817 - город
@@ -37,7 +38,7 @@
 
       }
 
-      $select = ['UF_CRM_1542029182','UF_CRM_1541076330647','UF_CRM_1542955977','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667','UF_CRM_1541753539107','CATEGORY_ID'];
+      $select = ['UF_CRM_1540202889','UF_CRM_1542029182','UF_CRM_1541076330647','UF_CRM_1542955977','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667','UF_CRM_1541753539107','CATEGORY_ID'];
 
       $arResult = [];
 
@@ -47,7 +48,7 @@
 
         $geodata = json_decode($row['UF_CRM_1542955977'], 1);
 
-        if(count($geodata) >= self::GEODATA_LENGTH) {
+        if(-1 > 500 && count($geodata) >= self::GEODATA_LENGTH) {
    
           $arResult[] = [
 
@@ -70,7 +71,7 @@
 
            'ID'     => $row['ID'],
            'SQUARE' => (int)$row['UF_CRM_1541076330647'],
-           'STREET' => $row['UF_CRM_1540202900'],
+           'STREET' => self::street($row['UF_CRM_1540202900'], $row['UF_CRM_1540202889']),
            'HOUSE'  => $row['UF_CRM_1540202908'],
            'CITY'   => $row['UF_CRM_1540202817'],
            'REGION' => $row['UF_CRM_1540202667'],
@@ -84,6 +85,39 @@
       }
 
       return $arResult;
+
+   }
+
+   public static function street(string $street, ?int $street_type = 0) : string {
+
+    if($street_type > 0) {
+
+      return sprintf("%s %s", $street, self::streetType($street_type) );
+
+    }
+
+    return $street;
+
+   }
+
+   private static function streetType(?int $variant_id) : string {
+
+    $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => "CRM_DEAL", "FIELD_NAME" => 'UF_CRM_1540202889'));
+    $entity = $entityResult->Fetch();
+
+    $enumResult = \CUserTypeEnum::GetList($entity);
+
+    while($enum = $enumResult->Fetch()) {
+
+      if($enum['ID'] ==  $variant_id) {
+
+         return $enum['VALUE'];
+
+       }
+
+    }
+
+    return '';
 
    }
 

@@ -33,7 +33,7 @@ final class CianPriceMonitoring {
 
 
   private const CIAN_SEARCH_TYPE = [
-      '0' => 'flatrent',
+      '0' => 'commercialrent',
       '1' => 'flatsale',
       '2' => 'flatrent'
   ];
@@ -102,6 +102,8 @@ final class CianPriceMonitoring {
   *@param array $data - параметры объекта площадь, город, улица, дом
   *
   *@return array $result - массив ключей запроса для ЦИАН
+  * 
+  *@var $square_gte - площадь [от] минус [SQUARE_PRECENT] процент от площади объекта
   *
   */
  private function buildRequest(array $data) : array {
@@ -111,17 +113,17 @@ final class CianPriceMonitoring {
   $search_type = self::CIAN_SEARCH_TYPE[$data['CATEGORY_ID']];
 
   $result = ['jsonQuery' => [
-           '_type' => $search_type,
+           '_type' => $search_type, // тип поиска
            'engine_version' => [
              'type' => 'term',
              'value' => 2,
            ],
-           'room' => [
+          /* 'room' => [
 
             'type' => 'term',
-            'value' => [1,2]
+            'value' => [1,2] // количество комнат
 
-           ],
+           ],*/
            'geo' =>  [
             'type' => 'geo',
             'value' => [
@@ -130,6 +132,12 @@ final class CianPriceMonitoring {
               'id'  => $data['HOUSE']
               ]
             ]
+           ],
+           'office_type' => [
+
+            'type' => 'term',
+            'value' => [1, 2, 3, 5, 4, 9, 10, 7, 6, 11, 12], // типы объектов [Офис,Торговая площадь,СкладПСН,Общепит,Гараж,Производство,Автосервис,Готовый бизнес,Здание,Бытовые услуги,Коммерческая земля]
+
            ],
            'region' => [
 
@@ -144,7 +152,7 @@ final class CianPriceMonitoring {
            ]
         ]];
 
-        if($search_type == 'flatrent') {
+        if($search_type == self::CIAN_SEARCH_TYPE[0]) {
 
             $result['jsonQuery']['for_day'] = [
 
@@ -160,6 +168,7 @@ final class CianPriceMonitoring {
  }
 
  public function getGeocodedAdress(array $address) : ?array {
+
 
   if($address['IS_DECODED'] == 'Y') {
 
@@ -184,6 +193,8 @@ final class CianPriceMonitoring {
      "Kind" => "house",
      "Address" => $this->houseAdressString($address)
    ];
+
+   file_put_contents($_SERVER['DOCUMENT_ROOT'].'/log.txt', print_r( $data['Address']  ,1).date("d/m/Y H:i:s")."\r\n");
 
    $geoData = $this->geocoded($data);
 
@@ -297,23 +308,31 @@ final class CianPriceMonitoring {
 
   if(strlen($address['CITY']) > 0 && $address['CITY'] != self::DEFAULT_CITY) {
 
-    if($this->isProspekt($address['STREET'])) {
+    if($this->isStreet($address['STREET'])) {
   
-      return  "Россия, Москва, {$address['STREET']}, {$address['HOUSE']}";
+      return  "Россия, Москва, {$address['CITY']}, {$address['HOUSE']}-я {$address['STREET']}";
 
     }
 
-    return  "Россия, Москва, {$address['CITY']}, {$address['HOUSE']}-я {$address['STREET']} улица";
+    return  "Россия, Москва, {$address['CITY']}, {$address['STREET']}, {$address['HOUSE']}";
 
   }
 
-  if($this->isProspekt($address['STREET'])) {
+  if($this->isStreet($address['STREET'])) {
+
   
-    return  "Россия, Москва, {$address['STREET']}, {$address['HOUSE']}";
+    return  "Россия, Москва, {$address['HOUSE']}-я {$address['STREET']}";
+    
 
   }
 
-  return  "Россия, Москва, {$address['HOUSE']}-я {$address['STREET']} улица";
+  return  "Россия, Москва, {$address['STREET']}, {$address['HOUSE']}";
+
+ }
+
+ private function isStreet(?string $street) : bool {
+
+    return $street && strpos($street, 'улица') ? : false;
 
  }
 
