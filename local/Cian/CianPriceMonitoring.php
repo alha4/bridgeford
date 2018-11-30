@@ -283,24 +283,12 @@ final class CianPriceMonitoring {
 
   if(strlen($address['CITY']) > 0 && $address['CITY'] != self::DEFAULT_CITY) {
 
-    if($this->isProspekt($address['STREET'])) {
-  
-      return  "Россия, Москва, {$address['STREET']}, {$address['HOUSE']}";
-
-    }
-  
-    return "Россия, Москва, {$address['CITY']}, {$address['STREET']} улица, {$address['HOUSE']}";
+    
+     return  "Россия, Москва, {$address['CITY']}, {$address['STREET']}, {$address['HOUSE']}";
 
   }
 
-
-  if($this->isProspekt($address['STREET'])) {
-  
-    return  "Россия, Москва, {$address['STREET']}, {$address['HOUSE']}";
-
-  }
-
-  return "Россия, Москва, {$address['STREET']} улица, {$address['HOUSE']}";
+  return "Россия, Москва, {$address['STREET']}, {$address['HOUSE']}";
 
  }
 
