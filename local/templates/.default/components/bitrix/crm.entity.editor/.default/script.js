@@ -1439,7 +1439,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
             for(var item of competitors_list) {
 
 							 html+= `<span class="fields enumeration enumeration-checkbox field-item"><label for="item_${item['PRICE']}"><input id="item_${item['PRICE']}" ${mainAnchor.value == item['PRICE'] ? 'checked' : ''} name="comp_item" value="${item['PRICE']}" type="radio">`;
-							 html+= `${item['TITLE']} - ${item['PRICE']} руб.</label>`;
+							 html+= `<a href="${item['URL']}" target="_blank">${item['TITLE']}</a> - ${item['PRICE']} руб.</label>`;
 							 html+= '</span>';
 
 						}

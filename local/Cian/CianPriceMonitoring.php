@@ -361,7 +361,8 @@ final class CianPriceMonitoring {
 
       $result[] = [
          'TITLE' => $item['geo']['userInput'],
-         'PRICE' => $item['priceTotalPerMonthRur']
+         'PRICE' => $item['priceTotalPerMonthRur'],
+         'URL'   => $item['fullUrl']
       ];
 
     }
