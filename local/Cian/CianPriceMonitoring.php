@@ -342,6 +342,7 @@ final class CianPriceMonitoring {
 
  }
 
+
  private function getMinPrice(array $data) : float {
 
   $prices = array_column($data['offersSerialized'], 'bargainTerms');
@@ -361,7 +362,7 @@ final class CianPriceMonitoring {
 
       $result[] = [
          'TITLE' => $item['geo']['userInput'],
-         'PRICE' => $item['bargainTerms']['price']
+         'PRICE' => $item['priceTotalPerMonthRur']
       ];
 
     }
