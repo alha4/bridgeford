@@ -345,8 +345,7 @@ final class CianPriceMonitoring {
 
  private function getMinPrice(array $data) : float {
 
-  $prices = array_column($data['offersSerialized'], 'bargainTerms');
-  $prices = array_column($prices, 'price');
+  $prices = array_column($data['offersSerialized'], 'priceTotalPerMonthRur');
   $prices = array_unique($prices);
   asort($prices);
  
