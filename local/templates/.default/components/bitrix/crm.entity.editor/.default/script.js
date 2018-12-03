@@ -1073,6 +1073,58 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		initializeAdvertisingEvent : function() {
+
+			this.bindEvent(this.nodeRadio('UF_CRM_1543834597'), 'click', this.onAdvertisingChange);
+		
+		},
+
+		onAdvertisingChange : function(e) {
+
+      this.advertisingView(e.target.checked);
+
+		},
+
+		advertisingView : function(state) {
+
+			const viewFields = ['UF_CRM_1540977921792','UF_CRM_1540977409431'],
+
+			      viewModel = this.prepareModel({
+
+              'edit' : {
+		 
+								 YES : { value : true }
+
+							},
+							'view' : {
+		 
+								YES : { value : 'да' }
+
+						 }
+
+						});
+
+			
+			if(state == viewModel.YES) {
+
+				for(var code of viewFields) {
+ 
+					this.showField(this.node(code));
+	
+				
+			  }
+       
+			} else {
+
+				for(var code of viewFields) {
+ 
+					this.hideField(this.node(code));
+				
+			  }
+
+			}
+		},
+
 		initializeDuplicationEvent : function() {
 
 			this.bindEvent(document.querySelector('[data-cid="UF_CRM_1540976695789"]'), 'click', this.onDuplication1Change);
@@ -1585,6 +1637,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		nodeRadio :  function(exp) {
+ 
+			return document.querySelectorAll(`input[name="${exp}"]`)[1];
+
+		},
+
 		prepareModel : function(params) {
 
 		  const	viewModel = {
@@ -1908,6 +1966,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeCaclulateRentEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeVacationRentalEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeEventCompetitions');
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingEvent');
 	
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateRentEvent');

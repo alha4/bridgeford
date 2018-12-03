@@ -48,7 +48,7 @@
 
         $geodata = json_decode($row['UF_CRM_1542955977'], 1);
 
-        if(-1 > 500 && count($geodata) >= self::GEODATA_LENGTH) {
+        if(count($geodata) >= self::GEODATA_LENGTH) {
    
           $arResult[] = [
 

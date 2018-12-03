@@ -24,6 +24,8 @@ final class CianPriceMonitoring {
 
   private const GEO_DATA_LENGTH = 4;
 
+  private $httpClient;
+
   private $http_headers = ["Host"    => "api.cian.ru",
                            "Origin"  => "https://www.cian.ru",
                            "Referer" => "https://www.cian.ru/cat.php?deal_type=sale&engine_version=2&offer_type=flat&region=1&room1=1&room2=1",
@@ -38,41 +40,46 @@ final class CianPriceMonitoring {
       '2' => 'flatrent'
   ];
 
- public static function instance() : CianPriceMonitoring {
+  public static function instance() : CianPriceMonitoring {
 
-   return new static();
+      $self = new static();
+      $self->setHttpClient();
 
- }
- /**
+      return $self;
+  }
+  /**
   * 
-  *@param $object_id ID сделки необязательный параметр
+  *@param int $object_id ID сделки необязательный параметр
   *
- */
- public function run(?int $object_id = 0) : void {
+  *@var array $objects список объектов недвижимости
+  *
+  *@return void json ответ 
+  */
+  public function run(?int $object_id = 0) : void {
 
-   $objects = CrmObject::getAll( $object_id );
+    $objects = CrmObject::getAll( $object_id );
 
-   if($objects) {
+    if($objects) {
 
-     foreach($objects as $object) {
+      foreach($objects as $object) {
 
-     $geodecode = $this->getGeocodedAdress($object);
+        $geodecode = $this->getGeocodedAdress($object);
 
-     if($geodecode) {
+        if($geodecode) {
    
-        $geodecode['CATEGORY_ID'] = $object['CATEGORY_ID'];
+          $geodecode['CATEGORY_ID'] = $object['CATEGORY_ID'];
 
-        $response = $this->searchOffers($geodecode);
+          $response = $this->searchOffers($geodecode);
 
-        if($response) {
+          if($response) {
 
-           $competitors = $this->getOffersList($response);
+            $competitors = $this->getOffersList($response);
 
-           if(CrmObject::setCompetitors($object['ID'], $competitors)) {
+            if(CrmObject::setCompetitors($object['ID'], $competitors)) {
 
-             $price = $object['MAIN_ANCHOR'] > 0 ? $object['MAIN_ANCHOR'] : $this->getMinPrice($response);
+              $price = $object['MAIN_ANCHOR'] > 0 ? $object['MAIN_ANCHOR'] : $this->getMinPrice($response);
 
-             if($price > 0) {
+              if($price > 0) {
 
                $price_step = $object['PRICE_STEP'];
            
@@ -117,7 +124,7 @@ final class CianPriceMonitoring {
   *
   *@var $search_type - тип поиска [Аренда,Продажа,Коммерческая]
   */
- private function buildRequest(array $data) : array {
+ private function buildRequest(array $data) : string {
 
   $square_gte = round($data['SQUARE'] - (($data['SQUARE']) / 100 * self::SQUARE_PRECENT));
 
@@ -174,7 +181,7 @@ final class CianPriceMonitoring {
 
         }
 
-   return $result;
+   return json_encode($result);
 
  }
 
@@ -250,11 +257,9 @@ final class CianPriceMonitoring {
   */
  private function searchOffers(array $data) : array {
   
-  $http_client = $this->httpClient();
-  
   $request  = $this->buildRequest($data);
 
-  $response = json_decode( $http_client->post(self::CIAN_API_URL, json_encode($request)), 1);
+  $response = json_decode( $this->httpClient->post(self::CIAN_API_URL, $request), 1);
 
   if($response['status'] == self::SUCCESS) {
 
@@ -262,7 +267,7 @@ final class CianPriceMonitoring {
 
   }
 
-  return ['RESPONSE' => $response, 'DATA' =>  json_encode($data) /*,'HEADERS' => $http_client->getHeaders()*/];
+  return ['RESPONSE' => $response, 'DATA' =>  json_encode($data), 'HEADERS' => $this->httpClient()->getHeaders()->toArray() ];
 
  }
 
@@ -274,11 +279,9 @@ final class CianPriceMonitoring {
   */
  private function coordinate(string $search) : ?array {
 
-  $http_client = $this->httpClient();
-
   $url = str_replace('#REGION#', urlencode($search), self::CIAN_GEO_SEARCH_URL);
 
-  $response = json_decode( $http_client->get($url), 1);
+  $response = json_decode( $this->httpClient->get($url), 1);
 
   if($response['items']) {
 
@@ -299,9 +302,7 @@ final class CianPriceMonitoring {
   */
  private function geocoded(array $data) : ?array {
 
-  $http_client = $this->httpClient();
-
-  $response = json_decode( $http_client->post(self::CIAN_GEOCODER_SEARCH_URL, json_encode($data)), 1);
+  $response = json_decode( $this->httpClient->post(self::CIAN_GEOCODER_SEARCH_URL, json_encode($data)), 1);
 
   if($response['isParsed'] == 1) {
 
@@ -404,20 +405,20 @@ final class CianPriceMonitoring {
     
  }
 
- private function httpClient() {
+ private function setHttpClient() : void {
 
   $http_client = new HttpClient();
 
   foreach($this->http_headers as $name=>$value) {
-
+    
     $http_client->setHeader($name, $value);
 
   }
 
-  return $http_client;
+  $this->httpClient = $http_client;
 
  }
-                          
+                       
  private function __construct() {}
  private function __clone(){}
 }
