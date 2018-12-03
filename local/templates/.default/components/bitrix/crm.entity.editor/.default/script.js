@@ -1073,6 +1073,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		showAdvertisingFields : function() {
+
+			const textValue = this.getTextValue(this.node('UF_CRM_1543834597'));
+
+            this.advertisingView(textValue);
+
+		},
+
 		initializeAdvertisingEvent : function() {
 
 			this.bindEvent(this.nodeRadio('UF_CRM_1543834597'), 'click', this.onAdvertisingChange);
@@ -1096,6 +1104,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 								 YES : { value : true }
 
 							},
+
 							'view' : {
 		 
 								YES : { value : 'да' }
@@ -1104,8 +1113,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						});
 
-			
-			if(state == viewModel.YES) {
+			console.log(state, viewModel.YES);
+			if(state === viewModel.YES) {
 
 				for(var code of viewFields) {
  
@@ -1990,9 +1999,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
+
+				//this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
+				//this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
+
 				this.registerView(this._CATEGORY.TO_RENT, 'showVacationFields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
 	
 				this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
 				this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
