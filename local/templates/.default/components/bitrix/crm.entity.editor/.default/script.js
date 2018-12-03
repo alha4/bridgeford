@@ -1078,7 +1078,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			const textValue = this.getTextValue(this.node('UF_CRM_1543834597'));
 
             this.advertisingView(textValue);
-
+            
 		},
 
 		initializeAdvertisingEvent : function() {
@@ -1112,6 +1112,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						 }
 
 						});
+
+						console.log(state, viewModel.YES);
 
 			if(state === viewModel.YES) {
 
