@@ -1119,7 +1119,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				for(var code of viewFields) {
  
-					this.showField(this.node(code));
+					this.showField(document.querySelector(`div[data-cid="${code}"]`));
 	
 				
 			  }
@@ -1133,6 +1133,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			  }
 
 			}
+		},
+
+		showAdvertisingCianFields : function() {
+
+			const textValue = this.getTextValue(this.node('UF_CRM_1543837331299'));
+
+            this.advertisingCianView(textValue);
+            
 		},
 
 		initializeAdvertisingCianEvent : function() {
@@ -1258,7 +1266,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
     duplication2View : function(duplication) {
 
-			const viewFields = ['UF_CRM_1540977306391','UF_CRM_1540977795','UF_CRM_1540977921792','UF_CRM_1540978008'];
+			const viewFields = ['UF_CRM_1540977306391','UF_CRM_1540977795','UF_CRM_1540978008'];
 
 			if(duplication.value == 1 && duplication.checked) {
 
@@ -2017,6 +2025,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeEventCompetitions');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingCianEvent');
+			
 	
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateRentEvent');
@@ -2040,6 +2049,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingCianFields');
 
 				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
