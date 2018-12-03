@@ -33,6 +33,15 @@
 
 #section_reklama div[data-cid="UF_CRM_1540977921792"],
 #section_reklama div[data-cid="UF_CRM_1540977409431"], 
+#section_reklama div[data-cid="UF_CRM_1540976407661"], /* Тип выгрузки */
+#section_reklama div[data-cid="UF_CRM_1540977227270"], /* Тип выгрузки для продублированного */
+#section_reklama div[data-cid="UF_CRM_1540977530"], /* Тип объекта для дублирования */
+
+#section_reklama_v_tsian_ div[data-cid="UF_CRM_1540976407661"],
+#section_reklama_v_tsian_ div[data-cid="UF_CRM_1540977530"],
+#section_reklama_v_tsian_ div[data-cid="UF_CRM_1540977227270"],
+#section_reklama_v_tsian_ div[data-cid="UF_CRM_1540977306391"], /* Тип выгрузки для продублированного 2*/
+#section_reklama_v_tsian_ div[data-cid="UF_CRM_1540977795"], /* Тип объекта для дублирования 2 */
 
 #section_arendator div[data-cid="UF_CRM_1541055274251"],
 #section_arendator div[data-cid="UF_CRM_1541055803"],

@@ -1113,7 +1113,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						});
 
-			console.log(state, viewModel.YES);
 			if(state === viewModel.YES) {
 
 				for(var code of viewFields) {
@@ -1131,6 +1130,48 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				
 			  }
 
+			}
+		},
+
+		initializeAdvertisingCianEvent : function() {
+
+			this.bindEvent(this.nodeRadio('UF_CRM_1543837331299'), 'click', this.onAdvertisingCianChange);
+		
+		},
+
+		onAdvertisingCianChange : function(e) {
+
+      this.advertisingCianView(e.target.checked);
+
+		},
+
+		advertisingCianView : function(state) {
+
+			const viewModel = this.prepareModel({
+
+              'edit' : {
+		 
+								 YES : { value : true }
+
+							},
+
+							'view' : {
+		 
+								YES : { value : 'да' }
+
+						 }
+
+						});
+
+			if(state === viewModel.YES) {
+
+					this.showField(this.node('UF_CRM_1540976407661'));
+	
+       
+			} else {
+
+					this.hideField(this.node('UF_CRM_1540976407661'));
+				
 			}
 		},
 
@@ -1215,7 +1256,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
     duplication2View : function(duplication) {
 
-			const viewFields = ['UF_CRM_1540977306391','UF_CRM_1540977409431','UF_CRM_1540977655471','UF_CRM_1540977795','UF_CRM_1540977921792','UF_CRM_1540978008'];
+			const viewFields = ['UF_CRM_1540977306391','UF_CRM_1540977795','UF_CRM_1540977921792','UF_CRM_1540978008'];
 
 			if(duplication.value == 1 && duplication.checked) {
 
@@ -1223,15 +1264,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
  
 				   this.showField(document.querySelector(`[data-cid="${code}"`));
 				 
-				}
+				} 
 
 			} else {
 
         for(var code of viewFields) {
  
-					 if(!document.querySelector(`[data-cid="${code}"`)) {
-                console.log(code);
-					 }
 					 this.hideField(document.querySelector(`[data-cid="${code}"`));
 					
 				}
@@ -1976,6 +2014,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeVacationRentalEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeEventCompetitions');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingEvent');
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingCianEvent');
 	
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateRentEvent');
@@ -2000,8 +2039,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
 
-				//this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
-				//this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
+				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
 
 				this.registerView(this._CATEGORY.TO_RENT, 'showVacationFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
