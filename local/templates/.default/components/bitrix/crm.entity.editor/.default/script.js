@@ -831,8 +831,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		onCaclulateObjectPrice  : function() {
 
-      const objValue = this.nodeSelectValue(this._caclulateObj);
-    
+			const objValue = this.nodeSelectValue(this._caclulateObj);
+			
 			if(objValue) {
 
 				 this.objPriceView(objValue);
@@ -2050,18 +2050,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingCianFields');
-
 				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
-
 				this.registerView(this._CATEGORY.TO_RENT, 'showVacationFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
 	
 				this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
 				this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
 				this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
-	
-		
+
 				this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
 				this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
 				this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
