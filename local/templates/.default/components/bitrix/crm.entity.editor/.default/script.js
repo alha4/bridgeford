@@ -299,12 +299,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 NOT_ACTUAL	 = {
 						 
 							MOSCOW :     ['UF_CRM_1540202747','UF_CRM_1540202807','UF_CRM_1540202766'],
-							SUB_MOSCOW : ['UF_CRM_1540203111','UF_CRM_1540203015','UF_CRM_1543406565'],
-							NEW_MOSCOW : ['UF_CRM_1540203015','UF_CRM_1543406565'] 
+							SUB_MOSCOW : ['UF_CRM_1540203111','UF_CRM_1540203015','UF_CRM_1543406565']
 
 					 },
 
-					 NOT_ACTUAL_VALUE = 'не актуально';
+					 NOT_ACTUAL_VALUE = 'не актуально',
    
 					 regions = this.prepareModel(viewData);
 					 
@@ -324,8 +323,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					
 					for(uf of NOT_ACTUAL.MOSCOW) {
 
-						 console.log( this.getDefaultOptions(uf, NOT_ACTUAL_VALUE) ) ;
-              
+						 this.setDefaultValue(uf, NOT_ACTUAL_VALUE);
 
 					}
 			 
@@ -336,6 +334,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  }
  
 			   }  else {
+
+				 for(uf of NOT_ACTUAL.SUB_MOSCOW) {
+
+						this.setDefaultValue(uf, NOT_ACTUAL_VALUE);
+						
+				 }
  
 				 for(node of geoFields) {
 					
@@ -1717,7 +1721,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		getDefaultOptions : function(select, value) {
+		setDefaultValue : function(select, value) {
 
 			const nodeSelect = this.nodeSelect(select),
 			      nodeInput  = this.nodeInput(select);
@@ -2074,11 +2078,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeEventCompetitions');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingCianEvent');
-			
+				this.registerEventListener(this._CATEGORY.TO_RENT,'showDescriptionFields');
 	
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateRentEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
+				this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
 	
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateObjectEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
@@ -2087,6 +2092,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializePaideExplotationEvent');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showDescriptionFields');
 	
 				this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
