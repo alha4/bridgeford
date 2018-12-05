@@ -295,6 +295,16 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 														'UF_CRM_1540203111',
 														'UF_CRM_1543406565'
 													],
+
+					 NOT_ACTUAL	 = {
+						 
+							MOSCOW :     ['UF_CRM_1540202747','UF_CRM_1540202807','UF_CRM_1540202766'],
+							SUB_MOSCOW : ['UF_CRM_1540203111','UF_CRM_1540203015','UF_CRM_1543406565'],
+							NEW_MOSCOW : ['UF_CRM_1540203015','UF_CRM_1543406565'] 
+
+					 },
+
+					 NOT_ACTUAL_VALUE = 'не актуально';
    
 					 regions = this.prepareModel(viewData);
 					 
@@ -310,7 +320,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 							
 					  }
 		
-				  }
+					}
+					
+					for(uf of NOT_ACTUAL.MOSCOW) {
+
+						 console.log( this.getDefaultOptions(uf, NOT_ACTUAL_VALUE) ) ;
+              
+
+					}
 			 
 				  for(uf of FIELDS_MOSCOW) {
  
@@ -1697,6 +1714,38 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		nodeRadio :  function(exp) {
  
 			return document.querySelectorAll(`input[name="${exp}"]`)[1];
+
+		},
+
+		getDefaultOptions : function(select, value) {
+
+			const nodeSelect = this.nodeSelect(select),
+			      nodeInput  = this.nodeInput(select);
+
+			if(nodeSelect) {
+
+				const nodeSelectOptions = nodeSelect.options;
+
+			  for(var i = 0; i < nodeSelectOptions.length; i++) {
+
+				  if(nodeSelectOptions[i].text == value) {
+
+					  nodeSelect.selectedIndex = i;
+					
+					  return true;
+
+				  }
+				 }
+				 
+			 } else if(nodeInput) {
+
+					 nodeInput.value = value;  
+					 
+					 return true;
+
+			 }
+			
+			 return false;
 
 		},
 
