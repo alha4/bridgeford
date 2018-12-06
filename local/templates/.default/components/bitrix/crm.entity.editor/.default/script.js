@@ -221,6 +221,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			this._regionSelect = this.nodeSelect("UF_CRM_1540202667");
 
+			if(!this._regionSelect) {
+				
+				console.log('селект регион ещё не создан');
+				
+			} 
+			
 		  this.bindEvent(this._regionSelect, 'change', this.onRegionChange );
 	
 		},
@@ -228,6 +234,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		onRegionChange : function() {
 
 			const regionValue = this.nodeSelectValue(this._regionSelect);
+
+			console.log('меняем регион',regionValue);
 		        
 			if(regionValue) {
 
@@ -299,7 +307,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 NOT_ACTUAL	 = {
 						 
 							MOSCOW :     ['UF_CRM_1540202747','UF_CRM_1540202807','UF_CRM_1540202766'],
-							SUB_MOSCOW : ['UF_CRM_1540203111','UF_CRM_1540203015','UF_CRM_1543406565']
+							NEW_MOSCOW : ['UF_CRM_1540203144','UF_CRM_1540203015','UF_CRM_1543406565'],
+							SUB_MOSCOW : ['UF_CRM_1540203111','UF_CRM_1540203015','UF_CRM_1543406565','UF_CRM_1540203144']
+					 },
+
+					 NOT_SELECT = {
+
+							MOSCOW :     ['UF_CRM_1543406565','UF_CRM_1540203015','UF_CRM_1540203111','UF_CRM_1540203144'],
+							SUB_MOSCOW : ['UF_CRM_1540203144'],
+							NEW_MOSCOW : ['UF_CRM_1540203144','UF_CRM_1540203111']
 
 					 },
 
@@ -320,27 +336,23 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					  }
 		
 					}
+
+				  for(uf of FIELDS_MOSCOW) {
+ 
+					   this.showField(document.querySelector('[data-cid="' + uf + '"]'));
+ 
+					}
+					
+					this.setNotSelectValue();
 					
 					for(uf of NOT_ACTUAL.MOSCOW) {
 
 						 this.setDefaultValue(uf, NOT_ACTUAL_VALUE);
 
 					}
-			 
-				  for(uf of FIELDS_MOSCOW) {
- 
-					   this.showField(document.querySelector('[data-cid="' + uf + '"]'));
- 
-				  }
- 
+
 			   }  else {
 
-				 for(uf of NOT_ACTUAL.SUB_MOSCOW) {
-
-						this.setDefaultValue(uf, NOT_ACTUAL_VALUE);
-						
-				 }
- 
 				 for(node of geoFields) {
 					
 					if(node.dataset.cid != HIDDEN_FIELDS.INNER) {
@@ -359,6 +371,30 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 this.hideField(document.querySelector('[data-cid="' + HIDDEN_FIELDS.AREA + '"]'));
  
 				 }
+
+				 if(regionValue == regions.SUB_MOSCOW) {
+
+					this.setNotSelectValue();
+
+					for(uf of NOT_ACTUAL.SUB_MOSCOW) {
+
+					 this.setDefaultValue(uf, NOT_ACTUAL_VALUE);
+					 
+					}
+
+				}
+
+				if(regionValue == regions.NEW_MOSCOW) {
+
+				 this.setNotSelectValue();
+
+				 for(uf of NOT_ACTUAL.NEW_MOSCOW) {
+
+					 this.setDefaultValue(uf, NOT_ACTUAL_VALUE);
+					
+				 }
+
+				}
 			 } 
 		 }
 		},
@@ -1721,6 +1757,36 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		setNotSelectValue : function(is_moskow = false) {
+
+			const nodeSelect = document.querySelectorAll("#section_geografiya .show-field select").length > 0 ? document.querySelectorAll("#section_geografiya .show-field select") 
+											 : document.querySelectorAll("#section_geografiya select"),
+											 REGION_SELECT = 'UF_CRM_1540202667';
+		
+      if(nodeSelect) {
+
+				for(var i = 0; i < nodeSelect.length; i++) {
+				 
+						let node =  nodeSelect[i];
+
+						if(node.name == REGION_SELECT) {
+							 
+							 continue;
+
+						}
+						
+					  node.selectedIndex = 0;
+
+				}
+				
+				return true;
+
+			}
+
+			return false;
+
+		},
+
 		setDefaultValue : function(select, value) {
 
 			const nodeSelect = this.nodeSelect(select),
@@ -1743,7 +1809,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 
 			 } else if(nodeInput) {
 
-					 nodeInput.value = value;  
+					 nodeInput.value = '';  
 					 
 					 return true;
 
@@ -2063,10 +2129,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._generalBrokerID  = BX.prop.get(this._settings, "generalBrokerID", null);
 	
 				this._customerID = BX.prop.get(this._settings, "customerID", null);
-	
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
-				this.registerView(this._CATEGORY.TO_RENT,'initializeMapEvent');
 
+				BX.showWait(document.body);
+				
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
+				this.registerEventListener(this._CATEGORY.TO_RENT,'showGeoFields');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeLandEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeReadyToMoveEvent');
@@ -2096,6 +2163,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	
 				this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
+				this.registerView(this._CATEGORY.TO_RENT, 'initializeMapEvent');
 				this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
 				this.registerView(this._CATEGORY.TO_RENT, 'showReadyToMoveFields');
@@ -2120,8 +2188,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
 				this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
 
-				BX.showWait(document.body);
-
 				setTimeout(() => {
 			
 						this.initializeViews(); 
@@ -2130,7 +2196,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						
 				}, 2000);
 
-			}
+		 }
 		},
 
 		release: function()
@@ -2172,7 +2238,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					model: this._model
 				};
 			BX.onCustomEvent(window, "BX.Crm.EntityEditor:onOpen", [ this, eventArgs ]);
-
+     
 		},
 		onSliderClose: function(event)
 		{
