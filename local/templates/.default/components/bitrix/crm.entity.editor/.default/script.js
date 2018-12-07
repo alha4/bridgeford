@@ -2153,7 +2153,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeGeoEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE, 'showGeoFields');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateRentEvent');
+				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateObjectEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
 	
@@ -2192,10 +2192,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
 				  this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
-					
+					this.registerView(this._CATEGORY.TO_SALE, 'showSystemInfoFields');
+
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'getGeoData');
-			  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
+					this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
+					this.registerView(this._CATEGORY.TO_BUSSINES, 'showSystemInfoFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
