@@ -2150,11 +2150,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingCianEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'showDescriptionFields');
 	
+				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeGeoEvent');
+				this.registerEventListener(this._CATEGORY.TO_SALE, 'showGeoFields');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateRentEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
 	
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'initializeGeoEvent');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateObjectEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
@@ -2183,10 +2187,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			    this.registerView(this._CATEGORY.TO_RENT, 'showVacationFields');
 			  	this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
 	
+					this.registerView(this._CATEGORY.TO_SALE, 'showGeoFields');
 				  this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
 				  this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
-				  this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
-
+					this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
+					
+					this.registerView(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
 			  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
