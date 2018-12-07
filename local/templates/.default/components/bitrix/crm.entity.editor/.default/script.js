@@ -950,9 +950,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		rentView : function(rentValue) {
 			
-			const priceOnYear  = document.querySelector('input[name="UF_CRM_1540554743072"]'),
-						priceOnMonth = document.querySelector('input[name="UF_CRM_1540456697"]'),
-						priceRental  = parseFloat(document.querySelector('input[name="UF_CRM_1540456417"').value),
+			const priceOnYear  = this.nodeInput('UF_CRM_1540554743072'),
+						priceOnMonth = this.nodeInput('UF_CRM_1540456697'),
+						priceRental  = parseFloat(this.nodeInput('UF_CRM_1540456417').value),
 
 						squareNode   = this.nodeInput("UF_CRM_1541076330647"),
 
