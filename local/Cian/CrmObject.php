@@ -88,9 +88,9 @@
 
    }
 
-   public static function street(string $street, ?int $street_type = 0) : string {
+   public static function street(?string $street = '', ?int $street_type = 0) : ?string {
 
-    if($street_type > 0) {
+    if($street_type > 0 && strlen($street) > 0) {
 
       return sprintf("%s %s", $street, self::streetType($street_type) );
 

@@ -17,6 +17,7 @@ if (!empty($arResult['BUTTONS']))
 	{
 		$template = SITE_TEMPLATE_ID === 'bitrix24' ? 'slider' : 'type2';
 	}
+
  
 	$APPLICATION->IncludeComponent(
 		'bitrix:crm.interface.toolbar',
@@ -28,7 +29,7 @@ if (!empty($arResult['BUTTONS']))
 			'ENTITY_ID' => $arParams['OWNER_INFO']['ENTITY_ID']
 		),
 		$component,
-		array('HIDE_ICONS' => 'Y')
+		array('HIDE_ICONS' => 'N')
 	);
 }
 

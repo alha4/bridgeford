@@ -13,6 +13,8 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED!==true)die();
 
 use \Bitrix\Main;
 use \Bitrix\Crm;
+use \Bitrix\Crm\Category\DealCategory;
+
 CJSCore::Init(array('translit','ajax', 'uf', 'uploader', 'avatar_editor', 'core_money_editor', 'tooltip', 'phone_number', 'spotlight', 'userfield_resourcebooking', 'helper'));
 Main\UI\Extension::load('ui.buttons');
 Main\UI\Extension::load('ui.notification');
@@ -38,6 +40,7 @@ if($arResult['ENTITY_TYPE_ID'] == CCrmOwnerType::Deal) {
 	Main\Page\Asset::getInstance()->addCss($templateFolder.'/fields.css');
 
 }
+
 
 $guid = $arResult['GUID'];
 $prefix = strtolower($guid);
@@ -649,7 +652,7 @@ if(!empty($htmlEditorConfigs))
 				BX.Crm.EntityEditor.create(
 					"<?=CUtil::JSEscape($guid)?>",
 					{
-						categoryID  : <?=\CCrmDeal::GetCategoryID($arResult['ENTITY_ID'])?>,
+						categoryID  : <?=DealCategory::resolveFromStageID($arResult['ENTITY_DATA']['STAGE_ID']);#\CCrmDeal::GetCategoryID($arResult['ENTITY_ID'])?>,
 						isAdmin     : "<?=$USER->IsAdmin() ? 'YES' : 'NO' ?>",
 						systemInfo  : <?=CUtil::PhpToJSObject($systemInfo)?>,
 						brokerAssignedID : <?=$brokerAssignedID?>,
