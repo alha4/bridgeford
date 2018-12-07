@@ -930,21 +930,21 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				case viewModel.ALL_OBJ :
 
 			    	priceOnAllObj.value =  (priceObj);
-						priceOn1SQM.value   =  (priceObj / square);
+						priceOn1SQM.value   =  Math.round(priceObj / square);
 
 				break;
 
 				case viewModel.SQ1M :
 
-			    	priceOnAllObj.value =  (priceObj * square);
+			    	priceOnAllObj.value =  Math.round(priceObj * square);
 				    priceOn1SQM.value   =  priceObj;
 
 				break;
 
 			 }
 
-			 payback.value = (priceObj) / priceOnAllObj.value;
-		   cashing.value =  priceOnAllObj.value  / (priceObj) + "%";	
+			 payback.value = Math.round(priceObj / priceOnAllObj.value, 2);
+		   cashing.value = Math.round(priceOnAllObj.value  / priceObj, 2) + "%";	
 
 		},
 
@@ -2188,11 +2188,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			  	this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
 	
 					this.registerView(this._CATEGORY.TO_SALE, 'showGeoFields');
+					this.registerView(this._CATEGORY.TO_SALE, 'getGeoData');
 				  this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
 				  this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 					
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
+					this.registerView(this._CATEGORY.TO_BUSSINES, 'getGeoData');
 			  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
