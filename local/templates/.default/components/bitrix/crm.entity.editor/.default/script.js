@@ -219,16 +219,19 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		
 		initializeGeoEvent : function() {
 
-			this._regionSelect = this.nodeSelect("UF_CRM_1540202667");
+			setTimeout( () => {
 
-			if(!this._regionSelect) {
-				
-				console.log('селект регион ещё не создан');
-				
-			} 
-			
-		  this.bindEvent(this._regionSelect, 'change', this.onRegionChange );
+					this._regionSelect = this.nodeSelect("UF_CRM_1540202667");
+
+					if(!this._regionSelect) {
+             console.log('ещё не создан регион');
+					}
+					
+		      this.bindEvent(this._regionSelect, 'change', this.onRegionChange );
 	
+			}, 	this._entityId > 0 ? 0 : 1000);
+
+
 		},
 		
 		onRegionChange : function() {
@@ -2160,42 +2163,44 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializePaideExplotationEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showDescriptionFields');
-	
-				this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
-				this.registerView(this._CATEGORY.TO_RENT, 'initializeMapEvent');
-				this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showReadyToMoveFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showExploitationFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showDescriptionFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingCianFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showVacationFields');
-				this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
-	
-				this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
-				this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
-				this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 
-				this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
-				this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
-				this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
-				this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
-				this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
+				if(this._entityId > 0) {
+	
+				  this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
+			  	this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
+			  	this.registerView(this._CATEGORY.TO_RENT, 'initializeMapEvent');
+				  this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
+			  	this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
+				  this.registerView(this._CATEGORY.TO_RENT, 'showReadyToMoveFields');
+				  this.registerView(this._CATEGORY.TO_RENT, 'showExploitationFields');
+			  	this.registerView(this._CATEGORY.TO_RENT, 'showDescriptionFields');
+			  	this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFields');
+			  	this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
+				  this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
+				  this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingCianFields');
+				  this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
+			  	this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
+			    this.registerView(this._CATEGORY.TO_RENT, 'showVacationFields');
+			  	this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
+	
+				  this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
+				  this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
+				  this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 
-				setTimeout(() => {
+			  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
+				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
+				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
+				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
+				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
+
+				  setTimeout(() => {
 			
-						this.initializeViews(); 
+						this.initializeViews(); 	
+					}, 2000);
+					
+			  }
 
-						BX.closeWait(document.body);
-						
-				}, 2000);
-
+			 BX.closeWait(document.body);
 		 }
 		},
 
