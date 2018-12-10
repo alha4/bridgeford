@@ -2091,7 +2091,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateObjectEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeAdvertisingEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeAdvertisingCianEvent');
-
+				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeDuplicationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
 	
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeGeoEvent');
@@ -2105,6 +2105,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializePaideExplotationEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showDescriptionFields');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeDuplicationEvent');
 
 				if(this._entityId > 0) {
 	
@@ -2132,6 +2133,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showSystemInfoFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingFields'); 
+					this.registerView(this._CATEGORY.TO_SALE, 'showDuplication1Fields');
+			  	this.registerView(this._CATEGORY.TO_SALE, 'showDuplication2Fields');
 
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'getGeoData');
@@ -2142,6 +2145,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'showAdvertisingFields')
+					this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication1Fields');
+			  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication2Fields');
 					
 				  setTimeout(() => {
 			
