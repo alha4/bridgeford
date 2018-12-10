@@ -1066,12 +1066,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				if(this.isAdmin()) {
 
-					this.showField(document.querySelector('div[data-cid="UF_CRM_1540471444329"]'));
-					this.showField(document.querySelector('div[data-cid="UF_CRM_1540471471728"]'));
+					this.showField(this.node("UF_CRM_1540471444329"));
+					this.showField(this.node("UF_CRM_1540471471728"));
 
 					if(this.getDealCategory() == this._CATEGORY.TO_RENT) {
 					
-						this.showField(document.querySelector('div[data-cid="UF_CRM_1540974006"]'));
+						this.showField(this.node("UF_CRM_1540974006"));
 					
 					}
 				}
@@ -1081,9 +1081,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		showAdvertisingFields : function() {
 
+			if(this.isAdmin()) {
+
 			const textValue = this.getTextValue(this.node('UF_CRM_1543834597'));
 
-            this.advertisingView(textValue);
+			      this.showField(document.querySelector('#section_reklama'));
+
+						this.advertisingView(textValue);
+						
+			}
             
 		},
 
@@ -1143,9 +1149,16 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		showAdvertisingCianFields : function() {
 
+			if(this.isAdmin()) {
+
 			const textValue = this.getTextValue(this.node('UF_CRM_1543837331299'));
 
-            this.advertisingCianView(textValue);
+			      this.showField(document.querySelector('#section_reklama_v_tsian_'));
+
+						this.advertisingCianView(textValue);
+						
+
+			}
             
 		},
 
