@@ -879,18 +879,19 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			       priceMAP     = parseInt(this.getTextValue(this.node('UF_CRM_1541055727999')).replace(/\s+/ig,"") ) * 12;
 
-					   payback      = this.nodeInput('UF_CRM_1541067577722'), //окупаемость
+					   payback      = this.nodeInput('UF_CRM_1544431330'), //окупаемость
 					   cashing      = this.nodeInput('UF_CRM_1541067645026'), //доходность
 
 					   priceObj     = parseFloat( this.nodeInput('UF_CRM_1541072013901').value ),
 
 					   squareValue  = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
 
-				
+				let  paybackPrecent = parseInt((priceObj / priceMAP) / 12);
+
 						 priceOn1SQM.value = BX.Currency.currencyFormat(Math.round(priceObj / squareValue), 'RUB', true);
 
-						 //payback.value = Math.round(priceObj / priceOnAllObj.value, 2);
-						 console.log(priceMAP);
+						 payback.value = paybackPrecent + "%";
+					
 		         cashing.value = (priceMAP / priceObj) * 100 + "%";	
 
 		},
@@ -1736,6 +1737,26 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		precentToDate : function(number) {
+	 
+			var monthIndex;
+
+			if((monthIndex = number.indexOf(".")) != -1) {
+
+				const month = Math.ceil((12 / 100) * parseInt( (number.substr(monthIndex + 1)).substr(0,2) )),
+				      dateYear = number.substr(0, monthIndex);
+				
+				// console.log((number.substr(monthIndex + 1)).substr(0,2), number, monthIndex);
+
+				return `${dateYear} года, ${month} месяца`;
+
+			}
+
+			return `${number} года`;
+
+		},
+
+
 		prepareModel : function(params) {
 
 		  const	viewModel = {
@@ -2068,14 +2089,17 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_SALE, 'showGeoFields');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateObjectEvent');
-			
+				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeAdvertisingEvent');
+				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeAdvertisingCianEvent');
+
 				this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
 	
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'initializeGeoEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeGeoEvent');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showGeoFields');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateObjectEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
-		
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeAdvertisingEvent');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeAdvertisingCianEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
@@ -2107,6 +2131,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showSystemInfoFields');
+					this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingFields'); 
 
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'getGeoData');
@@ -2116,7 +2141,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
-
+					this.registerView(this._CATEGORY.TO_BUSSINES, 'showAdvertisingFields')
+					
 				  setTimeout(() => {
 			
 						this.initializeViews(); 	
