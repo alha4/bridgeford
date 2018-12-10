@@ -943,12 +943,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		rentView : function() {
 			
 			const priceSq2OnYear  = this.nodeInput('UF_CRM_1540554743072'),
+			      priceOnYear     = this.nodeInput('UF_CRM_1544425067'),
 						priceRental     = parseFloat(this.nodeInput('UF_CRM_1540456417').value),
 
 						squareValue     = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
 
-            priceSq2OnYear.value  = (priceRental * 12 / squareValue);
-							
+						priceSq2OnYear.value  = (priceRental * 12 / squareValue);
+						
+						priceOnYear.value  = priceRental * 12;
 					
 
 		},
