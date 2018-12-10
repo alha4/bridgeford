@@ -824,13 +824,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeCaclulateRentEvent : function() {
 
-			this._caclulateRent = this.nodeSelect("UF_CRM_1540456536");
-
 			this._rentalCost    = this.nodeInput("UF_CRM_1540456417");
-
-			this.bindEvent(this._caclulateRent, 'change',this.onCaclulateRent);
 		
-			this.bindEvent(this._rentalCost, 'keyup',    this.onRentCostChange);
+			this.bindEvent(this._rentalCost, 'keyup',  this.onRentCostChange);
 
 		},
 
