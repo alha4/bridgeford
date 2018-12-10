@@ -948,9 +948,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						squareValue     = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
 
-						priceSq2OnYear.value  = (priceRental * 12 / squareValue);
+						priceSq2OnYear.value  = BX.Currency.currencyFormat(Math.round(priceRental * 12 / squareValue), 'RUB', true);  
 						
-						priceOnYear.value  = priceRental * 12;
+						priceOnYear.value  = BX.Currency.currencyFormat(priceRental * 12, 'RUB', true);  
 					
 
 		},

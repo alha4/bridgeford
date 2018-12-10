@@ -15,7 +15,7 @@ use \Bitrix\Main;
 use \Bitrix\Crm;
 use \Bitrix\Crm\Category\DealCategory;
 
-CJSCore::Init(array('translit','ajax', 'uf', 'uploader', 'avatar_editor', 'core_money_editor', 'tooltip', 'phone_number', 'spotlight', 'userfield_resourcebooking', 'helper'));
+CJSCore::Init(array('translit','ajax', 'uf', 'currency', 'uploader', 'avatar_editor', 'core_money_editor', 'tooltip', 'phone_number', 'spotlight', 'userfield_resourcebooking', 'helper'));
 Main\UI\Extension::load('ui.buttons');
 Main\UI\Extension::load('ui.notification');
 Main\UI\Extension::load("ui.dropdown");
@@ -647,6 +647,12 @@ if(!empty($htmlEditorConfigs))
 				"<?=CUtil::JSEscape($guid)?>",
 				<?=\CUtil::PhpToJSObject($arResult['REST_PLACEMENT_TAB_CONFIG'])?>
 			);
+ 
+			<?
+          $currencyFormat = CCurrencyLang::GetFormatDescription('RUB'); 
+			?>
+			
+			BX.Currency.setCurrencyFormat('RUB', <? echo CUtil::PhpToJSObject($currencyFormat, false, true); ?>);  
 
 			BX.Crm.EntityEditor.setDefault(
 				BX.Crm.EntityEditor.create(
