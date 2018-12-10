@@ -844,11 +844,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		onRentCostChange : function() {
 
-			const rentValue = this.nodeSelectValue(this._caclulateRent);
-
-			if(rentValue)
-
-        this.rentView(rentValue);
+        this.rentView();
 
 		},
 
@@ -944,64 +940,16 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		rentView : function(rentValue) {
+		rentView : function() {
 			
-			const priceOnYear  = this.nodeInput('UF_CRM_1540554743072'),
-						priceOnMonth = this.nodeInput('UF_CRM_1540456697'),
-						priceRental  = parseFloat(this.nodeInput('UF_CRM_1540456417').value),
+			const priceSq2OnYear  = this.nodeInput('UF_CRM_1540554743072'),
+						priceRental     = parseFloat(this.nodeInput('UF_CRM_1540456417').value),
 
-						squareNode   = this.nodeInput("UF_CRM_1541076330647"),
+						squareValue     = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
 
-						square  = parseInt(squareNode.value) || 1;
-
-						viewData = {
-
-							 'edit' :  {
-
-								 ALL_MONTH : { value : 147},
-								 ALL_YEAR  : { value : 149},
-								 SQ1M_YEAR : { value : 148}
-
-							 }
-						},
-
-						viewModel = this.prepareModel(viewData);
-
-						switch(parseInt(rentValue)) {
-
-							 case viewModel.ALL_MONTH :
-
-               priceOnYear.value  = (priceRental * 12 / square);
-							 priceOnMonth.value =  priceRental;
-
-							 console.log('все месяцы',rentValue, priceRental);
-
-							 break;
-
-							 case viewModel.SQ1M_YEAR :
-
-							 priceOnYear.value  = priceRental;
-							 priceOnMonth.value = (priceRental * square / 12);
-
-							 console.log('за год 1 кв м',rentValue, priceRental);
-							 
-							 break;
-
-							 case viewModel.ALL_YEAR :
-
-							 priceOnYear.value  = priceRental / square ;
-							 priceOnMonth.value = priceRental / 12  ;
-
-							 console.log('за год',rentValue, priceRental);
-							 
-							 break;
-
-							 default :
- 
-							 console.log('не найдено',rentValue);
-
-
-						}
+            priceSq2OnYear.value  = (priceRental * 12 / squareValue);
+							
+					
 
 		},
 
