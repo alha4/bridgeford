@@ -1087,7 +1087,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				for(var code of viewFields) {
  
-					this.showField(document.querySelector(`div[data-cid="${code}"]`));
+					this.showField(this.node(code));
 	
 				
 			  }
@@ -1109,7 +1109,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			const textValue = this.getTextValue(this.node('UF_CRM_1543837331299'));
 
-			      this.showField(document.querySelector('#section_reklama_v_tsian_'));
+			      this.showField(document.querySelector('#section_reklama_v_tsian'));
 
 						this.advertisingCianView(textValue);
 						
@@ -1162,8 +1162,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeDuplicationEvent : function() {
 
-			this.bindEvent(document.querySelector('[data-cid="UF_CRM_1540976695789"]'), 'click', this.onDuplication1Change);
-			this.bindEvent(document.querySelector('[data-cid="UF_CRM_1540976723316"]'), 'click', this.onDuplication2Change);
+			this.bindEvent(this.node("UF_CRM_1540976695789"), 'click', this.onDuplication1Change);
+			this.bindEvent(this.node("UF_CRM_1540976723316"), 'click', this.onDuplication2Change);
 			
 		},
 
@@ -1185,7 +1185,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			  for(var code of viewFields) {
  
-				   this.showField(document.querySelector(`[data-cid="${code}"`));
+				   this.showField(this.node(code));
 				 
 				}
 
@@ -1193,7 +1193,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
         for(var code of viewFields) {
  
-					 this.hideField(document.querySelector(`[data-cid="${code}"`));
+					 this.hideField(this.node(code));
 					
 				 }
 
@@ -2133,6 +2133,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showSystemInfoFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingFields'); 
+					this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingCianFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showDuplication1Fields');
 			  	this.registerView(this._CATEGORY.TO_SALE, 'showDuplication2Fields');
 
@@ -2145,6 +2146,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'showAdvertisingFields')
+					this.registerView(this._CATEGORY.TO_BUSSINES, 'showAdvertisingCianFields');
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication1Fields');
 			  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication2Fields');
 					
