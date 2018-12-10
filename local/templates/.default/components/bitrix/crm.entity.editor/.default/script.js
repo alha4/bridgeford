@@ -831,12 +831,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		},
 
 		initializeCaclulateObjectEvent : function() {
-
-			this._caclulateObj = this.nodeSelect("UF_CRM_1541072087");
 		
 			this._objCost      = this.nodeInput("UF_CRM_1541072013901");
-
-			this.bindEvent(this._caclulateObj, 'change', this.onCaclulateObjectPrice);
 		
 			this.bindEvent(this._objCost, 'keyup',  this.onObjCostChange);
 
@@ -850,11 +846,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		onObjCostChange : function() {
 
-			const objValue = this.nodeSelectValue(this._caclulateObj);
-
-			if(objValue)
-
-         this.objPriceView(objValue);
+         this.objPriceView();
 
 		},
 
@@ -881,62 +873,22 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		onCaclulateObjectPrice  : function() {
-
-			const objValue = this.nodeSelectValue(this._caclulateObj);
-			
-			if(objValue) {
-
-				 this.objPriceView(objValue);
-			}
-
-		},
-
 		objPriceView : function(costValue) {
  
-			 const  viewModel = this.prepareModel({
+			 const priceOn1SQM  = this.nodeInput('UF_CRM_1541072151310'),
 
-							'edit' :  {
+					   payback       = this.nodeInput('UF_CRM_1541067577722'), //окупаемость
+					   cashing       = this.nodeInput('UF_CRM_1541067645026'); //доходность
 
-								ALL_OBJ : { value : 285},
-								SQ1M : { value : 286}
+					   priceObj      = parseFloat( this.nodeInput('UF_CRM_1541072013901').value ),
 
-							}
-					 }),
+					   squareValue   = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
 
-	
-					 priceOnAllObj = this.nodeInput('UF_CRM_1541072168373'),
-					 priceOn1SQM   = this.nodeInput('UF_CRM_1541072151310'),
+				
+						 priceOn1SQM.value   =  BX.Currency.currencyFormat(Math.round(priceObj / squareValue), 'RUB', true);
 
-					 payback       = this.nodeInput('UF_CRM_1541067577722'), //окупаемость
-					 cashing       = this.nodeInput('UF_CRM_1541067645026'); //доходность
-
-					 priceObj      = parseFloat( this.nodeInput('UF_CRM_1541072013901').value ),
-
-					 squareNode    = this.nodeInput("UF_CRM_1541076330647"),
-
-					 square  = parseInt(squareNode.value) || 1;
-			 
-			 switch(parseInt(costValue)) {
-
-				case viewModel.ALL_OBJ :
-
-			    	priceOnAllObj.value =  (priceObj);
-						priceOn1SQM.value   =  Math.round(priceObj / square);
-
-				break;
-
-				case viewModel.SQ1M :
-
-			    	priceOnAllObj.value =  Math.round(priceObj * square);
-				    priceOn1SQM.value   =  priceObj;
-
-				break;
-
-			 }
-
-			 payback.value = Math.round(priceObj / priceOnAllObj.value, 2);
-		   cashing.value = Math.round(priceOnAllObj.value  / priceObj, 2) + "%";	
+			       //payback.value = Math.round(priceObj / priceOnAllObj.value, 2);
+		         //cashing.value = Math.round(priceOnAllObj.value  / priceObj, 2) + "%";	
 
 		},
 
