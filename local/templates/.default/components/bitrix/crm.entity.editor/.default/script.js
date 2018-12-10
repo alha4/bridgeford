@@ -237,8 +237,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		onRegionChange : function() {
 
 			const regionValue = this.nodeSelectValue(this._regionSelect);
-
-			console.log('меняем регион',regionValue);
 		        
 			if(regionValue) {
 
@@ -1207,7 +1205,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				setTimeout( () => {
 
-				const duplicationTextValue = this.getTextValue(document.querySelector('[data-cid="UF_CRM_1540976695789"]'));
+				const duplicationTextValue = this.getTextValue(this.node("UF_CRM_1540976695789"));
 
         if(duplicationTextValue == 'да') {
 
@@ -1247,7 +1245,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			  for(var code of viewFields) {
  
-				   this.showField(document.querySelector(`[data-cid="${code}"`));
+				   this.showField(this.node(code));
 				 
 				} 
 
@@ -1255,7 +1253,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
         for(var code of viewFields) {
  
-					 this.hideField(document.querySelector(`[data-cid="${code}"`));
+					 this.hideField(this.node(code));
 					
 				}
 
@@ -1293,7 +1291,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeArendNameEvent : function() {
 
-				this._arendName = document.querySelector('select[name="UF_CRM_1541055237379"]');
+				this._arendName = this.nodeSelect('UF_CRM_1541055237379');
 				
         this.bindEvent(this._arendName, 'change', this.onArendNameChange);
 
@@ -1319,7 +1317,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			}),
 
-			otherArendName = document.querySelector('div[data-cid="UF_CRM_1541055274251"]');
+			otherArendName = this.node("UF_CRM_1541055274251");
 
 			if(arendNameValue == viewModel.OTHER && otherArendName) {
 
@@ -1333,7 +1331,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		showArendNameFields : function() {
 
-			const arendNameTextValue = this.getTextValue(document.querySelector('div[data-cid="UF_CRM_1541055237379"]'));
+			const arendNameTextValue = this.getTextValue(this.node("UF_CRM_1541055237379"));
 
 			if(arendNameTextValue) {
 
@@ -1344,7 +1342,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeCurrencyMAPEvent : function() {
 
-			this._currencyMAP = document.querySelector('div[data-cid="UF_CRM_1541055747749"]');
+			this._currencyMAP = this.node("UF_CRM_1541055747749");
 			
 			this.bindEvent(this._currencyMAP, 'click', this.onCurrencyMAPChange);
 
@@ -1361,7 +1359,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		currencyMAPView : function(currencyMAP) {
 
-			const currencyMAPComment = document.querySelector('div[data-cid="UF_CRM_1541055803"]');
+			const currencyMAPComment = this.node("UF_CRM_1541055803");
 
 			if(currencyMAP.checked) {
 
@@ -1375,7 +1373,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		showCurrencyMAPFields : function() {
 
-			const currencyMAPTextValue = this.getTextValue(document.querySelector('div[data-cid="UF_CRM_1541055747749"]'));
+			const currencyMAPTextValue = this.getTextValue(this.node("UF_CRM_1541055747749"));
 
 			if(currencyMAPTextValue == 'да') {
 
@@ -1389,7 +1387,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeBindingMAPEvent : function() {
 
-			this._bindingMAP = document.querySelector('div[data-cid="UF_CRM_1541055982038"]');
+			this._bindingMAP = this.node("UF_CRM_1541055982038");
 			
 			this.bindEvent(this._bindingMAP, 'click', this.onBindingMAPChange);
 
@@ -1406,7 +1404,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		bindingMAPView : function(bindingMAP) {
 
-			const bindingMAPComment = document.querySelector('div[data-cid="UF_CRM_1541056010"]');
+			const bindingMAPComment = this.node("UF_CRM_1541056010");
 
 			if(bindingMAP.checked) {
 
@@ -1420,7 +1418,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		showBindingMAPFields : function() {
 
-			const bindinMAPTextValue = this.getTextValue(document.querySelector('div[data-cid="UF_CRM_1541055982038"]'));
+			const bindinMAPTextValue = this.getTextValue(this.node("UF_CRM_1541055982038"));
 
 			if(bindinMAPTextValue == 'да') {
 
