@@ -877,18 +877,21 @@ if(typeof BX.Crm.EntityEditor === "undefined")
  
 			 const priceOn1SQM  = this.nodeInput('UF_CRM_1541072151310'),
 
-					   payback       = this.nodeInput('UF_CRM_1541067577722'), //окупаемость
-					   cashing       = this.nodeInput('UF_CRM_1541067645026'); //доходность
+			       priceMAP     = parseInt(this.getTextValue(this.node('UF_CRM_1541055727999')).replace(/\s+/ig,"") ) * 12;
 
-					   priceObj      = parseFloat( this.nodeInput('UF_CRM_1541072013901').value ),
+					   payback      = this.nodeInput('UF_CRM_1541067577722'), //окупаемость
+					   cashing      = this.nodeInput('UF_CRM_1541067645026'), //доходность
 
-					   squareValue   = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
+					   priceObj     = parseFloat( this.nodeInput('UF_CRM_1541072013901').value ),
+
+					   squareValue  = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
 
 				
-						 priceOn1SQM.value   =  BX.Currency.currencyFormat(Math.round(priceObj / squareValue), 'RUB', true);
+						 priceOn1SQM.value = BX.Currency.currencyFormat(Math.round(priceObj / squareValue), 'RUB', true);
 
-			       //payback.value = Math.round(priceObj / priceOnAllObj.value, 2);
-		         //cashing.value = Math.round(priceOnAllObj.value  / priceObj, 2) + "%";	
+						 //payback.value = Math.round(priceObj / priceOnAllObj.value, 2);
+						 console.log(priceMAP);
+		         cashing.value = (priceMAP / priceObj) * 100 + "%";	
 
 		},
 
@@ -2065,14 +2068,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_SALE, 'showGeoFields');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateObjectEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
+			
 				this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
 	
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'initializeGeoEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateObjectEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
+		
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
