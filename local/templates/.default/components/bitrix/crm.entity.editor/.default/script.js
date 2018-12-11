@@ -871,26 +871,28 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		objPriceView : function(costValue) {
+		objPriceView : function() {
  
 			 const priceOn1SQM  = this.nodeInput('UF_CRM_1541072151310'),
 
-			       priceMAP     = parseInt(this.getTextValue(this.node('UF_CRM_1541055727999')).replace(/\s+/ig,"") ) * 12;
-
-					   payback      = this.nodeInput('UF_CRM_1544431330'), //окупаемость
-					   cashing      = this.nodeInput('UF_CRM_1541067645026'), //доходность
-
 					   priceObj     = parseFloat( this.nodeInput('UF_CRM_1541072013901').value ),
 
-					   squareValue  = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
+						 squareValue  = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
+						 
+				if(this.getDealCategory() == this._CATEGORY.TO_BUSSINES) {
 
-				let  paybackPrecent = parseInt((priceObj / priceMAP) / 12);
+					 const priceMAP     = parseInt(this.getTextValue(this.node('UF_CRM_1541055727999')).replace(/\s+/ig,"") ) * 12;
+								 cashing      = this.nodeInput('UF_CRM_1541067645026'), //доходность
+								 payback      = this.nodeInput('UF_CRM_1544431330'); //окупаемость
 
-						 priceOn1SQM.value = BX.Currency.currencyFormat(Math.round(priceObj / squareValue), 'RUB', true);
+								 cashing.value = (priceMAP / priceObj) * 100 + "%";	
+								 payback.value =  parseInt((priceObj / priceMAP) / 12); + "%";
+				}
 
-						 payback.value = paybackPrecent + "%";
-					
-		         cashing.value = (priceMAP / priceObj) * 100 + "%";	
+
+				priceOn1SQM.value = BX.Currency.currencyFormat(Math.round(priceObj / squareValue), 'RUB', true);
+
+				console.log(priceObj);
 
 		},
 
@@ -2091,6 +2093,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeAdvertisingCianEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeDuplicationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
+				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
 	
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeGeoEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showGeoFields');
@@ -2099,6 +2102,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeAdvertisingEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeAdvertisingCianEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializePaideExplotationEvent');
