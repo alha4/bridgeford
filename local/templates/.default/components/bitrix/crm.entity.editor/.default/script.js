@@ -1615,16 +1615,19 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeObjStatusEvent : function() {
 
-			 this._objStatus = this.nodeInput('UF_CRM_1544521987', true)[1];
+			 this._objStatus = this.node('UF_CRM_1544521987');
 
-		   
 			 this.showObjStatusFields();
 
 		},
 
 		showObjStatusFields : function() {
 
-      
+      if(this.isAdmin()) {
+
+				//this._objStatus.classList.add("editable");
+
+			}
 		},
 
 		brokerAssignedID : function() {

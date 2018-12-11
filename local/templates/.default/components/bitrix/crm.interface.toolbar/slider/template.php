@@ -91,7 +91,8 @@ $this->SetViewTarget('inside_pagetitle', 10000);
 	 
        } else {
 
-	        BX.closeWait(BX('actuality_object'));
+					BX.closeWait(BX('actuality_object'));
+					alert('Произошла ошибка, проверьте поле брокер');
 	       
       }
 		 });

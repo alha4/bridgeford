@@ -2,7 +2,8 @@
 namespace Cian;
 
 use \Bitrix\Main\Web\HttpClient,
-    \Cian\CrmObject;
+    \Cian\CrmObject,
+    \Cian\Logger;
 
 final class CianPriceMonitoring {
 
@@ -36,8 +37,29 @@ final class CianPriceMonitoring {
 
   private const CIAN_SEARCH_TYPE = [
       '0' => 'commercialrent',
-      '1' => 'flatsale',
+      '1' => 'commercialsale', //'flatsale',
       '2' => 'flatrent'
+  ];
+
+  /**
+   *@const array CIAN_OFFICE_TYPE - [Офис,Торговая площадь,СкладПСН,Общепит,Гараж,Производство,Автосервис,Готовый бизнес,Здание,Бытовые услуги,Коммерческая земля]
+   *
+   */
+
+  private const CIAN_OFFICE_TYPE = [
+
+    '0' => [1, 2, 3, 5, 4, 9, 10, 7, 6, 11, 12],
+    '1' => [4, 2, 3, 5, 9, 12, 11, 6, 7, 10, 1],
+    '2' => [1, 2, 3, 5, 4, 9, 10, 7, 6, 11, 12]
+
+  ];
+
+  private const CIAN_TERMS_TYPE = [
+
+     '0' => 'term',
+     '1' => 'terms',
+     '2' => 'terms'
+
   ];
 
   public static function instance() : CianPriceMonitoring {
@@ -131,17 +153,33 @@ final class CianPriceMonitoring {
   $search_type = self::CIAN_SEARCH_TYPE[$data['CATEGORY_ID']];
 
   $result = ['jsonQuery' => [
-           '_type' => $search_type, // тип поиска
+
+            'region' => [
+
+              'type' => self::CIAN_TERMS_TYPE[ $data['CATEGORY_ID'] ],
+              'value' => [$data['CITY']],
+            ],
+
+            '_type' => $search_type, // тип поиска
+
            'engine_version' => [
              'type' => 'term',
              'value' => 2,
            ],
-          /* 'room' => [
 
-            'type' => 'term',
-            'value' => [1,2] // количество комнат
+           'office_type' => [
 
-           ],*/
+            'type'  => self::CIAN_TERMS_TYPE[ $data['CATEGORY_ID'] ],
+            'value' => self::CIAN_OFFICE_TYPE[ $data['CATEGORY_ID'] ],
+
+           ],
+
+           'total_area' => [
+            'type' => 'range',
+            'value' => ['gte' => $square_gte,
+                        'lte' => $data['SQUARE']]
+           ],
+
            'geo' =>  [
             'type' => 'geo',
             'value' => [
@@ -149,39 +187,19 @@ final class CianPriceMonitoring {
               'type' => 'house',
               'id'  => $data['HOUSE']
               ]
-            ]
-           ],
-           'office_type' => [
-
-            'type' => 'term',
-            'value' => [1, 2, 3, 5, 4, 9, 10, 7, 6, 11, 12], // типы объектов [Офис,Торговая площадь,СкладПСН,Общепит,Гараж,Производство,Автосервис,Готовый бизнес,Здание,Бытовые услуги,Коммерческая земля]
-
-           ],
-           'region' => [
-
-            'type' => 'term',
-            'value' => [$data['CITY']],
-
-           ],
-           'total_area' => [
-              'type' => 'range',
-              'value' => ['gte' => $square_gte,
-                          'lte' => $data['SQUARE']]
+            ] 
            ]
-        ]];
+          ]
+        ];
 
-        if($search_type == self::CIAN_SEARCH_TYPE[0]) {
-
-            $result['jsonQuery']['for_day'] = [
+      /*$result['jsonQuery']['for_day'] = [
 
               'type' => 'term',
               'value' => '!1'
   
-            ];
-
-        }
-
-   return json_encode($result);
+      ];*/
+ 
+     return json_encode($result);
 
  }
 
@@ -261,13 +279,17 @@ final class CianPriceMonitoring {
 
   $response = json_decode( $this->httpClient->post(self::CIAN_API_URL, $request), 1);
 
+  Logger::log([$request,$response]);
+
   if($response['status'] == self::SUCCESS) {
 
      return $response['data']['offersSerialized'] ? : [];
 
   }
 
-  return ['RESPONSE' => $response, 'DATA' =>  json_encode($data), 'HEADERS' => $this->httpClient()->getHeaders()->toArray() ];
+  #Logger::log(['RESPONSE' => $response, 'REQUEST' =>  json_encode($request), 'HEADERS' => $this->httpClient->getHeaders()->toArray() ]);
+
+  return []; 
 
  }
 
