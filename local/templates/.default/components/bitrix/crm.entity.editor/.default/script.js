@@ -1613,6 +1613,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		initializeObjStatusEvent : function() {
+
+			 this._objStatus = this.nodeInput('UF_CRM_1544521987', true)[1];
+
+		   
+			 this.showObjStatusFields();
+
+		},
+
+		showObjStatusFields : function() {
+
+      
+		},
+
 		brokerAssignedID : function() {
 
 			 return this._brokerAssignedID; 
@@ -1663,8 +1677,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		nodeInput : function(exp) {
+		nodeInput : function(exp, all) {
  
+			if(all) {
+
+				 return document.querySelectorAll(`input[name="${exp}"]`);
+
+			}
+
 			return document.querySelector(`input[name="${exp}"]`);
 
 		},
@@ -2069,7 +2089,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._customerID = BX.prop.get(this._settings, "customerID", null);
 
 				BX.showWait(document.body);
-				
+				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeObjStatusEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'showGeoFields');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
@@ -2084,9 +2104,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingCianEvent');
 				this.registerEventListener(this._CATEGORY.TO_RENT,'showDescriptionFields');
+			
 	
+				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeObjStatusEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeGeoEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE, 'showGeoFields');
+				this.registerEventListener(this._CATEGORY.TO_SALE,'showGeoFields');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateObjectEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeAdvertisingEvent');
@@ -2095,6 +2117,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
 	
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeObjStatusEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeGeoEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showGeoFields');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateObjectEvent');

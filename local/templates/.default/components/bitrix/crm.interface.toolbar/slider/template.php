@@ -56,11 +56,47 @@ $this->SetViewTarget('inside_pagetitle', 10000);
 
 <?if($arParams['ENTITY_TYPE_ID'] == CCrmOwnerType::Deal) : ?>
 
+<?
+ 
+ $uf = new CUserTypeManager();
+ $brokerID = $uf->GetUserFieldValue('CRM_DEAL','UF_CRM_1540886934', $arParams['ENTITY_ID']);
+
+ #echo $USER->GetID(),' ', $brokerID, ' ', GENERAL_BROKER ;
+?>
+
+<?if($USER->IsAdmin() || $USER->GetID() == $brokerID || $brokerID == GENERAL_BROKER):?>
+<div class="ui-btn-double ui-btn-primary">
+ <button id="actuality_object" class="ui-btn-main">Актуализировать</button>
+ </div>
+<?endif;?> 
  <div class="ui-btn-double ui-btn-primary">
  <button id="update_price" class="ui-btn-main">Обновить цены конкурентов</button>
  </div> 
  <script>
-  "use strict";
+	"use strict";
+	
+	 BX.bind(BX('actuality_object'), 'click', function(e) {
+
+		if(confirm('Актуализировать объект сегодняшней датой?')) {
+		 
+		 BX.showWait(BX('actuality_object'));
+		 
+	 	 BX.ajax.post('/local/ajax/actuality_object.php', {'id' : <?=$arParams['ENTITY_ID']?>} , function(response) {
+
+       response = JSON.parse(response);
+
+       if(response.status) {
+
+	        location.reload();
+	 
+       } else {
+
+	        BX.closeWait(BX('actuality_object'));
+	       
+      }
+		 });
+		}
+	 });
 
 	 BX.bind( BX('update_price'), 'click', function(e) {
 

@@ -55,7 +55,6 @@ $systemInfo['CREATED_BY']  = "<a target=\"_blank\" href=\"/company/personal/user
 $systemInfo['DATE_CREATE'] = date("d.m.Y",strtotime($arResult['ENTITY_DATA']['DATE_CREATE']));
 $systemInfo['DATE_MODIFY'] = date("d.m.Y",strtotime($arResult['ENTITY_DATA']['DATE_MODIFY']));
 
-const GENERAL_BROKER = 15;
 
 $uf = new CUserTypeManager();
 $estateOwnerID = $uf->GetUserFieldValue('CRM_DEAL','UF_CRM_1540895685', $arResult['ENTITY_ID']);
