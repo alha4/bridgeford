@@ -9,7 +9,9 @@ class RentalRaiting extends RoomRaiting {
 
   protected function costObject() : int {
 
-    $price = (int)$this->object['UF_CRM_1541072013901'];
+    $price = (int)$this->object['UF_CRM_1540456417'];
+
+    file_put_contents($_SERVER['DOCUMENT_ROOT'].'/log.txt', $price);
 
     if($price >= 500000 && $price <= 700000) {
 
@@ -35,7 +37,7 @@ class RentalRaiting extends RoomRaiting {
 
         return 1;
 
-    } elseif($price > 3000000 || $price <= 50000) {
+    } elseif($price > 3000000 || $price < 50000) {
 
          return 0;
 
