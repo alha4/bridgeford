@@ -2,7 +2,8 @@
 
  namespace Cian;
 
- use \Bitrix\Main\Loader;
+ use \Bitrix\Main\Loader,
+     \Bitrix\Main\Error;
 
  Loader::IncludeModule("crm");
  /**
@@ -27,6 +28,8 @@
    private const GEODATA_LENGTH = 3;
 
    private const DEFAULT_CITY = 'Москва';
+
+   public static $LAST_ERROR;
 
    public static function getAll(?int $object_id = 0) : array {
 
@@ -140,6 +143,8 @@
 
      }
 
+     self::$LAST_ERROR = $crm_object->LAST_ERROR;
+
      return false;
      
    }
@@ -161,6 +166,8 @@
         return true;
 
      }
+
+     self::$LAST_ERROR = $deal->LAST_ERROR;
 
      return false;
 

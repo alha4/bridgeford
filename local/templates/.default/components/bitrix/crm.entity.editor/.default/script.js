@@ -886,7 +886,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 								 payback      = this.nodeInput('UF_CRM_1544431330'); //окупаемость
 
 								 cashing.value = (priceMAP / priceObj) * 100 + "%";	
-								 payback.value = (priceObj / priceMAP / 12).toFixed(1);
+								 payback.value = (priceObj / priceMAP).toFixed(1);
 				}
 
 

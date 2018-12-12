@@ -9,19 +9,19 @@ final class CianPriceMonitoring {
 
   private const CIAN_API_URL = 'https://api.cian.ru/search-offers/v2/search-offers-desktop/';
 
-  private const CIAN_GEOCODER_SEARCH_URL = 'https://www.cian.ru/api/geo/geocoded-for-search';
+  private const CIAN_API_GEOCODED_URL = 'https://www.cian.ru/api/geo/geocoded-for-search';
 
-  private const CIAN_REGION_SEARCH_URL = 'https://www.cian.ru/cian-api/site/v1/search-regions-cities/?text=#CITY#';
+  private const CIAN_API_CITY_SEARCH_URL = 'https://www.cian.ru/cian-api/site/v1/search-regions-cities/?text=#CITY#';
 
-  private const CIAN_GEO_SEARCH_URL = 'https://www.cian.ru/api/geo/geocode-cached?request=#REGION#';
+  private const CIAN_API_REGION_SEARCH_URL = 'https://www.cian.ru/api/geo/geocode-cached?request=#REGION#';
 
-  private const CIAN_SUGGEST_URL = 'https://api.cian.ru/geo-suggest/v1/suggest-railways/?query=#Q#&regionId=1&offerType=flat';
+  private const CIAN_API_SUGGEST_URL = 'https://api.cian.ru/geo-suggest/v1/suggest-railways/?query=#Q#&regionId=#R#&offerType=#T#';
 
-  private const SUCCESS = 'ok';
+  private const CIAN_API_RESPONSE_SUCCESS = 'ok';
 
   private const DEFAULT_CITY = 'Москва';
 
-  private const SQUARE_PRECENT = 15;
+  private const SQUARE_PRECENT = 10;
 
   private const GEO_DATA_LENGTH = 4;
 
@@ -44,10 +44,10 @@ final class CianPriceMonitoring {
   ];
 
   /**
-   *@const array CIAN_OFFICE_TYPE - [Офис,Торговая площадь,СкладПСН,Общепит,Гараж,Производство,Автосервис,Готовый бизнес,Здание,Бытовые услуги,Коммерческая земля]
+   * @const array CIAN_OFFICE_TYPE 
+   * [Офис,Торговая площадь,СкладПСН,Общепит,Гараж,Производство,Автосервис,Готовый бизнес,Здание,Бытовые услуги,Коммерческая земля]
    *
    */
-
   private const CIAN_OFFICE_TYPE = [
 
     '0' => [1, 2, 3, 5, 4, 9, 10, 7, 6, 11, 12],  //Помещение в аренду
@@ -56,6 +56,12 @@ final class CianPriceMonitoring {
 
   ];
 
+  /**
+   * @const array CIAN_PRICE_TYPE 
+   * dealType - в зависимости от типа предложения поле цены price | priceTotalPerMonthRur
+   * sale - Помещение на продажу 
+   * rent - Помещение в аренду & Арендный бизнес
+   */
   private const CIAN_PRICE_TYPE = [
 
    'sale' => 'price',
@@ -65,10 +71,11 @@ final class CianPriceMonitoring {
 
   public static function instance() : CianPriceMonitoring {
 
-      $self = new static();
-      $self->setHttpClient();
+    $self = new static();
+    $self->setHttpClient();
 
-      return $self;
+    return $self;
+
   }
   /**
   * 
@@ -76,9 +83,13 @@ final class CianPriceMonitoring {
   *
   *@var array $objects список объектов недвижимости
   *
-  *@return void json ответ 
+  *@return array
+  *
+  *@throws Exception - ошибка
+  *
+  *CATEGORY_ID - направление сделки
   */
-  public function run(?int $object_id = 0) : void {
+  public function run(?int $object_id = 0) : ?array {
 
     $objects = CrmObject::getAll( $object_id );
 
@@ -108,36 +119,36 @@ final class CianPriceMonitoring {
            
                if(CrmObject::setPrice($object['ID'], $price, $price_step)) {
            
-                  echo json_encode(['ID' => $object['ID'], 'status' => 'цена обновлена'], JSON_UNESCAPED_UNICODE);
+                  return ['ID' => $object['ID'], 'status' => 'цена обновлена'];
 
 
                } else {
 
-                  echo json_encode(['произошла ошибка обновления цены'], JSON_UNESCAPED_UNICODE);
+                 throw new \Exception('произошла ошибка обновления цены');
 
                }
 
-             } else {
+              } else {
 
-                echo json_encode(['произошла ошибка цена не может быть = 0'], JSON_UNESCAPED_UNICODE);
+                throw new \Exception('произошла ошибка цена не может быть = 0');
 
              }
 
            } else {
 
-              echo json_encode(['произошла ошибка обновления списка конкурентов'], JSON_UNESCAPED_UNICODE);
+               throw new \Exception('произошла ошибка обновления списка конкурентов');
 
            }
          } else {
   
-          echo json_encode(['нет данных',$response],JSON_UNESCAPED_UNICODE);
+            return ['нет данных'];
 
         }
       }
      }
    } else {
 
-      echo json_encode(['проверьте Активировано ли автоматическое ценообразование'],JSON_UNESCAPED_UNICODE);
+     return ['проверьте Активировано ли автоматическое ценообразование'];
 
    }
  }
@@ -147,9 +158,9 @@ final class CianPriceMonitoring {
   *
   *@return array $result - массив ключей запроса для ЦИАН
   * 
-  *@var $square_gte - площадь [от] минус [SQUARE_PRECENT] процент от площади объекта
+  *@var int $square_gte - площадь [от] минус [SQUARE_PRECENT] процент от площади объекта
   *
-  *@var $search_type - тип поиска [Аренда,Продажа,Коммерческая]
+  *@var string $search_type - тип поиска [Аренда,Продажа,Коммерческая]
   */
  private function buildRequest(array $data) : string {
 
@@ -290,15 +301,13 @@ final class CianPriceMonitoring {
 
   $response = json_decode($this->httpClient->post(self::CIAN_API_URL, $request), 1);
 
-  Logger::log([$request,$response]);
-
-  if($response['status'] == self::SUCCESS || $response['data']['offersSerialized']) {
+  if($response['status'] == self::CIAN_API_RESPONSE_SUCCESS || $response['data']['offersSerialized']) {
 
      return $response['data']['offersSerialized'];
 
   }
 
-  #Logger::log(['RESPONSE' => $response, 'REQUEST' =>  json_encode($request), 'HEADERS' => $this->httpClient->getHeaders()->toArray() ]);
+  Logger::log(['REQUEST' =>  $request, 'RESPONSE' => $response, 'HEADERS' => $this->httpClient->getHeaders()->toArray() ]);
 
   return []; 
 
@@ -312,7 +321,7 @@ final class CianPriceMonitoring {
   */
  private function coordinate(string $search) : ?array {
 
-  $url = str_replace('#REGION#', urlencode($search), self::CIAN_GEO_SEARCH_URL);
+  $url = str_replace('#REGION#', urlencode($search), self::CIAN_API_REGION_SEARCH_URL);
 
   $response = json_decode( $this->httpClient->get($url), 1);
 
@@ -335,7 +344,7 @@ final class CianPriceMonitoring {
   */
  private function geocoded(array $data) : ?array {
 
-  $response = json_decode( $this->httpClient->post(self::CIAN_GEOCODER_SEARCH_URL, json_encode($data)), 1);
+  $response = json_decode( $this->httpClient->post(self::CIAN_API_GEOCODED_URL, json_encode($data)), 1);
 
   if($response['isParsed'] == 1) {
 
