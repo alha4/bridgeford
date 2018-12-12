@@ -886,7 +886,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 								 payback      = this.nodeInput('UF_CRM_1544431330'); //окупаемость
 
 								 cashing.value = (priceMAP / priceObj) * 100 + "%";	
-								 payback.value =  parseInt((priceObj / priceMAP) * 12); + "%";
+								 payback.value = (priceObj / priceMAP / 12).toFixed(1);
 				}
 
 
@@ -2165,7 +2165,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingFields'); 
 					this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingCianFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showDuplication1Fields');
-			  	this.registerView(this._CATEGORY.TO_SALE, 'showDuplication2Fields');
+			  	this.registerView(this._CATEGORY.TO_SALE, 'showDuplication2Fields'); 
 
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'getGeoData');
