@@ -432,6 +432,18 @@ final class CianPriceMonitoring {
 
  }
 
+ private function extractPrice(string $dealType, array $item) : int {
+
+  if($dealType == 'sale') {
+
+     return $item['bargainTerms'][$this->getPriceType($dealType)];
+
+  }
+
+  return  $item[$this->getPriceType($dealType)];
+   
+ }
+
  /**
   *@method getOffersList список предложений [название, стоимость, url на циан] 
   */
@@ -444,7 +456,7 @@ final class CianPriceMonitoring {
 
       $result[] = [
          'TITLE' => $item['geo']['userInput'],
-         'PRICE' => $this->getPriceType($item['dealType']),
+         'PRICE' => $this->extractPrice($item['dealType'], $item),
          'URL'   => $item['fullUrl']
       ];
 

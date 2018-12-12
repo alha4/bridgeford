@@ -1499,10 +1499,10 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		},
 
 		showCompetitorsFields : function() {
-
-			if(BX('section_strategii_avtomaticheskogo_tsenoobrazovaniya') &&
+      
+	    if(BX('section_strategii_avtomaticheskogo_tsenoobrazovaniya') &&
 			   !document.getElementById('competitions_variant')) {
-
+ 
 				 const competitors = this.nodeInput('UF_CRM_1542029126'),
 				       mainAnchor  = this.nodeInput('UF_CRM_1542029182'),
 				       priceStrategies = document.querySelector('#section_strategii_avtomaticheskogo_tsenoobrazovaniya');
