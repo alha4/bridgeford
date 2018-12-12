@@ -24,7 +24,9 @@
   */
  final class CrmObject {
 
-   const GEODATA_LENGTH = 3;
+   private const GEODATA_LENGTH = 3;
+
+   private const DEFAULT_CITY = 'Москва';
 
    public static function getAll(?int $object_id = 0) : array {
 
@@ -57,6 +59,7 @@
             'STREET' => $geodata['STREET'],
             'HOUSE'  => $geodata['HOUSE'],
             'CITY'   => $geodata['CITY'],
+            'IS_MOSKOW' => ($row['UF_CRM_1540202817'] == self::DEFAULT_CITY),
             'REGION' => $row['UF_CRM_1540202667'],
             'PRICE_STEP' => (float)$row['UF_CRM_1541753539107'],
             'CATEGORY_ID' => $row['CATEGORY_ID'],
@@ -74,6 +77,7 @@
            'STREET' => self::street($row['UF_CRM_1540202900'], $row['UF_CRM_1540202889']),
            'HOUSE'  => $row['UF_CRM_1540202908'],
            'CITY'   => $row['UF_CRM_1540202817'],
+           'IS_MOSKOW' => ($row['UF_CRM_1540202817'] == self::DEFAULT_CITY),
            'REGION' => $row['UF_CRM_1540202667'],
            'PRICE_STEP' => (float)$row['UF_CRM_1541753539107'],
            'CATEGORY_ID' => $row['CATEGORY_ID'],
