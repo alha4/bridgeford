@@ -2130,7 +2130,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeAdvertisingEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeAdvertisingCianEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeReadyToMoveEvent');
+			
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializePaideExplotationEvent');
