@@ -36,9 +36,11 @@ final class CianPriceMonitoring {
 
 
   private const CIAN_SEARCH_TYPE = [
-      '0' => 'commercialrent',
-      '1' => 'commercialsale', //'flatsale',
-      '2' => 'flatrent'
+
+    '0' => 'commercialrent',  //Помещение в аренду
+    '1' => 'commercialsale', //Помещение на продажу 
+    '2' => 'commercialrent' //Арендный бизнес
+
   ];
 
   /**
@@ -48,17 +50,9 @@ final class CianPriceMonitoring {
 
   private const CIAN_OFFICE_TYPE = [
 
-    '0' => [1, 2, 3, 5, 4, 9, 10, 7, 6, 11, 12],
-    '1' => [4, 2, 3, 5, 9, 12, 11, 6, 7, 10, 1],
-    '2' => [1, 2, 3, 5, 4, 9, 10, 7, 6, 11, 12]
-
-  ];
-
-  private const CIAN_TERMS_TYPE = [
-
-     '0' => 'terms',
-     '1' => 'terms',
-     '2' => 'terms'
+    '0' => [1, 2, 3, 5, 4, 9, 10, 7, 6, 11, 12],  //Помещение в аренду
+    '1' => [4, 2, 3, 5, 9, 12, 11, 6, 7, 10, 1], //Помещение на продажу 
+    '2' => [4, 2, 3, 5, 9, 12, 11, 6, 7, 10, 1] //Арендный бизнес
 
   ];
 
@@ -141,6 +135,10 @@ final class CianPriceMonitoring {
         }
       }
      }
+   } else {
+
+      echo json_encode(['проверьте Активировано ли автоматическое ценообразование'],JSON_UNESCAPED_UNICODE);
+
    }
  }
 
@@ -163,7 +161,7 @@ final class CianPriceMonitoring {
 
             'region' => [
 
-              'type' => self::CIAN_TERMS_TYPE[ $data['CATEGORY_ID'] ],
+              'type' => "terms",
               'value' => [ $data['IS_MOSKOW'] == 1 ? $data['CITY'] : $data['STREET'] ],
             ],
 
@@ -176,15 +174,15 @@ final class CianPriceMonitoring {
 
            'office_type' => [
 
-            'type'  => self::CIAN_TERMS_TYPE[ $data['CATEGORY_ID'] ],
+            'type'  => "terms",
             'value' => self::CIAN_OFFICE_TYPE[ $data['CATEGORY_ID'] ],
 
            ],
 
            'total_area' => [
             'type' => 'range',
-            'value' => ['gte' => $square_gte,
-                        'lte' => $data['SQUARE']]
+            'value' => ['gte' => $square_gte, // от
+                        'lte' => $data['SQUARE']] // до
            ],
 
            'geo' =>  [
@@ -292,7 +290,7 @@ final class CianPriceMonitoring {
 
   $response = json_decode($this->httpClient->post(self::CIAN_API_URL, $request), 1);
 
-  #Logger::log([$request,$response]);
+  Logger::log([$request,$response]);
 
   if($response['status'] == self::SUCCESS || $response['data']['offersSerialized']) {
 
