@@ -1,0 +1,165 @@
+#section_geografiya .crm-entity-widget-content-block:nth-child(n+2), /* Тип района */
+
+#section_zdanie div[data-cid="UF_CRM_1540371938"], /* Особняк */
+#section_zdanie div[data-cid="UF_CRM_1540371802"], /* Сдан дата */
+
+#section_strategii_avtomaticheskogo_tsenoobrazovaniya input[name="UF_CRM_1542029126"], /* поле json список конкурентов */
+#section_strategii_avtomaticheskogo_tsenoobrazovaniya div[data-cid="UF_CRM_1542029126"],
+#section_strategii_avtomaticheskogo_tsenoobrazovaniya div[data-cid="UF_CRM_1542029182"], /* главный ценовой якорь текстовое поле */
+
+#section_zemelnyy_uchastok div[data-cid="UF_CRM_1540381635335"], /* год земельный участок */
+
+#section_kommercheskie_usloviya div[data-cid="UF_CRM_1540544416"],
+#section_kommercheskie_usloviya div[data-cid="UF_CRM_1540456969485"],
+#section_kommercheskie_usloviya div[data-cid="UF_CRM_1540456800018"], /* арендные каникулы */
+
+
+#section_opisanie div[data-cid="UF_CRM_1540471444329"], /* Срочная аренда */
+#section_opisanie div[data-cid="UF_CRM_1540471471728"], /* Закрытая аренда */
+#section_opisanie div[data-cid="UF_CRM_1540974006"],   /* Семантика помещения в аренду */
+  
+/*
+#section_reklama div[data-cid="UF_CRM_1540977600168"], 
+#section_reklama div[data-cid="UF_CRM_1540978008"],  магазин одежды реклама 
+*/
+
+#section_reklama ,
+#section_reklama_v_tsian,
+#section_reklama div[data-cid="UF_CRM_1540977921792"], /* Назначение объекта (для Яндекса) */
+#section_reklama div[data-cid="UF_CRM_1540977409431"], /* Тип выгрузки Яндекс */
+#section_reklama div[data-cid="UF_CRM_1540976407661"], /* Тип выгрузки */
+#section_reklama div[data-cid="UF_CRM_1540977227270"], /* Тип выгрузки для продублированного */
+#section_reklama div[data-cid="UF_CRM_1540977530"], /* Тип объекта для дублирования */
+
+#section_reklama_v_tsian div[data-cid="UF_CRM_1540976407661"], /* Тип выгрузки ЦИАН */
+#section_reklama_v_tsian div[data-cid="UF_CRM_1540977530"], /* Тип объекта для дублирования */
+#section_reklama_v_tsian div[data-cid="UF_CRM_1540977227270"], /* Тип выгрузки для продублированного  */
+#section_reklama_v_tsian div[data-cid="UF_CRM_1540977306391"], /* Тип выгрузки для продублированного 2*/
+#section_reklama_v_tsian div[data-cid="UF_CRM_1540977795"], /* Тип объекта для дублирования 2 */
+
+#section_arendator div[data-cid="UF_CRM_1541055274251"],
+#section_arendator div[data-cid="UF_CRM_1541055803"],
+#section_arendator div[data-cid="UF_CRM_1541056010"],
+#section_arendator div[data-cid="UF_CRM_1541056176623"],
+#section_arendator div[data-cid="UF_CRM_1541056221"],
+#section_arendator div[data-cid="UF_CRM_1541056258"],
+#section_arendator div[data-cid="UF_CRM_1541056313"],
+#section_arendator div[data-cid="UF_CRM_1541056338255"],
+#section_karta .crm-entity-widget-actions-block,
+#section_karta .crm-entity-widget-content-block
+.hide-field,
+.crm-entity-card-container-content form .crm-entity-card-widget:nth-last-child(-n+3),
+div[data-cid="UF_CRM_1542955977"],
+div[data-cid="UF_CRM_1541076330647"],
+div[data-cid="UF_CRM_1543504475389"],
+
+.pagetitle-sub {
+  display:none;
+}
+div[data-cid="UF_CRM_1542089326915"] {
+  position: relative;
+}
+/*
+ поля только для чтения
+*/
+
+div[data-cid="UF_CRM_1542089326915"] :before,
+div[data-cid="UF_CRM_1540554743072"] :before,
+div[data-cid="UF_CRM_1544425067"] :before,
+div[data-cid="UF_CRM_1544446024"] :before,
+div[data-cid="OPPORTUNITY_WITH_CURRENCY"] :before,
+div[data-cid="UF_CRM_1544431330"] :before,
+div[data-cid="UF_CRM_1541067577722"] :before, 
+div[data-cid="UF_CRM_1541067645026"] :before,
+div[data-cid="UF_CRM_1541072151310"] :before, 
+div[data-cid="UF_CRM_1541072168373"] :before,
+div[data-cid="UF_CRM_1544521987"] :before,
+div[data-cid="UF_CRM_1544524903217"] :before,
+div[data-cid="UF_CRM_1544528494"] :before {
+  content: ' ';
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  top: -10px;
+  left: 0px;
+  z-index: 9111;
+  background: #e8ecee00;
+}
+div[data-cid="UF_CRM_1542089326915"] .field-item input,
+div[data-cid="UF_CRM_1540554743072"] .field-item input,
+div[data-cid="UF_CRM_1541067577722"] .field-item input, 
+div[data-cid="UF_CRM_1541067645026"] .field-item input,
+div[data-cid="UF_CRM_1544446024"].field-item input,
+div[data-cid="UF_CRM_1544431330"] .field-item input,
+div[data-cid="UF_CRM_1544425067"] .field-item input,
+div[data-cid="UF_CRM_1541072151310"] .field-item input, 
+div[data-cid="UF_CRM_1541072168373"] .field-item input,
+div[data-cid="UF_CRM_1544521987"] .field-item input,
+div[data-cid="UF_CRM_1544524903217"] .field-item input,
+div[data-cid="UF_CRM_1544446024"] .field-item input,
+div[data-cid="UF_CRM_1544528494"] .field-item input,
+div[data-cid="OPPORTUNITY_WITH_CURRENCY"]  input,
+div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-select {
+  border:none!important;
+  background-color:transparent;
+}
+/*
+конец поля только для чтения
+*/
+div.editable :before {
+  display:none!important;
+}
+div.editable .field-item input {
+  border:inherit!important;
+  background-color:#fff;
+}
+div.show-field {
+  display: block!important;
+}
+.no-edit {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ffffff29;
+  left: 0px;
+  top:0px;
+  z-index: 4156;
+}
+.field_CREATED_BY, .ymaps-2-1-71-zoom {
+  z-index:8156;
+}
+.ymaps-2-1-71-zoom {
+ position: absolute!important;
+}
+#section_karta  {
+  height: 500px;
+}
+
+div[data-cid="UF_CRM_1540392018"],
+div[data-cid="UF_CRM_1540392118"],
+div[data-cid="UF_CRM_1540393032"],
+div[data-cid="UF_CRM_1540397194"],
+div[data-cid="UF_CRM_1540397421"],
+div[data-cid="UF_CRM_1540974006"] {
+  padding: 11px 0;
+  border-bottom: 1px solid #e8ecee;
+}
+
+div[data-cid="UF_CRM_1540392018"] .crm-entity-widget-content-block-title-text,
+div[data-cid="UF_CRM_1540392118"] .crm-entity-widget-content-block-title-text,
+div[data-cid="UF_CRM_1540393032"] .crm-entity-widget-content-block-title-text,
+div[data-cid="UF_CRM_1540392118"] .crm-entity-widget-content-block-title-text,
+div[data-cid="UF_CRM_1540397194"] .crm-entity-widget-content-block-title-text,
+div[data-cid="UF_CRM_1540397421"] .crm-entity-widget-content-block-title-text,
+div[data-cid="UF_CRM_1540974006"] .crm-entity-widget-content-block-title-text{
+  display: inline-block;
+  height: 23px;
+  color: #525c69;
+  vertical-align: middle;
+  text-transform: uppercase;
+  font: 600 11px/23px "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+#competitions_variant label {
+  cursor: pointer;
+}
