@@ -25,8 +25,6 @@ final class CianPriceMonitoring {
 
   private const GEO_DATA_MOSKOW_ROWS = 4;
 
-  private $httpClient;
-
   private $http_headers = ["Host"    => "api.cian.ru",
                            "Origin"  => "https://www.cian.ru",
                            "Referer" => false,
