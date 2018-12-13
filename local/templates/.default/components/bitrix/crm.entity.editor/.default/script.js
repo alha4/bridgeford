@@ -307,9 +307,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 					 NOT_ACTUAL	 = {
 						 
-							MOSCOW :     ['UF_CRM_1540202747','UF_CRM_1540202807','UF_CRM_1540202766'],
-							NEW_MOSCOW : ['UF_CRM_1540203144','UF_CRM_1540203015','UF_CRM_1543406565'],
-							SUB_MOSCOW : ['UF_CRM_1540203111','UF_CRM_1540203015','UF_CRM_1543406565','UF_CRM_1540203144']
+							MOSCOW :     ['UF_CRM_1540202747','UF_CRM_1540202807','UF_CRM_1540202766','UF_CRM_1540202817'],
+							NEW_MOSCOW : ['UF_CRM_1540203144','UF_CRM_1540203015','UF_CRM_1543406565','UF_CRM_1540202817'],
+							SUB_MOSCOW : ['UF_CRM_1540203111','UF_CRM_1540203015','UF_CRM_1543406565','UF_CRM_1540203144','UF_CRM_1540202817']
 					 },
 
 					 NOT_SELECT = {
@@ -326,6 +326,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 
 		  if(regionValue != regions.EMPTY) {
 
+				/**
+				 * выбран регион Москва
+				 */
 			  if(regionValue == regions.MOSCOW) {
 
 			    if(this.isFieldShown() && BX.Crm.EntityEditorMode.getName(this._mode) == 'edit') {
@@ -338,17 +341,26 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		
 					}
 
+					/**
+					 * показать поля Москва
+					 */
 				  for(uf of FIELDS_MOSCOW) {
  
-					   this.showField(document.querySelector('[data-cid="' + uf + '"]'));
+					   this.showField(this.node(uf));
  
 					}
-					
+
+					/**
+					 * не выбрано
+					 */
 					this.setNotSelectValue();
 					
+					/**
+					 * не актуально Москва
+					 */
 					for(uf of NOT_ACTUAL.MOSCOW) {
 
-						 this.setDefaultValue(uf, NOT_ACTUAL_VALUE);
+						 this.setDefaultValue(uf, NOT_ACTUAL_VALUE, true);
 
 					}
 
@@ -369,10 +381,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 
 				 if(regionValue == regions.SUB_MOSCOW) {
  
-					 this.hideField(document.querySelector('[data-cid="' + HIDDEN_FIELDS.AREA + '"]'));
+					 this.hideField(this.node(HIDDEN_FIELDS.AREA));
  
 				 }
 
+				 /**
+					* Подмосковье
+				  */
 				 if(regionValue == regions.SUB_MOSCOW) {
 
 					this.setNotSelectValue();
@@ -385,6 +400,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				}
 
+				/**
+				 * Новая Москва
+				 */
 				if(regionValue == regions.NEW_MOSCOW) {
 
 				 this.setNotSelectValue();
@@ -423,7 +441,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		       action    = geoMap.parentNode.querySelector(".crm-entity-widget-actions-block");
 
-					 codeFields = [/*'UF_CRM_1540202667','UF_CRM_1540203111',*/ 'UF_CRM_1540202766','UF_CRM_1540202817','UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908'],
+					 codeFields = ['UF_CRM_1540202766','UF_CRM_1540202817','UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908'],
 
 					 geoFields = codeFields.filter( uf => { return !!document.querySelector('[data-cid="' + uf + '"] .crm-entity-widget-content-block-inner .field-item') } );
 					 
@@ -1728,7 +1746,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		setDefaultValue : function(select, value) {
+		setDefaultValue : function(select, value, isMoskow) {
 
 			const nodeSelect = this.nodeSelect(select),
 			      nodeInput  = this.nodeInput(select);
@@ -1750,9 +1768,27 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 
 			 } else if(nodeInput) {
 
-					 nodeInput.value = '';  
+				 if(isMoskow) {
+
+				   if(nodeInput.name == 'UF_CRM_1540202817') {
+
+							value = 'Москва';
+
+					 } 
+
+				  } else {
+
+           if(nodeInput.name == 'UF_CRM_1540202817') {
+
+							 value = '';
+
+					  } 
+
+					}
+
+					nodeInput.value = value;  
 					 
-					 return true;
+					return true;
 
 			 }
 			
@@ -2159,7 +2195,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					this.registerView(this._CATEGORY.TO_SALE, 'showGeoFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'getGeoData');
 				  this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
-				  this.registerView(this._CATEGORY.TO_SALE, 'showExploitationFields');
+				 
 					this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showSystemInfoFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingFields'); 

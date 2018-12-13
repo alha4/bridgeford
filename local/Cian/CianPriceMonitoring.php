@@ -143,9 +143,9 @@ final class CianPriceMonitoring {
   
             return ['нет данных'];
 
-        }
+         }
+       }
       }
-     }
    } else {
 
      return ['проверьте Активировано ли автоматическое ценообразование'];
@@ -300,6 +300,8 @@ final class CianPriceMonitoring {
   $request  = $this->buildRequest($data);
 
   $response = json_decode($this->httpClient->post(self::CIAN_API_URL, $request), 1);
+
+  Logger::log(['REQUEST' =>  $request, 'RESPONSE' => $response, 'HEADERS' => $this->httpClient->getHeaders()->toArray() ]);
 
   if($response['status'] == self::CIAN_API_RESPONSE_SUCCESS || $response['data']['offersSerialized']) {
 
