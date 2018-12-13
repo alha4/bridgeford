@@ -23,7 +23,7 @@ final class CianPriceMonitoring {
 
   private const SQUARE_PRECENT = 10;
 
-  private const GEO_DATA_LENGTH = 4;
+  private const GEO_DATA_MOSKOW_ROWS = 4;
 
   private $httpClient;
 
@@ -71,11 +71,8 @@ final class CianPriceMonitoring {
 
   public static function instance() : CianPriceMonitoring {
 
-    $self = new static();
-    $self->setHttpClient();
-
-    return $self;
-
+    return new static();
+    
   }
   /**
   * 
@@ -174,7 +171,7 @@ final class CianPriceMonitoring {
   *
   *@var string $search_type - тип поиска [Аренда,Продажа,Коммерческая]
   */
- private function buildRequest(array $data) : string {
+ private function buildRequest(array $data) : array {
 
   $square_gte = round($data['SQUARE'] - (($data['SQUARE']) / 100 * self::SQUARE_PRECENT));
 
@@ -220,7 +217,7 @@ final class CianPriceMonitoring {
           ]
         ];
 
-    if($data['CATEGORY_ID'] == 0) {
+    if($data['CATEGORY_ID'] == 0 || $data['CATEGORY_ID'] == 2) {
 
       $result['jsonQuery']['for_day'] = [
 
@@ -231,7 +228,7 @@ final class CianPriceMonitoring {
 
     }
  
-    return json_encode($result);
+    return $result;
 
  }
 
@@ -243,60 +240,45 @@ final class CianPriceMonitoring {
   */
  public function getGeocodedAdress(array $address) : ?array {
 
-  if($address['IS_DECODED'] == 'Y') {
+   if($address['IS_DECODED'] == 'Y') {
 
      return  [
-      'STREET' => $address['STREET'],
-      'HOUSE'  => $address['HOUSE'],
-      'CITY'   => $address['CITY'],
-      'IS_MOSKOW' => $address['IS_MOSKOW'],
-      'SQUARE'    => $address['SQUARE']
+       'STREET' => $address['STREET'],
+       'HOUSE'  => $address['HOUSE'],
+       'CITY'   => $address['CITY'],
+       'IS_MOSKOW' => $address['IS_MOSKOW'],
+       'SQUARE'    => $address['SQUARE']
      ];
 
-  }
+   }
 
-  $full_address = $this->coordinateAdressString($address);
+   $fullAddress = $this->adressToString($address);
 
-  $boundedBy = $this->coordinate($full_address);
-
-  if($boundedBy) {
+   $boundedBy = $this->coordinate($fullAddress);
+ 
+   if($boundedBy) {
 
    $data = [
      "Lng" => $boundedBy['lng'],
      "Lat" => $boundedBy['lat'],
      "Kind" => "house",
-     "Address" => $this->houseAdressString($address)
+     "Address" => $this->prepareAdressString($address)
    ];
 
    $geoData = $this->geocoded($data);
 
    if($geoData) {
 
-    if(count($geoData) >= self::GEO_DATA_LENGTH) {
-     
-     return  [
-      'STREET' => $geoData[1]['id'],
-      'HOUSE'  => $geoData[3]['id'],
-      'CITY'   => $geoData[0]['id'],
-      'SQUARE' => $address['SQUARE'],
-      'IS_MOSKOW' => $address['IS_MOSKOW']
-     ];
-    
-    }
+     $geoData['SQUARE']    = $address['SQUARE'];
+     $geoData['IS_MOSKOW'] = $address['IS_MOSKOW'];
 
-    return  [
-      'STREET' => $geoData[1]['id'],
-      'HOUSE'  => $geoData[2]['id'],
-      'CITY'   => $geoData[0]['id'],
-      'SQUARE' => $address['SQUARE'],
-      'IS_MOSKOW' => $address['IS_MOSKOW']
-     ];
+     return $geoData;
 
    }
 
    return false;
 
-  }
+  }  
 
   return false;
 
@@ -309,9 +291,9 @@ final class CianPriceMonitoring {
   */
  private function searchOffers(array $data) : array {
   
-  $request  = $this->buildRequest($data);
+  $request  = json_encode($this->buildRequest($data));
 
-  $response = json_decode($this->httpClient->post(self::CIAN_API_URL, $request), 1);
+  $response = json_decode($this->httpClient()->post(self::CIAN_API_URL, $request), 1);
 
   if($response['status'] == self::CIAN_API_RESPONSE_SUCCESS || $response['data']['offersSerialized']) {
 
@@ -319,7 +301,7 @@ final class CianPriceMonitoring {
 
   }
 
-  Logger::log(['REQUEST' =>  $request, 'RESPONSE' => $response, 'HEADERS' => $this->httpClient->getHeaders()->toArray() ]);
+  Logger::log(['REQUEST' =>  $request, 'RESPONSE' => $response]);
 
   return []; 
 
@@ -335,7 +317,7 @@ final class CianPriceMonitoring {
 
   $url = str_replace('#REGION#', urlencode($search), self::CIAN_API_REGION_SEARCH_URL);
 
-  $response = json_decode( $this->httpClient->get($url), 1);
+  $response = json_decode( $this->httpClient()->get($url), 1);
 
   if($response['items']) {
 
@@ -356,40 +338,56 @@ final class CianPriceMonitoring {
   */
  private function geocoded(array $data) : ?array {
 
-  $response = json_decode( $this->httpClient->post(self::CIAN_API_GEOCODED_URL, json_encode($data)), 1);
+  $response = json_decode( $this->httpClient()->post(self::CIAN_API_GEOCODED_URL, json_encode($data)), 1);
 
   if($response['isParsed'] == 1) {
 
-     return $response['details'];
+    $geoData = $response['details'];
+
+    if(count($geoData) >= self::GEO_DATA_MOSKOW_ROWS) {
+     
+     return  [
+       'STREET' => $geoData[1]['id'],
+       'HOUSE'  => $geoData[3]['id'],
+       'CITY'   => $geoData[0]['id']
+      ];
+     
+    }
+ 
+    return  [
+       'STREET' => $geoData[1]['id'],
+       'HOUSE'  => $geoData[2]['id'],
+       'CITY'   => $geoData[0]['id']
+    ];
 
   }
 
-  return null;
+  return false;
 
  }
 
  /**
-  *@method coordinateAdressString  метод формирования строки адреса для метода coordinate
+  *@method  adressToString  метод формирования строки адреса для метода coordinate
   */
 
- private function coordinateAdressString(array $address) : string {
+ private function adressToString(array $address) : string {
 
   if(strlen($address['CITY']) > 0 && $address['CITY'] != self::DEFAULT_CITY) {
 
     
-     return  "Россия, Москва, {$address['CITY']}, {$address['STREET']}, {$address['HOUSE']}";
+     return  "Россия, ".self::DEFAULT_CITY.", {$address['CITY']}, {$address['STREET']}, {$address['HOUSE']}";
 
   }
 
-  return "Россия, Москва, {$address['STREET']}, {$address['HOUSE']}";
+  return "Россия, ".self::DEFAULT_CITY.", {$address['STREET']}, {$address['HOUSE']}";
 
  }
 
  /**
-  *@method houseAdressString метод формирования строки адреса для метода geocoded
+  *@method prepareAdressString метод формирования строки адреса для метода geocoded
   */
 
- private function houseAdressString(array $address) : string {
+ private function prepareAdressString(array $address) : string {
 
   if(strlen($address['CITY']) > 0 && $address['CITY'] != self::DEFAULT_CITY) {
 
@@ -406,12 +404,12 @@ final class CianPriceMonitoring {
   if($this->isStreet($address['STREET'])) {
 
   
-    return  "Россия, Москва, {$address['HOUSE']}-я {$address['STREET']}";
+    return  "Россия, ".self::DEFAULT_CITY.", {$address['HOUSE']}-я {$address['STREET']}";
     
 
   }
 
-  return  "Россия, Москва, {$address['STREET']}, {$address['HOUSE']}";
+  return  "Россия, ".self::DEFAULT_CITY.", {$address['STREET']}, {$address['HOUSE']}";
 
  }
 
@@ -485,7 +483,7 @@ final class CianPriceMonitoring {
     
  }
 
- private function setHttpClient() : void {
+ private function httpClient() : HttpClient {
 
   $http_client = new HttpClient();
 
@@ -507,7 +505,7 @@ final class CianPriceMonitoring {
 
   }
 
-  $this->httpClient = $http_client;
+  return $http_client;
 
  }
 

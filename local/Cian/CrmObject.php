@@ -25,7 +25,7 @@
   */
  final class CrmObject {
 
-   private const GEODATA_LENGTH = 3;
+   private const GEODATA_ROWS = 3;
 
    private const DEFAULT_CITY = 'Москва';
 
@@ -53,7 +53,7 @@
 
         $geodata = json_decode($row['UF_CRM_1542955977'], 1);
 
-        if(count($geodata) >= self::GEODATA_LENGTH) {
+        if(count($geodata) >= self::GEODATA_ROWS) {
    
           $arResult[] = [
 
@@ -84,8 +84,8 @@
            'REGION' => $row['UF_CRM_1540202667'],
            'PRICE_STEP' => (float)$row['UF_CRM_1541753539107'],
            'CATEGORY_ID' => $row['CATEGORY_ID'],
-           'MAIN_ANCHOR' => (int)$row['UF_CRM_1542029182'] 
-
+           'MAIN_ANCHOR' => (int)$row['UF_CRM_1542029182'], 
+           'IS_DECODED'  => 'N'
         ];
 
         }
