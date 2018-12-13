@@ -72,7 +72,7 @@ final class CianPriceMonitoring {
   public static function instance() : CianPriceMonitoring {
 
     return new static();
-    
+
   }
   /**
   * 
@@ -416,12 +416,6 @@ final class CianPriceMonitoring {
  private function isStreet(?string $street) : bool {
 
     return $street && strpos($street, 'улица') ? : false;
-
- }
-
- private function isProspekt(?string $street) : bool {
-
-    return $street && strpos($street, 'проспект') ? : false;
 
  }
 
