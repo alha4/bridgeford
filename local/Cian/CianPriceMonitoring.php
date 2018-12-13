@@ -119,36 +119,48 @@ final class CianPriceMonitoring {
            
                if(CrmObject::setPrice($object['ID'], $price, $price_step)) {
            
-                  return ['ID' => $object['ID'], 'status' => 'цена обновлена'];
+                  if($object_id)
+
+                     return ['ID' => $object['ID'], 'status' => 'цена обновлена'];
 
 
                } else {
+  
+                if($object_id)
 
-                 throw new \Exception('произошла ошибка обновления цены');
+                   throw new \Exception('произошла ошибка обновления цены');
 
                }
 
               } else {
 
-                throw new \Exception('произошла ошибка цена не может быть = 0');
+                if($object_id)
+
+                  throw new \Exception('произошла ошибка цена не может быть = 0');
 
              }
 
            } else {
 
-               throw new \Exception('произошла ошибка обновления списка конкурентов');
+              if($object_id)
+
+                 throw new \Exception('произошла ошибка обновления списка конкурентов');
 
            }
          } else {
   
+          if($object_id)
+
             return ['нет данных'];
 
          }
        }
       }
    } else {
+     
+    if($object_id)
 
-     return ['проверьте Активировано ли автоматическое ценообразование'];
+       return ['проверьте Активировано ли автоматическое ценообразование'];
 
    }
  }
@@ -300,8 +312,6 @@ final class CianPriceMonitoring {
   $request  = $this->buildRequest($data);
 
   $response = json_decode($this->httpClient->post(self::CIAN_API_URL, $request), 1);
-
-  Logger::log(['REQUEST' =>  $request, 'RESPONSE' => $response, 'HEADERS' => $this->httpClient->getHeaders()->toArray() ]);
 
   if($response['status'] == self::CIAN_API_RESPONSE_SUCCESS || $response['data']['offersSerialized']) {
 
