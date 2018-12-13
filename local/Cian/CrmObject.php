@@ -35,7 +35,7 @@
 
       $sort   = ['UF_CRM_1541678101879' => 'DESC'];
 
-      $filter = ['UF_CRM_1541678101879' => 1];
+      $filter = ['UF_CRM_1541678101879' => 1, 'CHECK_PERMISSIONS' => 'N'];
 
       if($object_id > 0) {
 
