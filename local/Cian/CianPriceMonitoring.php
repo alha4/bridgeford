@@ -146,7 +146,7 @@ final class CianPriceMonitoring {
   
           if($object_id)
 
-            return ['нет данных'];
+            return ['error' => 'нет данных'];
 
          }
        }
@@ -155,7 +155,7 @@ final class CianPriceMonitoring {
      
     if($object_id)
 
-       return ['проверьте Активировано ли автоматическое ценообразование'];
+       return ['error' => 'проверьте Активировано ли автоматическое ценообразование'];
 
    }
  }

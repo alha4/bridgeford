@@ -113,8 +113,17 @@ $this->SetViewTarget('inside_pagetitle', 10000);
 					 
 				} else {
 
-           BX.closeWait(BX('update_price'));
-           alert('Нет объявлений, проверьте поля адреса и поле площадь');
+					 BX.closeWait(BX('update_price'));
+					 
+					 let error_mess = 'Нет объявлений, проверьте поля адреса и поле площадь';
+
+					 if(response.error) {
+
+						error_mess+= ', или ' + response.error;
+
+					 }
+
+           alert(	error_mess );
 				}
 				
 			});
