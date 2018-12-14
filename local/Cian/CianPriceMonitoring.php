@@ -45,7 +45,7 @@ final class CianPriceMonitoring {
 
     '0' => 'commercialrent',  //Помещение в аренду
     '1' => 'commercialsale', //Помещение на продажу 
-    '2' => 'commercialrent' //Арендный бизнес
+    '2' => 'commercialsale' //Арендный бизнес
 
   ];
 
@@ -181,6 +181,8 @@ final class CianPriceMonitoring {
 
   $square_gte = round($data['SQUARE'] - (($data['SQUARE']) / 100 * self::SQUARE_PRECENT));
 
+  $square_lte = round($data['SQUARE'] + (($data['SQUARE']) / 100 * self::SQUARE_PRECENT));
+
   $search_type = self::CIAN_SEARCH_TYPE[$data['CATEGORY_ID']];
 
   $result = ['jsonQuery' => [
@@ -208,7 +210,7 @@ final class CianPriceMonitoring {
            'total_area' => [
             'type' => 'range',
             'value' => ['gte' => $square_gte, // от
-                        'lte' => $data['SQUARE']] // до
+                        'lte' => $square_lte] // до
            ],
 
            'geo' =>  [
@@ -301,6 +303,12 @@ final class CianPriceMonitoring {
   $request  = json_encode($this->buildRequest($data));
 
   $response = json_decode($this->httpClient()->post(self::CIAN_API_URL, $request), 1);
+
+  if(REQUEST_LOG == 'Y') {
+
+    Logger::log(['REQUEST' =>  $request]);
+
+  }
 
   if($response['status'] == self::CIAN_API_RESPONSE_SUCCESS || $response['data']['offersSerialized']) {
 
