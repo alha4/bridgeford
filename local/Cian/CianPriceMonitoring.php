@@ -175,6 +175,8 @@ final class CianPriceMonitoring {
   * 
   *@var int $square_gte - площадь [от] минус [SQUARE_PRECENT] процент от площади объекта
   *
+  *@var int $square_lte - площадь [до] плюс [SQUARE_PRECENT] процент от площади объекта
+  *
   *@var string $search_type - тип поиска [Аренда,Продажа,Коммерческая]
   */
  private function buildRequest(array $data) : array {
