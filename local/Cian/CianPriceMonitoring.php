@@ -33,6 +33,14 @@ final class CianPriceMonitoring {
                           ];
 
 
+  private const DEAL_CATEGORY = [
+    
+    'TO_RENT'     => 0,        //Помещение в аренду
+    'TO_SALE'     => 1,       //Помещение на продажу 
+    'TO_RENT_BUSSINESS' => 2 //Арендный бизнес
+
+  ];
+
   private const CIAN_SEARCH_TYPE = [
 
     '0' => 'commercialrent',  //Помещение в аренду
@@ -215,18 +223,19 @@ final class CianPriceMonitoring {
           ]
         ];
 
-    if($data['CATEGORY_ID'] == 0 || $data['CATEGORY_ID'] == 2) {
+   if($data['CATEGORY_ID'] == self::DEAL_CATEGORY['TO_RENT'] || 
+      $data['CATEGORY_ID'] == self::DEAL_CATEGORY['TO_RENT_BUSSINESS']) {
 
       $result['jsonQuery']['for_day'] = [
 
               'type' => 'term',
               'value' => '!1'
   
-      ];
+      ] ;
 
-    }
+   }
  
-    return $result;
+   return $result;
 
  }
 
@@ -267,9 +276,9 @@ final class CianPriceMonitoring {
 
    if($geoData) {
 
-     $geoData['SQUARE']    = $address['SQUARE'];
      $geoData['IS_MOSKOW'] = $address['IS_MOSKOW'];
-
+     $geoData['SQUARE']    = $address['SQUARE'];
+ 
      return $geoData;
 
    }
@@ -384,18 +393,17 @@ final class CianPriceMonitoring {
  /**
   *@method prepareAdressString метод формирования строки адреса для метода geocoded
   */
-
  private function prepareAdressString(array $address) : string {
 
   if(strlen($address['CITY']) > 0 && $address['CITY'] != self::DEFAULT_CITY) {
 
     if($this->isStreet($address['STREET'])) {
   
-      return  "Россия, Москва, {$address['CITY']}, {$address['HOUSE']}-я {$address['STREET']}";
+      return  "Россия, ".self::DEFAULT_CITY.", {$address['CITY']}, {$address['HOUSE']}-я {$address['STREET']}";
 
     }
 
-    return  "Россия, Москва, {$address['CITY']}, {$address['STREET']}, {$address['HOUSE']}";
+    return  "Россия, ".self::DEFAULT_CITY.", {$address['CITY']}, {$address['STREET']}, {$address['HOUSE']}";
 
   }
 
