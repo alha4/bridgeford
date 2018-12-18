@@ -308,7 +308,7 @@ final class CianPriceMonitoring {
 
   if(REQUEST_LOG == 'Y') {
 
-    Logger::log(['REQUEST' =>  $request]);
+    Logger::log(['REQUEST' =>  $request, 'RESPONSE' => $response]);
 
   }
 

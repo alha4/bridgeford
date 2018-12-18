@@ -511,20 +511,29 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeBuildingEvent : function() {
 
-			this._buildingSelect = document.querySelector('select[name="UF_CRM_1540371261836"]');
-			this._house = document.querySelector('[data-cid="UF_CRM_1540371563"]');
+			this._buildingSelect = this.nodeSelect('UF_CRM_1540371261836');
+			this._house = this.node('UF_CRM_1540371563');
 
 		  this.bindEvent(this._buildingSelect, 'change', this.onBuildingChange);
-		  this.bindEvent(this._house, 'click', this.onHouseChange);
-	
+			this.bindEvent(this._house, 'click', this.onHouseChange);
+
+			this.onHouseChange({
+				target : {
+					nodeName : 'INPUT',
+					value :  this.nodeRadioChecked('UF_CRM_1540371563').value
+			  }
+			});
+			
+			this.onBuildingChange();
+
 		},
 
 		onHouseChange : function(e) {
     
 			if(e.target.nodeName == 'INPUT') {
 	
-			const	datepicker = document.querySelector('[data-cid="UF_CRM_1540371802"]'),
-						datepickerInput = document.querySelector('input[name="UF_CRM_1540371802"]'),
+			const	datepicker = this.node('UF_CRM_1540371802'),
+						datepickerInput = this.nodeInput('UF_CRM_1540371802'),
 	
 						houseValue = e.target.value,
 				
@@ -573,9 +582,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	
 		showBuildingFields : function() {
 	
-			if(document.querySelector('[data-cid="UF_CRM_1540371261836"]')) {
+			if(this.node('UF_CRM_1540371261836')) {
 	
-			  	const buildingControl = document.querySelector('[data-cid="UF_CRM_1540371261836"]'); 
+			  	const buildingControl = this.node('UF_CRM_1540371261836'); 
 					
 								buildingTextValue = this.getTextValue(buildingControl);
 		
@@ -586,11 +595,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					} 
 				}
 				 
-				if(document.querySelector('[data-cid="UF_CRM_1540371563"]')) {
+				if(this.node('UF_CRM_1540371563')) {
 		
 					setTimeout(() => {
 
-						const houseControl = document.querySelector('[data-cid="UF_CRM_1540371563"]'),
+						const houseControl = this.node('UF_CRM_1540371563'),
 					        houseTextValue = this.getTextValue(houseControl);
 					
 					if(houseTextValue) {
@@ -615,7 +624,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	
 		 buildingView : function(buildingValue) {
 	
-		 const mansion = document.querySelector('[data-cid="UF_CRM_1540371938"]'),
+		 const mansion = this.node('UF_CRM_1540371938'),
 							
 				  	mansionInput = document.querySelectorAll('input[name="UF_CRM_1540371938"]')[1],
 				
@@ -1713,6 +1722,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		nodeRadio :  function(exp) {
  
 			return document.querySelectorAll(`input[name="${exp}"]`)[1];
+
+		},
+
+		nodeRadioChecked : function(exp) {
+
+			return document.querySelector(`input[name="${exp}"]:checked`);
 
 		},
 
