@@ -517,10 +517,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		  this.bindEvent(this._buildingSelect, 'change', this.onBuildingChange);
 			this.bindEvent(this._house, 'click', this.onHouseChange);
 
+			const homeDelivered = this.nodeRadioChecked('UF_CRM_1540371563') ? this.nodeRadioChecked('UF_CRM_1540371563').value : this.getTextValue(this.node('UF_CRM_1540371563'));
+
 			this.onHouseChange({
 				target : {
 					nodeName : 'INPUT',
-					value :  this.nodeRadioChecked('UF_CRM_1540371563').value
+					value :  homeDelivered
 			  }
 			});
 			
@@ -571,7 +573,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			
 		onBuildingChange : function() {
 	
-				const buildingValue = this._buildingSelect.options[ this._buildingSelect.selectedIndex ].value;
+				const buildingValue =  this._buildingSelect ?
+				                       this.nodeSelectValue(this._buildingSelect) : this.getTextValue(this.node('UF_CRM_1540371261836'));
 		 
 				if(buildingValue) {
 	
@@ -1642,7 +1645,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeObjStatusEvent : function() {
 
-			 this._objStatus = this.node('UF_CRM_1544521987');
+			 this._objStatus = this.node('UF_CRM_1545199624');
 
 			 this.showObjStatusFields();
 
@@ -2164,6 +2167,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeEventCompetitions');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeGeoEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'showGeoFields');
+				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeBuildingEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateObjectEvent');
 				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeAdvertisingEvent');
@@ -2176,6 +2180,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeEventCompetitions');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeGeoEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showGeoFields');
+				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBuildingEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateObjectEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
 				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeAdvertisingEvent');
@@ -2210,7 +2215,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					this.registerView(this._CATEGORY.TO_SALE, 'showGeoFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'getGeoData');
 				  this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
-				 
+					this.registerView(this._CATEGORY.TO_SALE, 'showBuildingFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showSystemInfoFields');
 					this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingFields'); 
@@ -2221,6 +2226,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'getGeoData');
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
+					this.registerView(this._CATEGORY.TO_BUSSINES, 'showBuildingFields');
 					this.registerView(this._CATEGORY.TO_BUSSINES, 'showSystemInfoFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
 				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
