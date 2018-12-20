@@ -1836,6 +1836,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		getSectionID : function(obj) {
+
+			return BX.findParent(obj, {class : 'crm-entity-widget-content'}).id;
+
+		},
 
 		prepareModel : function(params) {
 
@@ -2844,6 +2849,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._mode = BX.Crm.EntityEditorMode.edit;
 				this._modeChangeNotifier.notify([ this ]);
 			}
+
+			console.log(control._contentContainer.id);
 
 			const self = this;
 
