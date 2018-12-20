@@ -145,9 +145,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		getInits : function() {
 
-    	const dealCategoryID = this.getDealCategory();
-
-			return this._inits[dealCategoryID];
+			return this._inits[this.getDealCategory()];
 
 		},
 
@@ -161,8 +159,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		initializeViews : function() {
 
-			BX.ready(()=> {
-
+			BX.ready(() => {
 
 			const views = this.getViews(),
 
@@ -183,9 +180,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		getViews : function() {
 
-    	const dealCategoryID = this.getDealCategory();
-
-			return this._views[dealCategoryID];
+			return this._views[this.getDealCategory()];
 
 		},
 
@@ -2117,12 +2112,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				/** новый функционал  */
 
-				this._isAdmin = null;
-	
-				this._categoryID = null;
-	
-				this._timeout = 300;
-	
 				 this._CATEGORY =  {
 	
 					 TO_BUSSINES :  2, //Арендный бизнес 
@@ -2130,9 +2119,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 TO_RENT     :  0, //Помещение в аренду
 				};
 	
-				this._inits = [];
+				this._inits = []; // Контроллеры событий
 	
-				this._views = [];
+				this._views = []; // Представления режим view
 	
 				for(key in this._CATEGORY) {
 	
@@ -2143,9 +2132,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	
 				this._categoryID = BX.prop.getInteger(this._settings, "categoryID", -1);
 	
-				this._isAdmin = BX.prop.get(this._settings, "isAdmin");
+				this._isAdmin    = BX.prop.get(this._settings, "isAdmin", null);
 	
-				this._systemInfo =  BX.prop.get(this._settings, "systemInfo");
+				this._systemInfo =  BX.prop.get(this._settings, "systemInfo", null);
 	
 				this._brokerAssignedID = BX.prop.get(this._settings, "brokerAssignedID", null);
 	
@@ -2153,105 +2142,137 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	
 				this._customerID = BX.prop.get(this._settings, "customerID", null);
 
+				this._timeout = 300;
+
 				BX.showWait(document.body);
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeObjStatusEvent');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeEventCompetitions');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'showGeoFields');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeLandEvent');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeReadyToMoveEvent');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeSystemInfoEvent'); 
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeDuplicationEvent');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeCaclulateRentEvent');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeVacationRentalEvent');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingEvent');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingCianEvent');
-				this.registerEventListener(this._CATEGORY.TO_RENT,'showDescriptionFields');
+
+				switch(this.getDealCategory()) {
+
+				  case this._CATEGORY.TO_RENT :
+
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeObjStatusEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeEventCompetitions');
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeGeoEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'showGeoFields');
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeBuildingEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeLandEvent');
+		  		this.registerEventListener(this._CATEGORY.TO_RENT,'initializeReadyToMoveEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeExploitationEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeSystemInfoEvent'); 
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeDuplicationEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeCaclulateRentEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeVacationRentalEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingCianEvent');
+					this.registerEventListener(this._CATEGORY.TO_RENT,'showDescriptionFields');
+					
+					break;
 			
+					case this._CATEGORY.TO_SALE :
 	
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeObjStatusEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeEventCompetitions');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeGeoEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'showGeoFields');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeLandEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeBuildingEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateObjectEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeAdvertisingEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeAdvertisingCianEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeDuplicationEvent');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
-				this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeObjStatusEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeEventCompetitions');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeGeoEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'showGeoFields');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeLandEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeBuildingEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeExploitationEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCaclulateObjectEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeAdvertisingEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeAdvertisingCianEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeDuplicationEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
+					this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
+					
+					break;
+
+					case this._CATEGORY.TO_BUSSINES :
 	
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeObjStatusEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeEventCompetitions');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeGeoEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showGeoFields');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeLandEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBuildingEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateObjectEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeAdvertisingEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeAdvertisingCianEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
-			
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializePaideExplotationEvent');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showDescriptionFields');
-				this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeDuplicationEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeObjStatusEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeEventCompetitions');
+			  	this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeGeoEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showGeoFields');
+			  	this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeLandEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBuildingEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCaclulateObjectEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeExploitationEvent');
+			   	this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeAdvertisingEvent');
+				  this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeAdvertisingCianEvent');
+				  this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeArendNameEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCurrencyMAPEvent');
+			  	this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeBindingMAPEvent'); 
+				  this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializePaideExplotationEvent');
+				  this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showDescriptionFields');
+					this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeDuplicationEvent');
+					
+					break;
+
+				}
 
 				if(this._entityId > 0) {
-	
-				  this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
-			  	this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
-			  	this.registerView(this._CATEGORY.TO_RENT, 'initializeMapEvent');
-				  this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
-			  	this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
-				  this.registerView(this._CATEGORY.TO_RENT, 'showReadyToMoveFields');
-				  this.registerView(this._CATEGORY.TO_RENT, 'showExploitationFields');
-			  	this.registerView(this._CATEGORY.TO_RENT, 'showDescriptionFields');
-			  	this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFields');
-			  	this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
-				  this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
-				  this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingCianFields');
-				  this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
-			  	this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
-			    this.registerView(this._CATEGORY.TO_RENT, 'showVacationFields');
-			  	this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
-	
-					this.registerView(this._CATEGORY.TO_SALE, 'showGeoFields');
-					this.registerView(this._CATEGORY.TO_SALE, 'getGeoData');
-				  this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
-					this.registerView(this._CATEGORY.TO_SALE, 'showBuildingFields');
-					this.registerView(this._CATEGORY.TO_SALE, 'showLandFields');
-					this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
-					this.registerView(this._CATEGORY.TO_SALE, 'showSystemInfoFields');
-					this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingFields'); 
-					this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingCianFields');
-					this.registerView(this._CATEGORY.TO_SALE, 'showDuplication1Fields');
-			  	this.registerView(this._CATEGORY.TO_SALE, 'showDuplication2Fields'); 
 
-					this.registerView(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
-					this.registerView(this._CATEGORY.TO_BUSSINES, 'getGeoData');
-					this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
-					this.registerView(this._CATEGORY.TO_BUSSINES, 'showBuildingFields');
-					this.registerView(this._CATEGORY.TO_BUSSINES, 'showLandFields');
-					this.registerView(this._CATEGORY.TO_BUSSINES, 'showSystemInfoFields');
-				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
-				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
-				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
-				  this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
-					this.registerView(this._CATEGORY.TO_BUSSINES, 'showAdvertisingFields')
-					this.registerView(this._CATEGORY.TO_BUSSINES, 'showAdvertisingCianFields');
-					this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication1Fields');
-			  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication2Fields');
+					switch(this.getDealCategory()) {
+
+						case this._CATEGORY.TO_RENT :
+	
+			  	  this.registerView(this._CATEGORY.TO_RENT, 'showGeoFields');
+			    	this.registerView(this._CATEGORY.TO_RENT, 'getGeoData');
+			    	this.registerView(this._CATEGORY.TO_RENT, 'initializeMapEvent');
+			  	  this.registerView(this._CATEGORY.TO_RENT, 'showBuildingFields');
+			    	this.registerView(this._CATEGORY.TO_RENT, 'showLandFields');
+			  	  this.registerView(this._CATEGORY.TO_RENT, 'showReadyToMoveFields');
+			  	  this.registerView(this._CATEGORY.TO_RENT, 'showExploitationFields');
+			    	this.registerView(this._CATEGORY.TO_RENT, 'showDescriptionFields');
+			    	this.registerView(this._CATEGORY.TO_RENT, 'showBrokerFields');
+			    	this.registerView(this._CATEGORY.TO_RENT, 'showSystemInfoFields');
+				    this.registerView(this._CATEGORY.TO_RENT, 'showRightOwnerFields');
+				    this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingCianFields');
+				    this.registerView(this._CATEGORY.TO_RENT, 'showDuplication1Fields');
+			    	this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
+			      this.registerView(this._CATEGORY.TO_RENT, 'showVacationFields');
+						this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
+						
+						break;
+	
+						case this._CATEGORY.TO_SALE :
+
+		   			this.registerView(this._CATEGORY.TO_SALE, 'showGeoFields');
+			  		this.registerView(this._CATEGORY.TO_SALE, 'getGeoData');
+			  	  this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
+			  		this.registerView(this._CATEGORY.TO_SALE, 'showBuildingFields');
+				  	this.registerView(this._CATEGORY.TO_SALE, 'showLandFields');
+				  	this.registerView(this._CATEGORY.TO_SALE, 'showDescriptionFields');
+				  	this.registerView(this._CATEGORY.TO_SALE, 'showSystemInfoFields');
+				  	this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingFields'); 
+				  	this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingCianFields');
+				  	this.registerView(this._CATEGORY.TO_SALE, 'showDuplication1Fields');
+						this.registerView(this._CATEGORY.TO_SALE, 'showDuplication2Fields'); 
+						
+						case this._CATEGORY.TO_BUSSINES :
+
+				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
+				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'getGeoData');
+			    	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
+				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showBuildingFields');
+				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showLandFields');
+				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showSystemInfoFields');
+				    this.registerView(this._CATEGORY.TO_BUSSINES, 'showArendNameFields');
+				    this.registerView(this._CATEGORY.TO_BUSSINES, 'showCurrencyMAPFields');
+				    this.registerView(this._CATEGORY.TO_BUSSINES, 'showBindingMAPFields');
+				    this.registerView(this._CATEGORY.TO_BUSSINES, 'showPaidExplotationFields');
+				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showAdvertisingFields')
+					  this.registerView(this._CATEGORY.TO_BUSSINES, 'showAdvertisingCianFields');
+				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication1Fields');
+						this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication2Fields');
+						
+						break;
+
+					}
 					
 				  setTimeout(() => {
 			
-						this.initializeViews(); 	
+						this.initializeViews(); 
+
 					}, 2000);
 					
 			  }
