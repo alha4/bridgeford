@@ -666,7 +666,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			this._landSelect = this.nodeSelect("UF_CRM_1540381458431");
 	
-		  this.bindEvent(this._landSelect, 'change', this.onLandChange );
+			this.bindEvent(this._landSelect, 'change', this.onLandChange );
+			
+			this.onLandChange();
 
 		},
 
@@ -1706,7 +1708,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		nodeSelectValue : function(node) {
 
-			 return node.options[node.selectedIndex].value;
+			 if(node) {
+
+				 return	node.options[node.selectedIndex].value;
+
+			 }
+
+			 return false;
 
 		},
 
