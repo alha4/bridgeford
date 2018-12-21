@@ -97,7 +97,19 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	{
 		getDealCategory : function() {
 
+			if(this.getEntityTypeCode() == this._ENTITY_TYPE_LEAD) {
+
+				 return 0;
+
+			}
+
 			return this._categoryID;
+
+		},
+
+		getEntityTypeCode : function() {
+
+       return this._entityTypeId;
 
 		},
 
@@ -117,6 +129,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			return this._systemInfo;
 			
+		},
+
+
+		initializeEntityEvents : function() {
+
+
+
+
+
 		},
 
 		initializeEventListener : function() {
@@ -2112,8 +2133,25 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		},
 
 		initializeCustom : function() {
+
+			this._ENTITY_TYPE = {
+
+					LEAD : 1,
+					DEAL : 2
+				
+			};
+
+			if(this._entityTypeId == this._ENTITY_TYPE.LEAD) {
+				
+				
+
+
+
+
+
+			}
    
-			if(this._entityTypeId == 2) { 
+			if(this._entityTypeId == this._ENTITY_TYPE.DEAL) { 
 
 				/** новый функционал  */
 
