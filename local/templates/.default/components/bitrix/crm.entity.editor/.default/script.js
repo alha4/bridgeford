@@ -97,9 +97,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	{
 		getDealCategory : function() {
 
-			if(this.getEntityTypeCode() == this._ENTITY_TYPE_LEAD) {
+			if(this.getEntityTypeCode() == this._ENTITY_TYPE.LEAD) {
 
-				 return 0;
+				 return this.getTicketCategoryID();
 
 			}
 
@@ -110,6 +110,36 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		getEntityTypeCode : function() {
 
        return this._entityTypeId;
+
+		},
+
+		getTicketCategoryID : function() {
+
+      /*const TicketModel = this.prepareModel({
+				 
+				 'edit' : {
+ 
+						 ON_SEARCH : 359,
+						 ON_OBJECT : 360,
+						 ON_PERMANENT : 361 
+				 },
+				 'view' : {
+
+				  	ON_SEARCH : 'Заявка на поиск',
+				  	ON_OBJECT : 'Заявка по объекту',
+				  	ON_PERMANENT : 'Постоянная заявка' 
+
+				 }
+				
+			 });*/
+
+			if(this.getMode() === BX.Crm.EntityEditorMode.edit) {
+
+				 return this.nodeSelectValue(this.nodeSelect('UF_CRM_1545389896'));
+
+			}
+
+			return this.getTextValue(this.node('UF_CRM_1545389896'));
 
 		},
 
@@ -129,15 +159,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			return this._systemInfo;
 			
-		},
-
-
-		initializeEntityEvents : function() {
-
-
-
-
-
 		},
 
 		initializeEventListener : function() {
@@ -1678,6 +1699,22 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			}
 		},
 
+		initializeTicketTypeEvent : function() {
+
+			 this._ticketType = this.nodeSelect('UF_CRM_1545389896');
+
+       this.bindEvent(this._ticketType, 'change', this.onTicketTypeChange);
+
+		},
+
+		onTicketTypeChange : function() {
+
+			const selectType = this.nodeSelectValue(this._ticketType);
+
+			console.log(selectType);
+
+		},
+
 		brokerAssignedID : function() {
 
 			 return this._brokerAssignedID; 
@@ -2141,19 +2178,38 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				
 			};
 
+			this._inits = []; // Контроллеры событий
+	
+			this._views = []; // Представления режим view
+
+			this._timeout = 300;
+
+			this._isAdmin    = BX.prop.get(this._settings, "isAdmin", null);
+
+			BX.showWait(document.body);
+			
 			if(this._entityTypeId == this._ENTITY_TYPE.LEAD) {
 				
+				 this._TICKET = {
+
+				  	ON_SEARCH : 359,
+				  	ON_OBJECT : 360,
+				  	ON_PERMANENT : 361 
+
+				 };
+
+				 for(key in this._TICKET) {
+	
+					this._inits[this._TICKET[key]] = [];
+					this._views[this._TICKET[key]] = [];
 				
+				}
 
-
-
-
+				this.registerEventListener(this._TICKET.ON_SEARCH, 'initializeTicketTypeEvent');
 
 			}
    
 			if(this._entityTypeId == this._ENTITY_TYPE.DEAL) { 
-
-				/** новый функционал  */
 
 				 this._CATEGORY =  {
 	
@@ -2162,10 +2218,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 TO_RENT     :  0, //Помещение в аренду
 				};
 	
-				this._inits = []; // Контроллеры событий
-	
-				this._views = []; // Представления режим view
-	
+				
 				for(key in this._CATEGORY) {
 	
 					this._inits[this._CATEGORY[key]] = [];
@@ -2175,8 +2228,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	
 				this._categoryID = BX.prop.getInteger(this._settings, "categoryID", -1);
 	
-				this._isAdmin    = BX.prop.get(this._settings, "isAdmin", null);
-	
 				this._systemInfo =  BX.prop.get(this._settings, "systemInfo", null);
 	
 				this._brokerAssignedID = BX.prop.get(this._settings, "brokerAssignedID", null);
@@ -2184,10 +2235,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._generalBrokerID  = BX.prop.get(this._settings, "generalBrokerID", null);
 	
 				this._customerID = BX.prop.get(this._settings, "customerID", null);
-
-				this._timeout = 300;
-
-				BX.showWait(document.body);
 
 				switch(this.getDealCategory()) {
 
@@ -2319,9 +2366,10 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					}, 2000);
 					
 			  }
-
-			 BX.closeWait(document.body);
 		 }
+
+		 BX.closeWait(document.body);
+
 		},
 
 		release: function()
