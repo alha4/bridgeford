@@ -2184,7 +2184,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			this._timeout = 300;
 
-			this._isAdmin    = BX.prop.get(this._settings, "isAdmin", null);
+			this._isAdmin = BX.prop.get(this._settings, "isAdmin", null);
 
 			BX.showWait(document.body);
 			
@@ -2205,8 +2205,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				
 				}
 
-				this.registerEventListener(this._TICKET.ON_SEARCH, 'initializeTicketTypeEvent');
 
+				this.registerEventListener(this._TICKET.ON_SEARCH, 'initializeNeedGeoEvent');
+				   
 			}
    
 			if(this._entityTypeId == this._ENTITY_TYPE.DEAL) { 

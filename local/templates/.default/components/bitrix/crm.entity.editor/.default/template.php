@@ -41,6 +41,12 @@ if($arResult['ENTITY_TYPE_ID'] == CCrmOwnerType::Deal) {
 
 }
 
+if($arResult['ENTITY_TYPE_ID'] == CCrmOwnerType::Lead) {
+
+	Main\Page\Asset::getInstance()->addJs($templateFolder.'/ticket_script.js');
+
+}
+
 
 $guid = $arResult['GUID'];
 $prefix = strtolower($guid);
