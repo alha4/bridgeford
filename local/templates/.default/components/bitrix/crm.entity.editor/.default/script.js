@@ -1108,7 +1108,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			if(this.isAdmin()) {
 
-			const textValue = this.getTextValue(this.node('UF_CRM_1543834597'));
+			const textValue = this.getTextValue(this.node('UF_CRM_1543834597')) || 
+			                  this.nodeRadioChecked('UF_CRM_1543834597').checked;
 
 			      this.showField(document.querySelector('#section_reklama'));
 
@@ -1121,6 +1122,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		initializeAdvertisingEvent : function() {
 
 			this.bindEvent(this.nodeRadio('UF_CRM_1543834597'), 'click', this.onAdvertisingChange);
+
+			this.showAdvertisingFields();
 		
 		},
 
@@ -1176,7 +1179,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			if(this.isAdmin()) {
 
-			const textValue = this.getTextValue(this.node('UF_CRM_1543837331299'));
+			const textValue = this.getTextValue(this.node('UF_CRM_1543837331299')) ||
+			                  this.nodeRadioChecked('UF_CRM_1543837331299').checked;
 
 			      this.showField(document.querySelector('#section_reklama_v_tsian'));
 
@@ -1190,6 +1194,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		initializeAdvertisingCianEvent : function() {
 
 			this.bindEvent(this.nodeRadio('UF_CRM_1543837331299'), 'click', this.onAdvertisingCianChange);
+			this.showAdvertisingCianFields();
 		
 		},
 
@@ -2937,7 +2942,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._modeChangeNotifier.notify([ this ]);
 			}
 
-			console.log(control._contentContainer.id);
+			//console.log(control._contentContainer.id);
 
 			const self = this;
 
