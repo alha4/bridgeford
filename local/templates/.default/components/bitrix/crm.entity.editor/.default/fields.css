@@ -1,3 +1,14 @@
+div[data-cid="UF_CRM_1545649289833"] .money {
+  color: #424956;
+  font-size: 36px; 
+  padding-top: 6px;
+}
+
+div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-block-colums-right,
+div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-block-wallet {
+  color: #222;
+  font-size: 16px;
+}
 #section_geografiya .crm-entity-widget-content-block:nth-child(n+2), /* Тип района */
 
 #section_zdanie div[data-cid="UF_CRM_1540371938"], /* Особняк */
@@ -62,7 +73,7 @@ div[data-cid="UF_CRM_1542089326915"] {
 /*
  поля только для чтения
 */
-
+div[data-cid="UF_CRM_1545649289833"] :before,
 div[data-cid="UF_CRM_1542089326915"] :before,
 div[data-cid="UF_CRM_1540554743072"] :before,
 div[data-cid="UF_CRM_1544425067"] :before,
@@ -85,6 +96,7 @@ div[data-cid="UF_CRM_1544528494"] :before {
   z-index: 9111;
   background: #e8ecee00;
 }
+div[data-cid="UF_CRM_1545649289833"] .field-item input,
 div[data-cid="UF_CRM_1542089326915"] .field-item input,
 div[data-cid="UF_CRM_1540554743072"] .field-item input,
 div[data-cid="UF_CRM_1541067577722"] .field-item input, 

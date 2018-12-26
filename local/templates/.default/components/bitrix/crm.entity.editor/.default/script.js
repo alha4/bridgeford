@@ -240,6 +240,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		nodeText : function(node) {
+
+			const textNode  = node.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
+		                    node.querySelector(".crm-entity-widget-content-block-inner");
+
+			 if(textNode) {
+			 
+					return textNode;
+			 }
+
+			 return false;
+
+		},
+
 		getRadioValue : function(node) {
 
 			const radioNode  = node.querySelector("input[checked]");
@@ -1704,6 +1718,26 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			}
 		},
 
+		numberToMoney : function() {
+
+		 const fields = ['UF_CRM_1540456417','UF_CRM_1541072013901','UF_CRM_1541072151310','UF_CRM_1540554743072','UF_CRM_1544425067'];
+		 
+		 for(var uf of fields) {
+
+			 const node = this.node(uf);
+
+			 if(node) {
+
+					const moneyNode = this.nodeText(node);
+					
+					moneyNode.textContent = BX.Currency.currencyFormat(moneyNode.textContent ,'RUB', true);
+
+			 }
+		 }
+			 
+		},
+
+
 		initializeTicketTypeEvent : function() {
 
 			 this._ticketType = this.nodeSelect('UF_CRM_1545389896');
@@ -2327,6 +2361,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			    	this.registerView(this._CATEGORY.TO_RENT, 'showDuplication2Fields');
 			      this.registerView(this._CATEGORY.TO_RENT, 'showVacationFields');
 						this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
+						this.registerView(this._CATEGORY.TO_RENT, 'numberToMoney'); 
 						
 						break;
 	
@@ -2343,6 +2378,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  	this.registerView(this._CATEGORY.TO_SALE, 'showAdvertisingCianFields');
 				  	this.registerView(this._CATEGORY.TO_SALE, 'showDuplication1Fields');
 						this.registerView(this._CATEGORY.TO_SALE, 'showDuplication2Fields'); 
+						this.registerView(this._CATEGORY.TO_SALE, 'numberToMoney'); 
 						
 						case this._CATEGORY.TO_BUSSINES :
 
@@ -2360,6 +2396,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					  this.registerView(this._CATEGORY.TO_BUSSINES, 'showAdvertisingCianFields');
 				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication1Fields');
 						this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication2Fields');
+						this.registerView(this._CATEGORY.TO_BUSSINES, 'numberToMoney'); 
 						
 						break;
 
