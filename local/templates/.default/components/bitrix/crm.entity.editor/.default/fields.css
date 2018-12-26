@@ -1,14 +1,15 @@
-div[data-cid="UF_CRM_1545649289833"] .money {
+div[data-cid="UF_CRM_1545649289833"] .money { /* Реальная цена */
   color: #424956;
   font-size: 36px; 
   padding-top: 6px;
 }
 
-div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-block-colums-right,
-div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-block-wallet {
+div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-block-colums-right, 
+div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-block-wallet { /* Авто-цена */
   color: #222;
   font-size: 16px;
 }
+
 #section_geografiya .crm-entity-widget-content-block:nth-child(n+2), /* Тип района */
 
 #section_zdanie div[data-cid="UF_CRM_1540371938"], /* Особняк */
@@ -20,73 +21,67 @@ div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-block-walle
 
 #section_zemelnyy_uchastok div[data-cid="UF_CRM_1540381635335"], /* год земельный участок */
 
-#section_kommercheskie_usloviya div[data-cid="UF_CRM_1540544416"],
-#section_kommercheskie_usloviya div[data-cid="UF_CRM_1540456969485"],
+#section_kommercheskie_usloviya div[data-cid="UF_CRM_1540544416"], /* Дата выезда */
+#section_kommercheskie_usloviya div[data-cid="UF_CRM_1540456969485"], /* Стоимость эксплуатационных расходов в месяц */
 #section_kommercheskie_usloviya div[data-cid="UF_CRM_1540456800018"], /* арендные каникулы */
-
 
 #section_opisanie div[data-cid="UF_CRM_1540471444329"], /* Срочная аренда */
 #section_opisanie div[data-cid="UF_CRM_1540471471728"], /* Закрытая аренда */
 #section_opisanie div[data-cid="UF_CRM_1540974006"],   /* Семантика помещения в аренду */
   
-/*
-#section_reklama div[data-cid="UF_CRM_1540977600168"], 
-#section_reklama div[data-cid="UF_CRM_1540978008"],  магазин одежды реклама 
-*/
-
 #section_reklama ,
 #section_reklama_v_tsian,
 #section_reklama div[data-cid="UF_CRM_1540977921792"], /* Назначение объекта (для Яндекса) */
 #section_reklama div[data-cid="UF_CRM_1540977409431"], /* Тип выгрузки Яндекс */
 #section_reklama div[data-cid="UF_CRM_1540976407661"], /* Тип выгрузки */
 #section_reklama div[data-cid="UF_CRM_1540977227270"], /* Тип выгрузки для продублированного */
-#section_reklama div[data-cid="UF_CRM_1540977530"], /* Тип объекта для дублирования */
+#section_reklama div[data-cid="UF_CRM_1540977530"],    /* Тип объекта для дублирования */
 
 #section_reklama_v_tsian div[data-cid="UF_CRM_1540976407661"], /* Тип выгрузки ЦИАН */
-#section_reklama_v_tsian div[data-cid="UF_CRM_1540977530"], /* Тип объекта для дублирования */
+#section_reklama_v_tsian div[data-cid="UF_CRM_1540977530"],    /* Тип объекта для дублирования */
 #section_reklama_v_tsian div[data-cid="UF_CRM_1540977227270"], /* Тип выгрузки для продублированного  */
 #section_reklama_v_tsian div[data-cid="UF_CRM_1540977306391"], /* Тип выгрузки для продублированного 2*/
-#section_reklama_v_tsian div[data-cid="UF_CRM_1540977795"], /* Тип объекта для дублирования 2 */
+#section_reklama_v_tsian div[data-cid="UF_CRM_1540977795"],    /* Тип объекта для дублирования 2 */
 
-#section_arendator div[data-cid="UF_CRM_1541055274251"],
-#section_arendator div[data-cid="UF_CRM_1541055803"],
-#section_arendator div[data-cid="UF_CRM_1541056010"],
-#section_arendator div[data-cid="UF_CRM_1541056176623"],
-#section_arendator div[data-cid="UF_CRM_1541056221"],
-#section_arendator div[data-cid="UF_CRM_1541056258"],
-#section_arendator div[data-cid="UF_CRM_1541056313"],
-#section_arendator div[data-cid="UF_CRM_1541056338255"],
+#section_arendator div[data-cid="UF_CRM_1541055274251"], /* Иное названия арендатора  */
+#section_arendator div[data-cid="UF_CRM_1541055803"],   /*  Комментарий "Валютная оговорка МАП" */
+#section_arendator div[data-cid="UF_CRM_1541056010"],  /* Комментарий "Привязка МАП к выручке" */
+#section_arendator div[data-cid="UF_CRM_1541056176623"], /* Стоимость эксплуатационных расходов в месяц */
+#section_arendator div[data-cid="UF_CRM_1541056221"], /* Коммуналка */
+#section_arendator div[data-cid="UF_CRM_1541056258"], /* Дата подписания договора аренды */
+#section_arendator div[data-cid="UF_CRM_1541056313"], /* Срок действия договора аренды */
+#section_arendator div[data-cid="UF_CRM_1541056338255"], /* Краткосрочный договор аренды» */
 #section_karta .crm-entity-widget-actions-block,
 #section_karta .crm-entity-widget-content-block
 .hide-field,
 .crm-entity-card-container-content form .crm-entity-card-widget:nth-last-child(-n+3),
-div[data-cid="UF_CRM_1542955977"],
-div[data-cid="UF_CRM_1541076330647"],
-div[data-cid="UF_CRM_1543504475389"],
+div[data-cid="UF_CRM_1542955977"], /* Гео-данные */
+div[data-cid="UF_CRM_1541076330647"], /* Площадь объекта  */
+div[data-cid="UF_CRM_1543504475389"], /* Длительность каникул, мес */
 
 .pagetitle-sub {
   display:none;
 }
-div[data-cid="UF_CRM_1542089326915"] {
+div[data-cid="UF_CRM_1542089326915"] { /* кол-во конкурентов */
   position: relative;
 }
 /*
  поля только для чтения
 */
-div[data-cid="UF_CRM_1545649289833"] :before,
-div[data-cid="UF_CRM_1542089326915"] :before,
-div[data-cid="UF_CRM_1540554743072"] :before,
-div[data-cid="UF_CRM_1544425067"] :before,
-div[data-cid="UF_CRM_1544446024"] :before,
-div[data-cid="OPPORTUNITY_WITH_CURRENCY"] :before,
-div[data-cid="UF_CRM_1544431330"] :before,
-div[data-cid="UF_CRM_1541067577722"] :before, 
-div[data-cid="UF_CRM_1541067645026"] :before,
-div[data-cid="UF_CRM_1541072151310"] :before, 
+div[data-cid="UF_CRM_1545649289833"] :before, /*  Реальная цена */
+div[data-cid="UF_CRM_1542089326915"] :before, /* кол-во конкурентов */
+div[data-cid="UF_CRM_1540554743072"] :before, /* стоимость за 1 кв.м. в год */
+div[data-cid="UF_CRM_1544425067"] :before, /* Стоимость объекта в год */
+div[data-cid="UF_CRM_1544446024"] :before, /* Рейтинг */
+div[data-cid="OPPORTUNITY_WITH_CURRENCY"] :before, /* */
+div[data-cid="UF_CRM_1544431330"] :before, /* Окупаемость */
+div[data-cid="UF_CRM_1541067577722"] :before,  /* */
+div[data-cid="UF_CRM_1541067645026"] :before, /* Доходность */
+div[data-cid="UF_CRM_1541072151310"] :before, /* стоимость за 1 кв.м  */
 div[data-cid="UF_CRM_1541072168373"] :before,
 div[data-cid="UF_CRM_1544521987"] :before,
-div[data-cid="UF_CRM_1544524903217"] :before,
-div[data-cid="UF_CRM_1544528494"] :before {
+div[data-cid="UF_CRM_1544524903217"] :before, /* Дата актуализации */
+div[data-cid="UF_CRM_1544528494"] :before { /* Признак актуальности объекта */
   content: ' ';
   width: 100%;
   height: 50px;
@@ -147,12 +142,12 @@ div.show-field {
   height: 500px;
 }
 
-div[data-cid="UF_CRM_1540392018"],
-div[data-cid="UF_CRM_1540392118"],
-div[data-cid="UF_CRM_1540393032"],
-div[data-cid="UF_CRM_1540397194"],
-div[data-cid="UF_CRM_1540397421"],
-div[data-cid="UF_CRM_1540974006"] {
+div[data-cid="UF_CRM_1540392018"], /* Магазин */
+div[data-cid="UF_CRM_1540392118"], /*Медицина и Красота */
+div[data-cid="UF_CRM_1540393032"], /* Бизнес */
+div[data-cid="UF_CRM_1540397194"], /* Промышленность */
+div[data-cid="UF_CRM_1540397421"], /* Хорека */
+div[data-cid="UF_CRM_1540974006"] { /* Семантика "помещение в аренду" */
   padding: 11px 0;
   border-bottom: 1px solid #e8ecee;
 }
