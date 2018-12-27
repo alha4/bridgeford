@@ -1543,9 +1543,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		paidExplotationView : function(explotationValue) {
 
-			const arendFields = ['UF_CRM_1541056176623','UF_CRM_1541056221','UF_CRM_1541056258','UF_CRM_1541056313','UF_CRM_1541056338255'],
-			 
-			      viewModel = this.prepareModel({
+			const viewModel = this.prepareModel({
 
 							'edit' : { SEPARATE : {value : 281}},
 							'view' : { SEPARATE : {value : 'Оплачивается отдельно'}}
@@ -1554,18 +1552,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
        if(explotationValue == viewModel.SEPARATE) {
 
-          for(var uf of arendFields) {
-					 
-						 this.showField(this.node(uf));
-					}
+			 	 this.showField(this.node('UF_CRM_1540456969485'));
+				
 
 			 } else {
 
-				 for(var uf of arendFields) {
-					 
-					 this.hideField(this.node(uf));
-
-				 }	
+					this.hideField(this.node('UF_CRM_1540456969485'));	
 		
 			 }
 		},
