@@ -966,10 +966,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 					 const priceMAP     = parseInt(this.getTextValue(this.node('UF_CRM_1541055727999')).replace(/\s+/ig,"") ) * 12;//МАП 
 								 cashing      = this.nodeInput('UF_CRM_1541067645026'), //доходность
-								 payback      = this.nodeInput('UF_CRM_1544431330'); //окупаемость
+								 payback      = this.nodeInput('UF_CRM_1544431330'), //окупаемость
+
+								 paybackValue =(priceObj / priceMAP).toFixed(1);
 
 								 cashing.value = (priceMAP / priceObj) * 100 + "%";	
-								 payback.value = (priceObj / priceMAP).toFixed(1);
+
+								 payback.value = this.precentToDate(paybackValue);
 				}
 
 
@@ -1920,16 +1923,57 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			if((monthIndex = number.indexOf(".")) != -1) {
 
-				const month = Math.ceil((12 / 100) * parseInt( (number.substr(monthIndex + 1)).substr(0,2) )),
-				      dateYear = number.substr(0, monthIndex);
-				
-				// console.log((number.substr(monthIndex + 1)).substr(0,2), number, monthIndex);
+				const month = "0." + number.substr(monthIndex + 1),
 
-				return `${dateYear} года, ${month} месяца`;
+				      monthValue = parseInt(parseFloat(month) * 365 / 30);
+
+							dateYear = number.substr(0, monthIndex);
+							
+				let   yearText,
+				      monthText;
+
+				if(dateYear == 1) {
+
+					yearText = 'год';
+
+				} else if(dateYear > 1 && dateYear <= 4) {
+
+				 	yearText = 'года';
+
+				} else {
+
+					yearText = 'лет';
+
+				}
+
+				
+				if(monthValue == 1) {
+
+					monthText = 'месяц';
+
+				} else if(monthValue > 1 && monthValue <= 4) {
+
+				 	monthText = 'месяца';
+
+				} else {
+
+					monthText = 'месяцев';
+
+				}
+
+				console.log(month, monthValue);
+				
+				if(dateYear > 0) {
+
+				 return `${dateYear} ${yearText}, ${monthValue} ${monthText}`;
+
+				}
+
+				return `${monthValue} ${monthText}`;
 
 			}
 
-			return `${number} года`;
+			return `${number} ${yearText}`;
 
 		},
 
