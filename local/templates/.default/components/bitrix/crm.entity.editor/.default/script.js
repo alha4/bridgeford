@@ -222,6 +222,27 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		getEnumTextValue : function(node, value) {
+
+			const listNodes = node.querySelectorAll(".field-wrap .field-item");
+			
+			for(node of listNodes) {
+
+				console.log(node.textContent, value );
+
+				 if(node.textContent == value) {
+
+						return node.textContent;
+						
+					  break;
+				 }
+
+			}
+
+			return false;
+			
+		},
+
 		nodeText : function(node) {
 
 			const textNode  = node.querySelector(".crm-entity-widget-content-block-inner .field-item") ||
@@ -2276,7 +2297,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
 
 				this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
-
+				this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');
+				
 				setTimeout(() => {
 			
 					this.initializeViews(); 
