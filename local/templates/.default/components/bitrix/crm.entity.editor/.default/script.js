@@ -2280,11 +2280,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				
 				}
 
-				//console.log(this._inits,TicketModel.ON_SEARCH);
-				
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
-
-				console.log(this._inits);
+				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
 				   
 			}
    
