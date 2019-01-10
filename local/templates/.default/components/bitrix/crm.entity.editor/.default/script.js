@@ -2246,14 +2246,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			BX.showWait(document.body);
 			
 			if(this._entityTypeId == this._ENTITY_TYPE.LEAD) {
-				
-				 this._TICKET = {
-
-				  	ON_SEARCH : 359,
-				  	ON_OBJECT : 360,
-				  	ON_PERMANENT : 361 
-
-				 };
 
 				 const TicketModel = this.prepareModel({
 				 
@@ -2282,6 +2274,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
+
+				this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
+
+				setTimeout(() => {
+			
+					this.initializeViews(); 
+
+				}, 1000);
+
 				   
 			}
    
