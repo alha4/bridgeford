@@ -115,25 +115,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		getTicketCategoryID : function() {
 
-      /*const TicketModel = this.prepareModel({
-				 
-				 'edit' : {
- 
-						 ON_SEARCH : 359,
-						 ON_OBJECT : 360,
-						 ON_PERMANENT : 361 
-				 },
-				 'view' : {
-
-				  	ON_SEARCH : 'Заявка на поиск',
-				  	ON_OBJECT : 'Заявка по объекту',
-				  	ON_PERMANENT : 'Постоянная заявка' 
-
-				 }
-				
-			 });*/
-
-			if(this.getMode() === BX.Crm.EntityEditorMode.edit) {
+			if(this.getMode() === BX.Crm.EntityEditorMode.edit && this.nodeSelect('UF_CRM_1545389896')) {
 
 				 return this.nodeSelectValue(this.nodeSelect('UF_CRM_1545389896'));
 
@@ -2273,15 +2255,36 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				 };
 
-				 for(key in this._TICKET) {
-	
-					this._inits[this._TICKET[key]] = [];
-					this._views[this._TICKET[key]] = [];
+				 const TicketModel = this.prepareModel({
+				 
+				 'edit' : {
+ 
+						 ON_SEARCH :    {value : 359, enumerable : true},
+						 ON_OBJECT :    {value : 360, enumerable : true},
+						 ON_PERMANENT : {value : 361, enumerable : true}
+				 },
+				 'view' : {
+
+				  	ON_SEARCH :    {value : 'Заявка на поиск',   enumerable : true},
+				  	ON_OBJECT :    {value : 'Заявка по объекту', enumerable : true},
+				  	ON_PERMANENT : {value : 'Постоянная заявка', enumerable : true}
+
+				 }
+				
+				 });
+				
+				 for(key in TicketModel) {
+					
+					this._inits[TicketModel[key]] = [];
+					this._views[TicketModel[key]] = [];
 				
 				}
 
+				//console.log(this._inits,TicketModel.ON_SEARCH);
+				
+				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
 
-				this.registerEventListener(this._TICKET.ON_SEARCH, 'initializeNeedGeoEvent');
+				console.log(this._inits);
 				   
 			}
    
