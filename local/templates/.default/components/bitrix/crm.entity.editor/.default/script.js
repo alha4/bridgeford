@@ -2295,9 +2295,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
-
+				this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');
+				
 				this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
 				this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');
+				this.registerView(TicketModel.ON_SEARCH, 'showCommisionFields');
 				
 				setTimeout(() => {
 			
