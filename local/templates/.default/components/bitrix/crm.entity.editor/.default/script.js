@@ -1832,6 +1832,18 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
+		nodeRadioLabel : function(exp) {
+
+			return document.querySelector(`input[name="${exp}"]:checked`).parentNode.textContent;
+
+		},
+
+		setReadOnly : function(exp, html) {
+
+			document.querySelector(`div[data-cid="${exp}"]`).querySelector('.crm-entity-widget-content-block-inner').innerHTML = html;
+
+		},
+
 		setNotSelectValue : function(is_moskow = false) {
 
 			const nodeSelect = document.querySelectorAll("#section_geografiya .show-field select").length > 0 ? document.querySelectorAll("#section_geografiya .show-field select") 
@@ -2297,6 +2309,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'showClientContactFields');
+				this.registerEventListener(TicketModel.ON_SEARCH, 'showStatusTiketFields');
 
 				this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
 				this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');
