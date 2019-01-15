@@ -2310,11 +2310,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTiketRentPriceEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'showClientContactFields');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'showStatusTiketFields');
+				this.registerEventListener(TicketModel.ON_SEARCH, 'initializePlannedRunEvent');
 
 				this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
 				this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');
 				this.registerView(TicketModel.ON_SEARCH, 'showCommisionFields');
 				this.registerView(TicketModel.ON_SEARCH, 'showClientContactFields');
+				this.registerView(TicketModel.ON_SEARCH, 'showPlannedRunFields');
 				
 				setTimeout(() => {
 			
