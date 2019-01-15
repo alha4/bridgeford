@@ -1,0 +1,26 @@
+div[data-cid="UF_CRM_1545390183"],
+div[data-cid="UF_CRM_1545390196"],
+div[data-cid="UF_CRM_1545390372"],
+div[data-cid="UF_CRM_1545390443"],
+div[data-cid="UF_CRM_1547117777330"],
+div[data-cid="UF_CRM_1547204833"],
+div[data-cid="UF_CRM_1547204738"],
+div[data-cid="UF_CRM_1547218859"],
+div[data-cid="UF_CRM_1547551577246"] {
+  display:none;
+}
+div.show-field {
+  display: block!important;
+}
+div[data-cid="UF_CRM_1547218667182"] :before,
+div[data-cid="UF_CRM_1547218684391"] :before,
+.only-read :before { 
+  content: ' ';
+  width: 100%;
+  height: 105%;
+  position: absolute;
+  top: -10px;
+  left: 0px;
+  z-index: 9111;
+  background: #e8ecee00;
+}

@@ -2308,9 +2308,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTiketRentPriceEvent');
+				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTicketNDSEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'showClientContactFields');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'showStatusTiketFields');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializePlannedRunEvent');
+				this.registerEventListener(TicketModel.ON_SEARCH, 'showPlannedRunFields');
 
 				this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
 				this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');

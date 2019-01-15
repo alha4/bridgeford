@@ -243,6 +243,12 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
         
   },
 
+  initializeTicketNDSEvent : function() {
+
+      this.bindEvent(this.nodeSelect('UF_CRM_1547218608920'), 'change',  this.onTiketRentPriceChange);
+
+  },
+
   initializePlannedRunEvent : function() {
 
   
@@ -293,7 +299,14 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   showPlannedRunFields : function() {
 
-    this.plannedRunView(this.getTextValue(this.node('UF_CRM_1547218826')));
+    if(this.getMode() === BX.Crm.EntityEditorMode.edit) {
+
+      this.plannedRunView(this.nodeRadioChecked('UF_CRM_1547218826').value);
+
+    } else {
+
+       this.plannedRunView(this.getTextValue(this.node('UF_CRM_1547218826')));
+    }
 
   }
 
