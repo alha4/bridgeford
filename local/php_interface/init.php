@@ -9,6 +9,7 @@ $event = EventManager::getInstance();
 
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setGeoData');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setSquareClone');
+$event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'setTiketSquareClone');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRaiting');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRealPrice');
@@ -154,6 +155,29 @@ function setSquareClone(&$arFields) : void {
 
   }
 
+}
+
+function setTiketSquareClone(&$arFields) : void {
+
+  $select = ['UF_CRM_1547120946759'];
+
+  $crm_object = \CCrmLead::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], $select);
+
+  $row = $crm_object->Fetch();
+
+  $UF = new CUserTypeManager;
+
+  $fields = [
+ 
+    'UF_CRM_1547551577246' => $row['UF_CRM_1547120946759']
+
+  ];
+
+  if(!$UF->Update("CRM_LEAD", $arFields['ID'], $fields)) {
+
+      file_put_contents($_SERVER['DOCUMENT_ROOT'].'/log.txt', print_r( $fields  ,1).date("d/m/Y H:i:s")."\r\n");
+
+  }
 
 }
 

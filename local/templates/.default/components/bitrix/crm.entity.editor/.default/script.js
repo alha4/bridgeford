@@ -988,16 +988,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		rentView : function() {
 			
 			const priceSq2OnYear  = this.nodeInput('UF_CRM_1540554743072'),
-			      priceOnYear     = this.nodeInput('UF_CRM_1544425067'),
-						priceRental     = parseFloat(this.nodeInput('UF_CRM_1540456417').value),
+		      	priceOnYear     = this.nodeInput('UF_CRM_1544425067'),
+		      	priceRental     = parseFloat(this.nodeInput('UF_CRM_1540456417').value),
 
-						squareValue     = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
+		      	squareValue     = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
 
-						priceSq2OnYear.value  = BX.Currency.currencyFormat(Math.round(priceRental * 12 / squareValue), 'RUB', true);  
-						
-						priceOnYear.value  = BX.Currency.currencyFormat(priceRental * 12, 'RUB', true);  
+		       	priceSq2OnYear.value  = BX.Currency.currencyFormat(Math.round(priceRental * 12 / squareValue), 'RUB', true);  
+			  
+		      	priceOnYear.value  = BX.Currency.currencyFormat(priceRental * 12, 'RUB', true);  
 					
-
 		},
 
 		showBrokerFields : function() {
@@ -2308,6 +2307,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');
+				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTiketRentPriceEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'showClientContactFields');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'showStatusTiketFields');
 
