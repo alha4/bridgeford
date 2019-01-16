@@ -6,7 +6,10 @@ div[data-cid="UF_CRM_1547117777330"],
 div[data-cid="UF_CRM_1547204833"],
 div[data-cid="UF_CRM_1547204738"],
 div[data-cid="UF_CRM_1547218859"],
-div[data-cid="UF_CRM_1547551577246"] {
+div[data-cid="UF_CRM_1547551577246"],
+div[data-cid="UF_CRM_1547628374048"],
+div[data-cid="UF_CRM_1547628348754"],
+#section_arendator {
   display:none;
 }
 div.show-field {
@@ -14,6 +17,8 @@ div.show-field {
 }
 div[data-cid="UF_CRM_1547218667182"] :before,
 div[data-cid="UF_CRM_1547218684391"] :before,
+div[data-cid="UF_CRM_1547628374048"] :before,
+div[data-cid="UF_CRM_1547628348754"] :before,
 .only-read :before { 
   content: ' ';
   width: 100%;

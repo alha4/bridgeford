@@ -2302,11 +2302,15 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					this._inits[TicketModel[key]] = [];
 					this._views[TicketModel[key]] = [];
 				
-				}
+				 }
+
+
 
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');
+				this.registerEventListener(TicketModel.ON_SEARCH, 'showPaybackCashingFields');
+				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeCalculateCostEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTiketRentPriceEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTicketNDSEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'showClientContactFields');
@@ -2323,6 +2327,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				setTimeout(() => {
 			
 					this.initializeViews(); 
+					this.showSections();
 
 				}, 1000);
 

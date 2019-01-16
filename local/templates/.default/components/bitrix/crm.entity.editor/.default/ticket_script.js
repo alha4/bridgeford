@@ -1,4 +1,54 @@
 Object.assign( BX.Crm.EntityEditor.prototype, {
+
+
+  getTypeBuilding : function() {
+
+   if(this.nodeSelect('UF_CRM_1545389958')) {
+
+      return parseInt(this.nodeSelectValue(this.nodeSelect('UF_CRM_1545389958')));
+
+   }
+
+   return this.getTextValue(this.node('UF_CRM_1545389958'));
+
+  },
+
+  showSections : function() {
+
+
+     switch(this.getTypeBuilding()) {
+
+
+        case 'Арендный бизнес' :
+        case 364 :
+
+            this.showField(this.nodeSection('section_arendator'));
+
+        break;
+
+        case 'Помещение на продажу' :
+        case 363 :
+
+
+        break;
+
+        case 'Помещение в аренду' :
+        case 362 :
+
+
+        break;
+
+
+     }
+
+
+  },
+
+  nodeSection : function(exp) {
+
+      return document.querySelector(`#${exp}`);
+
+  },
   
   initializeNeedGeoEvent : function() {
 
@@ -207,6 +257,13 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
     }
   },
 
+  initializeCalculateCostEvent : function() {
+
+    this._costTypeSelect = this.nodeSelect('UF_CRM_1547218572751'); 
+    this.bindEvent(this._costTypeSelect , 'change',  this.onTiketRentPriceChange);
+
+  },
+
   initializeTiketRentPriceEvent : function() {
 
     this.bindEvent(this.nodeInput('UF_CRM_1547551210'), 'keyup', this.onTiketRentPriceChange);
@@ -224,23 +281,89 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
     const priceSq2OnYear  = this.nodeInput('UF_CRM_1547218667182'),
           priceOnMonth    = this.nodeInput('UF_CRM_1547218684391'),
 
+          cashing         = this.nodeInput('UF_CRM_1547628374048'), //доходность
+          payback         = this.nodeInput('UF_CRM_1547628348754'), //окупаемость
+
           priceRental     = parseFloat(this.nodeInput('UF_CRM_1547551210').value),
 
           squareValue     = parseInt(this.nodeInput("UF_CRM_1547551577246").value) || 1,
 
-          NDS_SELECT      = 416;
+          costType        = parseInt(this.nodeSelectValue(this._costTypeSelect));
 
-    let   nds = 0;  
+          NDS_SELECT      = 416,
+
+          rentTypeModel = this.prepareModel({
+
+             'edit' : {
+                SQ1YEAR :    { value : 413},
+                ALL1MONTH :  { value : 412}, 
+                ALL1YEAR   : { value : 414}
+             }
+
+          });
+
+    let  nds = 0;  
  
-    if(this.nodeSelectValue(this.nodeSelect('UF_CRM_1547218608920')) == NDS_SELECT) {
+         if(this.nodeSelectValue(this.nodeSelect('UF_CRM_1547218608920')) == NDS_SELECT) {
 
-          nds = (priceRental * 18) / 118;
+            nds = (priceRental * 18) / 118;
+
+         }
+
+         switch(costType) {
+
+                 /** стоимость за 1 кв.м. в год */
+            case rentTypeModel.SQ1YEAR : 
+
+                  priceSq2OnYear.value  = BX.Currency.currencyFormat(priceRental + nds, 'RUB', true);
+          
+                  priceOnMonth.value  = BX.Currency.currencyFormat( (priceRental / squareValue) + nds, 'RUB', true);  
+
+            break;
+                  /**стоимость в месяц за весь объект */
+            case rentTypeModel.ALL1MONTH : 
+
+                  priceSq2OnYear.value = BX.Currency.currencyFormat(Math.round(priceRental * 12 / squareValue) + nds, 'RUB', true);  
+    
+                  priceOnMonth.value  = BX.Currency.currencyFormat(priceRental + nds, 'RUB', true);
+
+            break;
+
+                  /**стоимость все помещение в год */
+            case rentTypeModel.ALL1YEAR : 
+
+                  priceSq2OnYear.value =  BX.Currency.currencyFormat(priceRental + nds, 'RUB', true); 
+    
+                  priceOnMonth.value  = BX.Currency.currencyFormat( (priceRental / squareValue) + nds, 'RUB', true); 
+
+            break;
+
+         }
+         
+         if(this.getTypeBuilding() == 'Арендный бизнес') {
+
+            const priceMAP  = parseInt(this.getTextValue(this.node('UF_CRM_1547629103665')).replace(/\s+/ig,"") ) * 12;//МАП 
+            
+                  paybackValue =((priceRental + nds) / priceMAP).toFixed(1);
+
+								  cashing.value = (priceMAP / (priceRental + nds)) * 100 + "%";	
+
+                  payback.value = this.precentToDate(paybackValue);
+                  
+                  console.log(priceMAP);
+         }
+        
+  },
+
+  showPaybackCashingFields : function() {
+
+    if(this.getTypeBuilding() == 'Арендный бизнес') {
+
+      this.showField(this.node('UF_CRM_1547628348754'));
+      this.showField(this.node('UF_CRM_1547628374048'));
+
     }
 
-          priceSq2OnYear.value  = BX.Currency.currencyFormat(Math.round(priceRental * 12 / squareValue) + nds, 'RUB', true);  
-          
-          priceOnMonth.value  = BX.Currency.currencyFormat( (priceRental / squareValue) + nds, 'RUB', true);  
-        
   },
 
   initializeTicketNDSEvent : function() {
