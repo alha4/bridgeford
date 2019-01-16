@@ -2318,6 +2318,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this.registerEventListener(TicketModel.ON_SEARCH, 'initializePlannedRunEvent');
 				this.registerEventListener(TicketModel.ON_SEARCH, 'showPlannedRunFields');
 
+				this.registerEventListener(TicketModel.ON_SEARCH,'showAllFields');
+
 				this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
 				this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');
 				this.registerView(TicketModel.ON_SEARCH, 'showCommisionFields');
@@ -2328,6 +2330,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			
 					this.initializeViews(); 
 					this.showSections();
+					this.showAllFields();
 
 				}, 1000);
 

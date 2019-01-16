@@ -44,6 +44,39 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   },
 
+  
+  showAllFields : function() {
+
+
+    switch(this.getTypeBuilding()) {
+
+
+       case 'Арендный бизнес' :
+       case 364 :
+
+           this.showField(this.node('UF_CRM_1547631768634'));
+           this.showField(this.node('UF_CRM_1547631814802'));
+
+       break;
+
+       case 'Помещение на продажу' :
+       case 363 :
+
+
+       break;
+
+       case 'Помещение в аренду' :
+       case 362 :
+
+
+       break;
+
+
+    }
+
+
+  },
+
   nodeSection : function(exp) {
 
       return document.querySelector(`${exp}`);
@@ -422,7 +455,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   showPlannedRunFields : function() {
 
-    if(this.getMode() === BX.Crm.EntityEditorMode.edit) {
+    if(this.nodeRadio('UF_CRM_1547218826')) {
 
       this.plannedRunView(this.nodeRadioChecked('UF_CRM_1547218826').value);
 
