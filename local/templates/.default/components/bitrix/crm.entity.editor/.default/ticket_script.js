@@ -22,7 +22,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
         case 'Арендный бизнес' :
         case 364 :
 
-            this.showField(this.nodeSection('section_arendator'));
+            this.showField(this.nodeSection('.crm-section_arendator'));
 
         break;
 
@@ -46,7 +46,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   nodeSection : function(exp) {
 
-      return document.querySelector(`#${exp}`);
+      return document.querySelector(`${exp}`);
 
   },
   

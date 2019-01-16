@@ -10966,7 +10966,7 @@ if(typeof BX.Crm.EntityEditorSection === "undefined")
 		var isViewMode = this._mode === BX.Crm.EntityEditorMode.view ;
 
 		var wrapperClassName = isViewMode
-			? "crm-entity-card-widget"
+			? "crm-entity-card-widget crm-section_" +  BX.translit(title)
 			: "crm-entity-card-widget-edit";
 
 		this._enableToggling = this.isModeToggleEnabled() && this._schemeElement.getDataBooleanParam("enableToggling", true);
