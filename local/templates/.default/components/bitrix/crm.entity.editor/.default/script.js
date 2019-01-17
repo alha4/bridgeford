@@ -113,18 +113,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		},
 
-		getTicketCategoryID : function() {
-
-			if(this.getMode() === BX.Crm.EntityEditorMode.edit && this.nodeSelect('UF_CRM_1545389896')) {
-
-				 return this.nodeSelectValue(this.nodeSelect('UF_CRM_1545389896'));
-
-			}
-
-			return this.getTextValue(this.node('UF_CRM_1545389896'));
-
-		},
-
 		isFieldShown : function() {
 		
 		  return document.querySelector(".show-field");
@@ -150,18 +138,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						self = this;
 
 						console.log(inits);
-			      
-			for(var func of inits) {
+			 
+			if(inits) {	
+						
+			 for(var func of inits) {
 
 					self[func]();
 						
-			}   
-
+		  	}   
+		  }
 		},
 
 		registerEventListener : function(dealCategoryID, func) {
 
-			if(this._inits[dealCategoryID].indexOf(func) == -1)
+			if(this._inits && this._inits[dealCategoryID].indexOf(func) == -1)
 			
 			   this._inits[dealCategoryID].push(func);
 
@@ -169,7 +159,12 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		getInits : function() {
 
-			return this._inits[this.getDealCategory()];
+			if(this._inits) {
+
+					return this._inits[this.getDealCategory()];
+			}
+
+			return false;
 
 		},
 
@@ -2276,65 +2271,40 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			this._isAdmin = BX.prop.get(this._settings, "isAdmin", null);
 
 			BX.showWait(document.body);
-			
+
 			if(this._entityTypeId == this._ENTITY_TYPE.LEAD) {
 
-				 const TicketModel = this.prepareModel({
-				 
-				 'edit' : {
- 
-						 ON_SEARCH :    {value : 359, enumerable : true},
-						 ON_OBJECT :    {value : 360, enumerable : true},
-						 ON_PERMANENT : {value : 361, enumerable : true}
-				 },
-				 'view' : {
+		     if(this._entityId > 0) {
 
-				  	ON_SEARCH :    {value : 'Заявка на поиск',   enumerable : true},
-				  	ON_OBJECT :    {value : 'Заявка по объекту', enumerable : true},
-				  	ON_PERMANENT : {value : 'Постоянная заявка', enumerable : true}
+						this.initializeTicketCustom();
+						
+				 }  else {
+
+					  setTimeout( () => {
+
+              this.bindEvent(this.nodeSelect('UF_CRM_1545389896'), 'change', 	this.initializeTicketCustom);
+
+						},1000);
 
 				 }
+
+				 if(this._entityId > 0) {
+
+				   this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
+			     this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');
+			  	 this.registerView(TicketModel.ON_SEARCH, 'showCommisionFields');
+				   this.registerView(TicketModel.ON_SEARCH, 'showClientContactFields');
+			     this.registerView(TicketModel.ON_SEARCH, 'showPlannedRunFields');
 				
-				 });
-				
-				 for(key in TicketModel) {
-					
-					this._inits[TicketModel[key]] = [];
-					this._views[TicketModel[key]] = [];
-				
-				 }
-
-
-
-				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
-				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
-				this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');
-				this.registerEventListener(TicketModel.ON_SEARCH, 'showPaybackCashingFields');
-				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeCalculateCostEvent');
-				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTiketRentPriceEvent');
-				this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTicketNDSEvent');
-				this.registerEventListener(TicketModel.ON_SEARCH, 'showClientContactFields');
-				this.registerEventListener(TicketModel.ON_SEARCH, 'showStatusTiketFields');
-				this.registerEventListener(TicketModel.ON_SEARCH, 'initializePlannedRunEvent');
-				this.registerEventListener(TicketModel.ON_SEARCH, 'showPlannedRunFields');
-
-				this.registerEventListener(TicketModel.ON_SEARCH,'showAllFields');
-
-				this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
-				this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');
-				this.registerView(TicketModel.ON_SEARCH, 'showCommisionFields');
-				this.registerView(TicketModel.ON_SEARCH, 'showClientContactFields');
-				this.registerView(TicketModel.ON_SEARCH, 'showPlannedRunFields');
-				
-				setTimeout(() => {
+			  	 setTimeout(() => {
 			
-					this.initializeViews(); 
-					this.showSections();
-					this.showAllFields();
+				  	 this.initializeViews(); 
+				  	 this.showSections();
+					   this.showAllFields();
 
-				}, 1000);
+			   	 }, 1000);
 
-				   
+			  }   
 			}
    
 			if(this._entityTypeId == this._ENTITY_TYPE.DEAL) { 

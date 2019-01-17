@@ -1,5 +1,72 @@
 Object.assign( BX.Crm.EntityEditor.prototype, {
 
+  initializeTicketCustom : function() {
+
+    console.log('start event handler');
+
+    const TicketModel = this.prepareModel({
+				 
+      'edit' : {
+
+          ON_SEARCH :    {value : 359, enumerable : true},
+          ON_OBJECT :    {value : 360, enumerable : true},
+          ON_PERMANENT : {value : 361, enumerable : true}
+      },
+      'view' : {
+
+         ON_SEARCH :    {value : 'Заявка на поиск',   enumerable : true},
+         ON_OBJECT :    {value : 'Заявка по объекту', enumerable : true},
+         ON_PERMANENT : {value : 'Постоянная заявка', enumerable : true}
+
+      }
+     
+    });
+     
+    for(key in TicketModel) {
+       
+       this._inits[TicketModel[key]] = [];
+       this._views[TicketModel[key]] = [];
+     
+    }
+
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'showPaybackCashingFields');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializeCalculateCostEvent');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTiketRentPriceEvent');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTicketNDSEvent');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'showClientContactFields');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'showStatusTiketFields');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializePlannedRunEvent');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'showPlannedRunFields');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'showAllFields');
+
+    if(!this._entityId) {
+
+        this.initializeEventListener();
+    }
+
+  },
+
+  getTicketCategoryID : function() {
+
+    if(this.getMode() === BX.Crm.EntityEditorMode.edit && this.nodeSelect('UF_CRM_1545389896')) {
+
+       return this.nodeSelectValue(this.nodeSelect('UF_CRM_1545389896'));
+
+    }
+
+    return this.getTextValue(this.node('UF_CRM_1545389896'));
+
+  },
+
+  getTypeTicket : function() {
+
+
+
+
+  },
 
   getTypeBuilding : function() {
 
@@ -44,7 +111,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   },
 
-  
+
   showAllFields : function() {
 
 
