@@ -17,6 +17,15 @@ final class CianXml extends ExportBase {
                    '2' => 'Sale'
                 ];
 
+
+  private const SERVICE_TYPE = [
+
+                  '198' => 'free',
+                  '199' => 'paid',
+                  '200' => 'top3',
+                  '201' => 'highlight'
+
+                ];
   
   private const CATEGORY_ADS = [
 
@@ -85,7 +94,8 @@ final class CianXml extends ExportBase {
                "UF_CRM_1540886934","UF_CRM_1540384807664","UF_CRM_1540384963","UF_CRM_1541076330647",
                "UF_CRM_1540371585","UF_CRM_1540385060","OPPORTUNITY","UF_CRM_1540371261836","UF_CRM_1540301873849",
                "UF_CRM_1540456473","UF_CRM_1540456608","UF_CRM_1540381458431","UF_CRM_1540532735882","UF_CRM_1540471409",
-               "UF_CRM_1541004853118","UF_CRM_1540385040","UF_CRM_1540385112","UF_CRM_1540532330","UF_CRM_1540532419","UF_CRM_1544172451"];
+               "UF_CRM_1541004853118","UF_CRM_1540385040","UF_CRM_1540385112","UF_CRM_1540532330","UF_CRM_1540532419","UF_CRM_1544172451",
+               "UF_CRM_1540976407661"];
 
     $xml_string = '<feed><feed_version>2</feed_version>';
 
@@ -103,6 +113,9 @@ final class CianXml extends ExportBase {
       $xml_string.= sprintf("<IsInHiddenBase>%s</IsInHiddenBase>", $row['UF_CRM_1541004853118']);
       $xml_string.= sprintf("<InputType>%s</InputType>", $this->getInputType($row["UF_CRM_1540385040"]));
       $xml_string.= sprintf("<Electricity>%s</Electricity>", $row['UF_CRM_1540385112']);
+
+      $xml_string.= sprintf("<PublishTerms><Terms><PublishTermSchema><Services>%s</Services></PublishTermSchema></Terms></PublishTerms>", 
+                    $this->getAdsServices($row['UF_CRM_1540976407661']) );
 
       $xml_string.= "<Photos>";
       $xml_string.= $this->getPhotos($row['UF_CRM_1540532330']);
@@ -136,6 +149,12 @@ final class CianXml extends ExportBase {
 
     return $xml_string;
 
+
+  }
+
+  private function getAdsServices(string $type)  : string {
+
+    return sprintf("<ServicesEnum>%s</ServicesEnum>",self::SERVICE_TYPE[$type]);
 
   }
 
