@@ -3,6 +3,8 @@ namespace XML;
 
 abstract class ExportBase {
 
+   use \XML\Helpers\CrmHelper;
+
    protected $fileName;
 
    protected const STATUS_OBJECT = 357;

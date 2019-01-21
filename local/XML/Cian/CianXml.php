@@ -26,6 +26,24 @@ final class CianXml extends ExportBase {
                   '201' => 'highlight'
 
                 ];
+
+  private const SERVICE_TYPE_1 = [
+
+                  '202' => 'free',
+                  '203' => 'paid',
+                  '204' => 'top3',
+                  '205' => 'highlight'
+
+                ];
+
+  private const SERVICE_TYPE_2 = [
+
+                  '206' => 'free',
+                  '207' => 'paid',
+                  '208' => 'top3',
+                  '209' => 'highlight'
+
+                ];
   
   private const CATEGORY_ADS = [
 
@@ -95,7 +113,7 @@ final class CianXml extends ExportBase {
                "UF_CRM_1540371585","UF_CRM_1540385060","OPPORTUNITY","UF_CRM_1540371261836","UF_CRM_1540301873849",
                "UF_CRM_1540456473","UF_CRM_1540456608","UF_CRM_1540381458431","UF_CRM_1540532735882","UF_CRM_1540471409",
                "UF_CRM_1541004853118","UF_CRM_1540385040","UF_CRM_1540385112","UF_CRM_1540532330","UF_CRM_1540532419","UF_CRM_1544172451",
-               "UF_CRM_1540976407661"];
+               "UF_CRM_1540976407661","UF_CRM_1540977227270","UF_CRM_1540977306391"];
 
     $xml_string = '<feed><feed_version>2</feed_version>';
 
@@ -115,7 +133,7 @@ final class CianXml extends ExportBase {
       $xml_string.= sprintf("<Electricity>%s</Electricity>", $row['UF_CRM_1540385112']);
 
       $xml_string.= sprintf("<PublishTerms><Terms><PublishTermSchema><Services>%s</Services></PublishTermSchema></Terms></PublishTerms>", 
-                    $this->getAdsServices($row['UF_CRM_1540976407661']) );
+                    $this->getAdsServices($row) );
 
       $xml_string.= "<Photos>";
       $xml_string.= $this->getPhotos($row['UF_CRM_1540532330']);
@@ -152,9 +170,24 @@ final class CianXml extends ExportBase {
 
   }
 
-  private function getAdsServices(string $type)  : string {
+  private function getAdsServices(array $data)  : string {
 
-    return sprintf("<ServicesEnum>%s</ServicesEnum>",self::SERVICE_TYPE[$type]);
+   
+    $xml_service = sprintf("<ServicesEnum>%s</ServicesEnum>",self::SERVICE_TYPE[$data['UF_CRM_1540976407661']]);
+
+    if($data['UF_CRM_1540977227270'] > 0) {
+
+      $xml_service.= sprintf("<ServicesEnum>%s</ServicesEnum>",self::SERVICE_TYPE_1[$data['UF_CRM_1540977227270']]);
+
+    }
+
+    if($data['UF_CRM_1540977306391'] > 0) {
+
+      $xml_service.= sprintf("<ServicesEnum>%s</ServicesEnum>",self::SERVICE_TYPE_2[$data['UF_CRM_1540977306391']]);
+
+    }
+
+    return $xml_service;
 
   }
 
@@ -260,26 +293,5 @@ final class CianXml extends ExportBase {
     return sprintf("%s, %s-й %s %s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202908'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202900']);
 
   }
-
-  private function enumValue(int $value_id, string $code) : string {
-
-    $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => "CRM_DEAL", "FIELD_NAME" => $code));
-    $entity = $entityResult->Fetch();
-    $enumResult = \CUserTypeEnum::GetList($entity);
- 
-    while($enum =  $enumResult->GetNext()) {
-
-        if($enum['ID'] == $value_id) {
-
-           return $enum['VALUE'];
-
-        }
-
-    }
-
-    return '';
-
-  }
-
 
 }
