@@ -8,15 +8,12 @@ final class CianXml extends ExportBase {
 
   protected $fileName = '/cian_commerc.xml';
 
-  private const HOST = 'https://crm.bridgeford.ru';
-
   private const CATEGORY = [
 
                    '0' => 'Rent',
                    '1' => 'Sale',
                    '2' => 'Sale'
                 ];
-
 
   private const SERVICE_TYPE = [
 
@@ -72,9 +69,9 @@ final class CianXml extends ExportBase {
 
 
   private const CURRENCY =  [
-                   "144" => 'rur',
-                   "145" => 'usd',
-                   "146" => 'eur'
+                  "144" => 'rur',
+                  "145" => 'usd',
+                  "146" => 'eur'
                 ];
 
 
@@ -83,7 +80,6 @@ final class CianXml extends ExportBase {
                    "151" => 'vatIncluded',
                    " "   => 'vatNotIncluded'
                 ];
-
 
   private const INPUTTYPE = [
 
@@ -136,11 +132,11 @@ final class CianXml extends ExportBase {
                     $this->getAdsServices($row) );
 
       $xml_string.= "<Photos>";
-      $xml_string.= $this->getPhotos($row['UF_CRM_1540532330']);
+      $xml_string.= $this->getPhotos((array)$row['UF_CRM_1540532330']);
       $xml_string.= "</Photos>";
 
       $xml_string.= "<Videos>";
-      $xml_string.= $this->getVideos($row['UF_CRM_1540532419']);
+      $xml_string.= $this->getVideos((array)$row['UF_CRM_1540532419']);
       $xml_string.= "</Videos>";
 
 
@@ -166,7 +162,6 @@ final class CianXml extends ExportBase {
     $xml_string.= '</feed>';
 
     return $xml_string;
-
 
   }
 
@@ -215,7 +210,7 @@ final class CianXml extends ExportBase {
 
   }
 
-  private function getTypeArea(string $type) : string {
+  private function getTypeArea(?string $type) : ?string {
 
     return self::AREATYPE[$type];
 
@@ -230,15 +225,13 @@ final class CianXml extends ExportBase {
 
   private function getInfrastructure(array $data) : string {
 
-
-
-
-
   }
 
-  private function getPhotos(array $data) : string {
+  private function getPhotos(array $data = []) : string {
 
-     foreach($data as $file_id) {
+    $xml_photo = '';
+
+   foreach($data as $file_id) {
 
          $file = \CFile::GetFileArray($file_id);
 
@@ -251,7 +244,9 @@ final class CianXml extends ExportBase {
 
   }
 
-  private function getVideos(array $data) : string {
+  private function getVideos(array $data = []) : string {
+
+    $xml_video = '';
 
     foreach($data as $file_id) {
 
@@ -265,22 +260,6 @@ final class CianXml extends ExportBase {
     return  $xml_video;
 
  }
-
-  private function getPhone(int $user_id = 1) : string {
-
-    $order = array('id' => 'asc');
-    $sort = 'id';
-    $user_id = 1;
-
-    $filter = array("ID" => $user_id);
-
-    $rsUsers = \CUser::GetList($order, $sort, $filter, ["SELECT" => array("PERSONAL_PHONE") ]);
-
-
-    return $rsUsers->Fetch()['PERSONAL_PHONE'];
-
-
-  }
 
   private function getAddress(array $row) : string {
 

@@ -8,6 +8,8 @@ abstract class ExportBase {
    protected $fileName;
 
    protected const STATUS_OBJECT = 357;
+
+   protected const HOST = 'https://crm.bridgeford.ru';
  
    abstract protected function buildXml() : string;
 
