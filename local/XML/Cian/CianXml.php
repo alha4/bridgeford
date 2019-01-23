@@ -57,25 +57,29 @@ final class CianXml extends ExportBase {
 
   private const BUILDING_TYPE = [
 
-                 '74' => 'officeAndResidentialComplex',
-                 '75' => 'administrativeBuilding',
-                 '76' => 'mansion',
-                 '77' => 'businessCenter',
-                 '78' => 'multifunctionalComplex',
-                 '79' => 'officeBuilding',
-                 '80' => 'industrialComplex',
-                 '81' => 'warehouseComplex',
+                  '74' => 'officeAndResidentialComplex',
+                  '75' => 'administrativeBuilding',
+                  '76' => 'mansion',
+                  '77' => 'businessCenter',
+                  '78' => 'multifunctionalComplex',
+                  '79' => 'officeBuilding',
+                  '80' => 'industrialComplex',
+                  '81' => 'warehouseComplex'
+
                 ];
 
 
   private const CURRENCY =  [
+
                   "144" => 'rur',
                   "145" => 'usd',
                   "146" => 'eur'
+
                 ];
 
 
   private const VATTYPE = [
+
                    "150" => 'usn',
                    "151" => 'vatIncluded',
                    " "   => 'vatNotIncluded'
@@ -84,7 +88,8 @@ final class CianXml extends ExportBase {
   private const INPUTTYPE = [
 
                    "96"  =>  "commonFromStreet",
-                   "95"  =>  "separateFromStreet",
+                   "95"  =>  "separateFromStreet"
+
                 ];
 
   private const AREATYPE = [
@@ -94,15 +99,11 @@ final class CianXml extends ExportBase {
 
                 ];
 
-  private const DEFAULT_CITY = 'Москва';
-
-  private const STREET_TYPE = 37;
-
   protected function buildXml() : string {
 
-    $sort = ["UF_CRM_1545199624" => "DESC"];
+    $sort   = ["UF_CRM_1545199624" => "DESC"];
 
-    $filter = ["CHECK_PERMISSION" => "N", "UF_CRM_1545199624" => self::STATUS_OBJECT, "UF_CRM_1543837331299" => 1];
+    $filter = ["CHECK_PERMISSIONS" => "N", "UF_CRM_1545199624" => self::STATUS_OBJECT, "UF_CRM_1543837331299" => 1];
 
     $select = ["UF_CRM_1540202817","UF_CRM_1540202900","UF_CRM_1540202889","UF_CRM_1540202908",
                "UF_CRM_1540886934","UF_CRM_1540384807664","UF_CRM_1540384963","UF_CRM_1541076330647",
@@ -153,7 +154,6 @@ final class CianXml extends ExportBase {
       $this->getCurrency($row['UF_CRM_1540456473']),
       $this->getBuildingType($row['UF_CRM_1540371261836']),
       $row['UF_CRM_1540532735882']);
-
 
       $xml_string.= '</object>';
 
@@ -229,7 +229,7 @@ final class CianXml extends ExportBase {
 
   private function getPhotos(array $data = []) : string {
 
-    $xml_photo = '';
+   $xml_photo = '';
 
    foreach($data as $file_id) {
 

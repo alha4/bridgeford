@@ -9,6 +9,8 @@ abstract class ExportBase {
 
    protected const STATUS_OBJECT = 357;
 
+   protected const STREET_TYPE = 37;
+
    protected const HOST = 'https://crm.bridgeford.ru';
  
    abstract protected function buildXml() : string;
