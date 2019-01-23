@@ -73,7 +73,11 @@ final class YandexXml extends ExportBase {
 
   private const METRO_NOT_SELECT = 159;
 
+  private const NOT_ACTUAL_LOCALITY = 288;
+
   private const UTILITY_INCLUDE = 282;
+
+  private const NOT_ACTUAL_DISTRICT = 'не актуально';
 
   protected function buildXml() : string {
 
@@ -87,7 +91,7 @@ final class YandexXml extends ExportBase {
                "UF_CRM_1540532330","UF_CRM_1540471409","UF_CRM_1540384963","UF_CRM_1540385040",
                "UF_CRM_1540385112","UF_CRM_1540301873849","UF_CRM_1541056221","UF_CRM_1540385060",
                "UF_CRM_1543406565","UF_CRM_154020301","UF_CRM_1540384807664","UF_CRM_1540202908",
-               "UF_CRM_1540203015"];
+               "UF_CRM_1540203015","UF_CRM_1540202807","UF_CRM_1540202766"];
 
     $date_create = date(\DATE_ISO8601);
 
@@ -108,14 +112,25 @@ final class YandexXml extends ExportBase {
       $xml_string.= sprintf('<last-update-date>%s</last-update-date>', $date_create);
  
       $xml_string.= sprintf('<vas>%s</vas>', $this->getVasType($row['UF_CRM_1540977409431']));
+
       $xml_string.= '<location><country>Россия</country>';
 
-      $xml_string.= sprintf('<district>%s</district>', $row['UF_CRM_1540202817']);
+      if($row['UF_CRM_1540202766'] != self::NOT_ACTUAL_DISTRICT) {
+     
+          $xml_string.= sprintf('<district>%s</district>', $row['UF_CRM_1540202766']);
+
+      }
 
       $xml_string.= sprintf('<region>%s</region>', $this->enumValue( (int)$row['UF_CRM_1540202667'], 'UF_CRM_1540202667') );
-
+      $xml_string.= sprintf('<locality-name>%s</locality-name>', $row['UF_CRM_1540202817']);
       $xml_string.= sprintf('<sub-locality-name>%s</sub-locality-name>', $this->enumValue((int)$row['UF_CRM_1540203111'],'UF_CRM_1540203111'));
       $xml_string.= sprintf('<address>%s</address>', $this->getAddress($row));
+
+      if($row['UF_CRM_1540202807'] && $row['UF_CRM_1540202807'] != self::NOT_ACTUAL_LOCALITY) {
+
+         $xml_string.= sprintf('<locality-name>%s</locality-name>', $this->enumValue((int)$row['UF_CRM_1540202807'],'UF_CRM_1540202807'));
+
+      }
   
       if($row['UF_CRM_1543406565'] != self::METRO_NOT_SELECT) {
 
@@ -132,7 +147,6 @@ final class YandexXml extends ExportBase {
         $xml_string.= '</metro>';
 
       }
-
 
       $xml_string.= '</location>';
 
@@ -177,7 +191,6 @@ final class YandexXml extends ExportBase {
 
       $xml_string.= '</offer>';
     
-
       }
 
       $xml_string.= '</realty-feed>';
