@@ -46,9 +46,13 @@ final class BridgefordXml extends ExportBase {
 
   ];
 
-  
-  private const DEFAULT_REGION = 'Москва';
+  /**
+   * 
+   * bool UF_CRM_1545648767661 - Реклама сайт
+   * 
+   */
 
+  private const DEFAULT_REGION = 'Москва';
 
   protected function buildXml() : string {
 
@@ -121,7 +125,7 @@ final class BridgefordXml extends ExportBase {
       $xml_string.= sprintf('<subway-time-feet>%s</subway-time-feet>', $this->enumValue((int)$row['UF_CRM_1540203015'],'UF_CRM_1540203015'));
       $xml_string.= sprintf('<price>%s</price>',(int)$row['OPPORTUNITY']);
       $xml_string.= sprintf('<is-basement>%s</is-basement>', $row['UF_CRM_1540384916112'] ? 'YES' : 'NO');
-      $xml_string.= sprintf('<is-mansion>%s</is-mansion>',  $row['UF_CRM_1540371938'] ? 'YES' : 'NO');
+      $xml_string.= sprintf('<is-mansion>%s</is-mansion>',   $row['UF_CRM_1540371938'] ? 'YES' : 'NO');
       $xml_string.= sprintf('<description>%s</description>', $row['UF_CRM_1540471409']);
       $xml_string.= sprintf('<photo>%s</photo>', $this->getPhotos((array)$row['UF_CRM_1540532330']));
       $xml_string.= sprintf('<ceiling>%s</ceiling>', $row['UF_CRM_1540385060']);
@@ -135,7 +139,7 @@ final class BridgefordXml extends ExportBase {
       $xml_string.= sprintf('<actualization-manager>%s</actualization-manager>', $this->getActualityUser($row['UF_CRM_1540895373']));
       $xml_string.= sprintf('<broker>%s</broker>',  $this->getActualityUser($row['ASSIGNED_BY_ID']));
 
-      if($category_id == 2) {
+      if($category_id == self::TYPE_DEAL['RENT_BUSSINES']) {
 
         $xml_string.= sprintf('<monthly-lease>%s</monthly-lease>', (int)$row['UF_CRM_1541072151310']);
         $xml_string.= sprintf('<annual-index>%s</annual-index>', $row['UF_CRM_1541056049']);
@@ -146,13 +150,11 @@ final class BridgefordXml extends ExportBase {
         $xml_string.= sprintf('<lease-date>%s</lease-date>', $row['UF_CRM_1541056258']);
         $xml_string.= sprintf('<lease-duration>%s</lease-duration>', $row['UF_CRM_1541056313']);
         $xml_string.= sprintf('<taxation>%s</taxation>',  $this->enumValue((int)$row['UF_CRM_1540456608'],'UF_CRM_1540456608'));
-      
         $xml_string.= sprintf('<space>%s</space>', $row['UF_CRM_1540381545640']);
 
       } else {
  
         $xml_string.= sprintf('<space>%s</space>', $row['UF_CRM_1540384944']);
-
         $xml_string.= sprintf('<object-purpose>%s</object-purpose>', $this->getDestination($row['UF_CRM_1540392018']));
 
       }
@@ -166,21 +168,19 @@ final class BridgefordXml extends ExportBase {
 
   }
 
-  
   private function getPhotos(array $data = []) : string {
 
     $xml_photo = '';
  
     foreach($data as $file_id) {
  
-          $file = \CFile::GetFileArray($file_id);
+       $file = \CFile::GetFileArray($file_id);
  
-          $xml_photo.= sprintf("<image>%s%s</image>", self::HOST, $file['SRC']);
+       $xml_photo.= sprintf("<image>%s%s</image>", self::HOST, $file['SRC']);
  
+    }
  
-      }
- 
-      return $xml_photo;
+    return $xml_photo;
  
   }
 
@@ -212,15 +212,12 @@ final class BridgefordXml extends ExportBase {
     while($user = $rsUsers->Fetch()) {
 
       $owner.= sprintf('<owner-name>%s %s</owner-name>',$user['NAME'], $user['LAST_MAE']);
-
-
       $owner.= sprintf('<owner-email>%s</owner-email>',$this->getMultiField($user_id, 'EMAIL'));
       $owner.= sprintf('<owner-phone>%s</owner-phone>',$this->getMultiField($user_id,'PHONE'));
 
     }
 
     return $owner;
-
 
   }
 
@@ -233,7 +230,7 @@ final class BridgefordXml extends ExportBase {
 
     $filter = array("ID" => $user_id);
 
-    $rsUsers = \CUser::GetList($order, $sort, $filter, ["SELECT" => array("NAME","LAST_NAME") ]);
+    $rsUsers = \CUser::GetList($order, $sort, $filter, ["SELECT" => array("NAME","LAST_NAME")]);
 
     $user = $rsUsers->Fetch();
 
