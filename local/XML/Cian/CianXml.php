@@ -96,7 +96,6 @@ final class CianXml extends ExportBase {
 
                 ];
 
-  
   /**
    * 
    * bool UF_CRM_1543837331299 - Реклама циан 

@@ -11,6 +11,14 @@ abstract class ExportBase {
 
    protected const STREET_TYPE = 37;
 
+   protected const TYPE_DEAL = [
+
+      'RENT' => 0,
+      'SALE' => 1,
+      'RENT_BUSSINES' => 2 
+
+   ];
+
    protected const HOST = 'https://crm.bridgeford.ru';
  
    abstract protected function buildXml() : string;

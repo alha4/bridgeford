@@ -79,6 +79,12 @@ final class YandexXml extends ExportBase {
 
   private const NOT_ACTUAL_DISTRICT = 'не актуально';
 
+  /**
+   * 
+   * bool UF_CRM_1543834597 - Реклама яндекс
+   * 
+  */
+
   protected function buildXml() : string {
 
     $sort   = ["UF_CRM_1545199624" => "DESC"];
@@ -103,10 +109,12 @@ final class YandexXml extends ExportBase {
 
     while($row = $object->Fetch()) {
 
+      $category_id = \CCrmDeal::GetCategoryID($row['ID']);
+
       $xml_string.= sprintf('<offer internal-id="%s">', $row['ID']);
-      $xml_string.= sprintf('<type>%s</type>', self::TYPE[ \CCrmDeal::GetCategoryID($row['ID']) ]);
+      $xml_string.= sprintf('<type>%s</type>', self::TYPE[  $category_id ]);
       $xml_string.='<category>commercial</category>';
-      $xml_string.= sprintf('<commercial-type>%s</commercial-type>', $this->getBuildingType($row['UF_CRM_1540371261836']) );
+      $xml_string.= sprintf('<commercial-type>%s</commercial-type>', self::BUILDING_TYPE[$row['UF_CRM_1540371261836']] );
       $xml_string.= sprintf('<commercial-building-type>%s</commercial-building-type>', self::BUILDING_TYPE_COMERCIAL[$row['UF_CRM_1540384807664']] );
       $xml_string.= sprintf('<creation-date>%s</creation-date>', $date_create);
       $xml_string.= sprintf('<last-update-date>%s</last-update-date>', $date_create);
@@ -158,7 +166,7 @@ final class YandexXml extends ExportBase {
 
       $xml_string.= '<price>';
       $xml_string.= sprintf('<value>%s</value>', (int)$row['OPPORTUNITY']);
-      $xml_string.= sprintf('<currency>%s</currency>', $this->getCurrency($row['UF_CRM_1540456473']));
+      $xml_string.= sprintf('<currency>%s</currency>', self::CURRENCY[$row['UF_CRM_1540456473']]);
       $xml_string.= sprintf('<taxation-form>%s</taxation-form>',  $this->getVatType($row["UF_CRM_1540456608"]));
       $xml_string.= '</price>';
 
@@ -172,7 +180,7 @@ final class YandexXml extends ExportBase {
       $xml_string.= sprintf('<floors-total>%s</floors-total>', $row['UF_CRM_1540384963']);
       $xml_string.= sprintf('<floor>%s</floor>', $row['UF_CRM_1540384963']);
       $xml_string.= sprintf('<ceiling-height>%s</ceiling-height>', $row['UF_CRM_1540385060']);
-      $xml_string.= sprintf('<entrance-type>%s</entrance-type>', $this->getInputType($row["UF_CRM_1540385040"]));
+      $xml_string.= sprintf('<entrance-type>%s</entrance-type>', self::INPUTTYPE[$row["UF_CRM_1540385040"]]);
       $xml_string.= sprintf('<electric-capacity>%s</electric-capacity>', $row['UF_CRM_1540385112']);
       $xml_string.= sprintf('<description>%s</description>', $row['UF_CRM_1540471409']);
 
@@ -182,7 +190,7 @@ final class YandexXml extends ExportBase {
 
       }
 
-      if(\CCrmDeal::GetCategoryID($row['ID']) == 0 || \CCrmDeal::GetCategoryID($row['ID']) == 1) {
+      if($category_id == self::TYPE_DEAL['RENT'] || $category_id ==  self::TYPE_DEAL['SALE']) {
 
         $xml_string.= '<deal-status>subrent</deal-status>';
 
@@ -228,12 +236,6 @@ final class YandexXml extends ExportBase {
 
   }
 
-  private function getCurrency(string $currency_id) : string {
-
-    return self::CURRENCY[$currency_id];
-
-  }
-
   private function getVatType(string $type = ' ') : string {
 
     return self::VATTYPE[$type];
@@ -246,27 +248,14 @@ final class YandexXml extends ExportBase {
  
     foreach($data as $file_id) {
  
-          $file = \CFile::GetFileArray($file_id);
+       $file = \CFile::GetFileArray($file_id);
  
-          $xml_photo.= sprintf("<image>%s%s</image>", self::HOST, $file['SRC']);
+       $xml_photo.= sprintf("<image>%s%s</image>", self::HOST, $file['SRC']);
  
  
-      }
+    }
  
-      return $xml_photo;
+    return $xml_photo;
  
   }
-
-  private function getInputType(string $type) : string {
- 
-    return self::INPUTTYPE[$type];
-
-  }
-
-  private function getBuildingType(string $type) : string {
-
-    return self::BUILDING_TYPE[$type];
-
-  }
-
 }
