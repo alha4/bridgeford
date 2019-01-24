@@ -30,12 +30,12 @@ final class YandexXml extends ExportBase {
                
   private const BUILDING_TYPE_COMERCIAL = [
                    
-                 '88' => 'retail',
-                 '89' => 'free purpose',
-                 '90' => 'office',
-                 '91' => 'public catering',
-                 '92' => 'free purpose',
-                 '93' => 'manufacturing',
+                 '88' => 'shopping center',
+                 '89' => 'detached building',
+                 '90' => 'detached building',
+                 '91' => 'detached building',
+                 '92' => 'residential building',
+                 '93' => 'residential building',
                  '94' => 'warehouse'
               
                 ];
@@ -93,7 +93,7 @@ final class YandexXml extends ExportBase {
                "UF_CRM_1543406565","UF_CRM_154020301","UF_CRM_1540384807664","UF_CRM_1540202908",
                "UF_CRM_1540203015","UF_CRM_1540202807","UF_CRM_1540202766"];
 
-    $date_create = date(\DATE_ISO8601);
+    $date_create = gmdate('c');
 
     $xml_string = '<realty-feed xmlns="http://webmaster.yandex.ru/schemas/feed/realty/2010-06">';
 
@@ -106,8 +106,8 @@ final class YandexXml extends ExportBase {
       $xml_string.= sprintf('<offer internal-id="%s">', $row['ID']);
       $xml_string.= sprintf('<type>%s</type>', self::TYPE[ \CCrmDeal::GetCategoryID($row['ID']) ]);
       $xml_string.='<category>commercial</category>';
-      $xml_string.= sprintf('<commercial-type>%s</commercial-type>', self::BUILDING_TYPE_COMERCIAL[$row['UF_CRM_1540384807664']] );
-      $xml_string.= sprintf('<commercial-building-type>%s</commercial-building-type>', $this->getBuildingType($row['UF_CRM_1540371261836']) );
+      $xml_string.= sprintf('<commercial-type>%s</commercial-type>', $this->getBuildingType($row['UF_CRM_1540371261836']) );
+      $xml_string.= sprintf('<commercial-building-type>%s</commercial-building-type>', self::BUILDING_TYPE_COMERCIAL[$row['UF_CRM_1540384807664']] );
       $xml_string.= sprintf('<creation-date>%s</creation-date>', $date_create);
       $xml_string.= sprintf('<last-update-date>%s</last-update-date>', $date_create);
  
@@ -140,7 +140,7 @@ final class YandexXml extends ExportBase {
 
         if($row['UF_CRM_1540203015'] > 0) {
 
-           $xml_string.= sprintf('<time-on-foot>%s</time-on-foot>', $this->enumValue((int)$row['UF_CRM_1540203015'],'UF_CRM_1540203015'));
+           $xml_string.= sprintf('<time-on-foot>%s</time-on-foot>', (int)$this->enumValue((int)$row['UF_CRM_1540203015'],'UF_CRM_1540203015'));
 
         }
 
@@ -175,7 +175,12 @@ final class YandexXml extends ExportBase {
       $xml_string.= sprintf('<entrance-type>%s</entrance-type>', $this->getInputType($row["UF_CRM_1540385040"]));
       $xml_string.= sprintf('<electric-capacity>%s</electric-capacity>', $row['UF_CRM_1540385112']);
       $xml_string.= sprintf('<description>%s</description>', $row['UF_CRM_1540471409']);
-      $xml_string.= sprintf('<parking-places>%s</parking-places>', $row['UF_CRM_1540301873849']);
+
+      if($row['UF_CRM_1540301873849']) {
+      
+         $xml_string.= sprintf('<parking-places>%s</parking-places>', $row['UF_CRM_1540301873849']);
+
+      }
 
       if(\CCrmDeal::GetCategoryID($row['ID']) == 0 || \CCrmDeal::GetCategoryID($row['ID']) == 1) {
 
