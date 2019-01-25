@@ -65,8 +65,9 @@ final class AvitoXml extends ExportBase {
       $xml_string.= '<AllowEmail>Да</AllowEmail>';
 
       $xml_string.= sprintf('<ManagerName>%s</ManagerName>', $this->getUserFullName($row['ASSIGNED_BY_ID']));
+      $xml_string.= '<PropertyRights>Посредник</PropertyRights>';
 
-      $xml_string.= sprintf('<ContactPhone>%s</ContactPhone>', $this->getPhone($row["ASSIGNED_BY_ID"]));
+      $xml_string.= sprintf('<ContactPhone>+7%s</ContactPhone>', $this->getPhone($row["ASSIGNED_BY_ID"]));
 
       $xml_string.= sprintf('<Address>%s</Address>', $this->getAddress($row));
 
@@ -74,7 +75,7 @@ final class AvitoXml extends ExportBase {
 
       $xml_string.= '<Category>Коммерческая недвижимость</Category>';
 
-      $xml_string.= sprintf('<OperationType></OperationType>', self::ADS_TYPE[$category_id]);
+      $xml_string.= sprintf('<OperationType>%s</OperationType>', self::ADS_TYPE[$category_id]);
 
       $xml_string.= sprintf('<Price>%s</Price>', (int)$row['OPPORTUNITY']);
 
@@ -91,15 +92,18 @@ final class AvitoXml extends ExportBase {
 
           $xml_string.= sprintf('<Square>%s</Square>', $row['UF_CRM_1540381545640']);
 
-          $xml_string.= sprintf('<LeaseType>%s</LeaseType>', self::RENT_TYPE[$row['UF_CRM_1541056338255']]);
-
-          $xml_string.= sprintf('<LeaseCommissionSize>%s</LeaseCommissionSize>', $row['UF_CRM_1540532735882']);
 
       } else {
 
          $xml_string.= sprintf('<Square>%s</Square>', $row['UF_CRM_1540384944']);
 
       }
+
+      $xml_string.= '<LeaseDeposit>Без залога</LeaseDeposit>';
+      
+      $xml_string.= sprintf('<LeaseType>%s</LeaseType>', self::RENT_TYPE[$row['UF_CRM_1541056338255']]);
+
+      $xml_string.= sprintf('<LeaseCommissionSize>%s</LeaseCommissionSize>', $row['UF_CRM_1540532735882']);
       
       $xml_string.='</Ad>';
 
