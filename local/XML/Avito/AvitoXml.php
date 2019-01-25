@@ -8,9 +8,11 @@ final class AvitoXml extends ExportBase {
   protected $fileName = '/avito_commerc.xml';
 
   private const ADS_TYPE = [
-                  '0' => 'Сдам',
-                  '1' => 'Продам',
-                  '2' => 'Сдам'
+
+                '0' => 'Сдам',
+                '1' => 'Продам',
+                '2' => 'Сдам'
+
                ];
 
   private const OBJECT_TYPE = [
@@ -27,8 +29,9 @@ final class AvitoXml extends ExportBase {
 
   private const RENT_TYPE = [
 
-                   '0' => 'На длительный срок',
-                   '1' => 'Посуточно'
+                '0' => 'На длительный срок',
+                '1' => 'Посуточно'
+
                 ];
 
 
@@ -65,6 +68,7 @@ final class AvitoXml extends ExportBase {
       $xml_string.= '<AllowEmail>Да</AllowEmail>';
 
       $xml_string.= sprintf('<ManagerName>%s</ManagerName>', $this->getUserFullName($row['ASSIGNED_BY_ID']));
+
       $xml_string.= '<PropertyRights>Посредник</PropertyRights>';
 
       $xml_string.= sprintf('<ContactPhone>+7%s</ContactPhone>', $this->getPhone($row["ASSIGNED_BY_ID"]));
