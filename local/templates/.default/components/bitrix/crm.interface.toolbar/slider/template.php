@@ -61,7 +61,6 @@ $this->SetViewTarget('inside_pagetitle', 10000);
  $uf = new CUserTypeManager();
  $brokerID = $uf->GetUserFieldValue('CRM_DEAL','UF_CRM_1540886934', $arParams['ENTITY_ID']);
 
- #echo $USER->GetID(),' ', $brokerID, ' ', GENERAL_BROKER ;
 ?>
 
 <?if($USER->IsAdmin() || $USER->GetID() == $brokerID || $brokerID == GENERAL_BROKER):?>
@@ -71,10 +70,9 @@ $this->SetViewTarget('inside_pagetitle', 10000);
  <div class="ui-btn-double ui-btn-primary">
 
 <form action="/local/mpdf/pdf_export.php" method="post">
-   <input type="hidden" name="doc_id" value="<?=$arParams['ENTITY_ID']?>">
-	<input id="pdf_export" type="submit" class="ui-btn-main" value="PDF экпорт">
+  <input type="hidden" name="doc_id" value="<?=$arParams['ENTITY_ID']?>">
+	<input id="pdf_export" type="submit" class="ui-btn-main" value="PDF экcпорт">
 </form>
-
  </div> 
 <?endif;?> 
  <div class="ui-btn-double ui-btn-primary">
@@ -83,15 +81,6 @@ $this->SetViewTarget('inside_pagetitle', 10000);
 
  <script>
 	"use strict";
-/*
-	BX.bind(BX('pdf_export'), 'click', function(e) {
-
-  	BX.ajax.post('/local/mpdf/pdf_export.php', {'doc_id' : <?=$arParams['ENTITY_ID']?>} , function(response) {
-
-
-	   });
-
-  });*/
 	
 	 BX.bind(BX('actuality_object'), 'click', function(e) {
 

@@ -7,10 +7,15 @@ final class RentBuilding extends PdfExport {
 
   use \PDF\Helpers\PdfHelper;
 
+  protected $filePrefix = 'rent';
+
+  protected $templatePath = __DIR__;
+
   private const RENT_TYPE = [
 
      '0' => 'Открытая аренда',
      '1' => 'Закрытая аренда'
+
   ];
 
   private const INPUTTYPE = [
@@ -28,9 +33,7 @@ final class RentBuilding extends PdfExport {
 
   ];
 
-  protected function buildPdf(int $doc_id) : string {
-
-    $template = file_get_contents(__DIR__.'/template.html');
+  protected function buildMacros(int $doc_id) : array {
 
     $sort = ["ID" => "DESC"];
 
@@ -50,9 +53,9 @@ final class RentBuilding extends PdfExport {
 
     $arFields = [
 
-      '#LOT#'  => $arResult['ID'],
-      '#RENT_TYPE#' => self::RENT_TYPE[$arResult['UF_CRM_1540471471728']],
-      '#TYPE#' => self::OBJECT_TYPE[$category_id],
+      '#LOT#'        => $arResult['ID'],
+      '#RENT_TYPE#'  => self::RENT_TYPE[$arResult['UF_CRM_1540471471728']],
+      '#TYPE#'       => self::OBJECT_TYPE[$category_id],
       '#BUILD_TYPE#' => $this->enumValue((int)$arResult['UF_CRM_1540384807664'], 'UF_CRM_1540384807664'),
       '#ADDRESS#'    => $this->getAddress($arResult),
       '#ADDR#'       => $this->getAddress($arResult),
@@ -72,15 +75,10 @@ final class RentBuilding extends PdfExport {
       '#OVERHOUL#'   => $this->enumValue((int)$arResult['UF_CRM_1540385262'],'UF_CRM_1540385262'),
       '#INPUT#'      => self::INPUTTYPE[$arResult["UF_CRM_1540385040"]],
       '#CURRENCY#'   => self::CURRENCY[$arResult['UF_CRM_1540456473']]
+
     ];
 
-    $macros = array_keys($arFields);
-
-    $replaced = array_values($arFields);
-
-    $template = str_replace($macros,$replaced, $template);
-
-    return  $template;
+    return  $arFields;
 
   }
 
