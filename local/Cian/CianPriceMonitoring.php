@@ -473,11 +473,6 @@ final class CianPriceMonitoring {
    
  }
 
- private function isBridgeford(string $companyName) : bool {
-
-
- }
-
  /**
   *@method getOffersList список предложений [название, стоимость, url на циан] 
   */
@@ -618,7 +613,6 @@ final class CianPriceMonitoring {
 	$userAgentArray[] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38";
 	$userAgentArray[] = "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36";
   $userAgentArray[] = "Mozilla/5.0 (X11; CrOS x86_64 9901.77.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.97 Safari/537.36";
-
 
 	return $userAgentArray[array_rand($userAgentArray)];
  
