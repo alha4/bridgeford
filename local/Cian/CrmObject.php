@@ -29,6 +29,10 @@
 
    private const DEFAULT_CITY = 'Москва';
 
+   private const ACTUAL_STATUS = 329;
+
+   private const NOT_ACTUAL_STATUS = 330;
+
    public static $LAST_ERROR;
 
    public static function getAll(?int $object_id = 0) : array {
@@ -181,7 +185,7 @@
 
     $arFields = [
 
-      'UF_CRM_1544528494' => 329,
+      'UF_CRM_1544528494'    => self::ACTUAL_STATUS,
       'UF_CRM_1544524903217' => date("d.m.Y"),
       'UF_CRM_1540895373'    => $USER->GetID()
 
