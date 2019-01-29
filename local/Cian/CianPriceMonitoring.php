@@ -124,7 +124,7 @@ final class CianPriceMonitoring {
            
                if(CrmObject::setPrice($object['ID'], $price, $price_step)) {
            
-                  if($object_id)
+                  if($object_id && CrmObject::actuality($object_id))
 
                      return ['ID' => $object['ID'], 'status' => 'цена обновлена'];
 

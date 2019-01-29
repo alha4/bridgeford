@@ -173,5 +173,31 @@
 
    }
 
+   public static function actuality(int $object_id) : bool {
+
+    $deal = new \CCrmDeal(false);
+
+    global $USER;
+
+    $arFields = [
+
+      'UF_CRM_1544528494' => 329,
+      'UF_CRM_1544524903217' => date("d.m.Y"),
+      'UF_CRM_1540895373'    => $USER->GetID()
+
+    ];
+
+    if($deal->Update($object_id, $arFields)) {
+
+        return true;
+
+     }
+
+     self::$LAST_ERROR = $deal->LAST_ERROR;
+
+     return false;
+
+   }
+
    private function __construct(){}
  }
