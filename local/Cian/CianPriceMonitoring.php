@@ -25,6 +25,8 @@ final class CianPriceMonitoring {
 
   private const GEO_DATA_MOSKOW_ROWS = 4;
 
+  private const OWNER_COMPANY_NAME = 'Bridgeford Capital';
+
   private $http_headers = ["Host"    => "api.cian.ru",
                            "Origin"  => "https://www.cian.ru",
                            "Referer" => false,
@@ -471,6 +473,11 @@ final class CianPriceMonitoring {
    
  }
 
+ private function isBridgeford(string $companyName) : bool {
+
+
+ }
+
  /**
   *@method getOffersList список предложений [название, стоимость, url на циан] 
   */
@@ -481,12 +488,15 @@ final class CianPriceMonitoring {
 
     foreach($data as $item) {
 
-      $result[] = [
-         'TITLE' => $item['geo']['userInput'],
-         'PRICE' => $this->extractPrice($item['dealType'], $item),
-         'URL'   => $item['fullUrl']
-      ];
+     if($item['user']['agencyName'] != self::OWNER_COMPANY_NAME) {
 
+        $result[] = [
+           'TITLE' => $item['geo']['userInput'],
+           'PRICE' => $this->extractPrice($item['dealType'], $item),
+           'URL'   => $item['fullUrl']
+         ];
+
+      }
     }
 
     return $result;

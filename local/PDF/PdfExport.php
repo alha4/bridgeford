@@ -8,7 +8,7 @@ abstract class PdfExport {
 
   protected $filePrefix;
 
-  protected $template;
+  protected $templatePath;
 
   protected const OBJECT_TYPE = [
 
@@ -81,9 +81,9 @@ abstract class PdfExport {
 
     $replaced = array_values($arFields);
 
-    $this->template = file_get_contents($fileTemplate);
+    $template = file_get_contents($fileTemplate);
 
-    return str_replace($macros, $replaced, $this->template);
+    return str_replace($macros, $replaced, $template);
 
   }
   

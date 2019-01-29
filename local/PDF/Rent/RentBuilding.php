@@ -62,7 +62,7 @@ final class RentBuilding extends PdfExport {
       '#MAP#'        => $this->getLocationMap((int)$arResult['UF_CRM_1548410231729']),
       '#AREA#'       => $this->enumValue((int)$arResult['UF_CRM_1540203111'],'UF_CRM_1540203111'),
       '#METRO#'      => $this->IblockEnumValue($arResult['UF_CRM_1543406565']),
-      '#METRO_TIME#' =>  $this->enumValue((int)$arResult['UF_CRM_1540203015'],'UF_CRM_1540203015'),
+      '#METRO_TIME#' => $this->enumValue((int)$arResult['UF_CRM_1540203015'],'UF_CRM_1540203015'),
       '#PRICE#'      => $arResult['OPPORTUNITY'],
       '#SQUARE#'     => $arResult['UF_CRM_1540384944'],
       '#PRICE_1YEAR#' => $arResult['UF_CRM_1540554743072'],
