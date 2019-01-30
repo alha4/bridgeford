@@ -127,9 +127,9 @@ final class CianPriceMonitoring {
            
                   $event = new CompetitorEvent();
 
-                  $event->run($object['ID'], $competitors);
+                  $event->dispatch($object['ID'], $competitors);
 
-                  Logger::log($competitors);
+                  //Logger::log($competitors);
 
                   if($object_id)
 

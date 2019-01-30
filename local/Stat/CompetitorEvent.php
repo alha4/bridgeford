@@ -12,19 +12,22 @@ final class CompetitorEvent {
 
   private const CREATE_EVENT = "INSERT INTO bf_stat_event (DEAL_ID, DATA, EVENT, LINK) VALUES(%d, '%s', '%s', '%s')";
 
-  public function run(int $deal_id, array $data) : bool {
+  public function dispatch(int $deal_id, array $data) : bool {
 
     if(!$this->exists($deal_id)) {
 
-      $this->create($deal_id, $data, 'ADD');
+       return $this->create($deal_id, $data, 'ADD');
 
     }
 
     $currentData = $this->getData($deal_id);
 
-    /*if($deal_id == 16) {
+    /*
+    if($deal_id == 7) {
 
-      unset($data[array_rand($data)]);
+       unset($data[array_rand($data)]);
+
+       $data[] = ['URL' => time(), 'ID'=> time(), 'TITLE' => 'Новый тест', 'PRICE' => 70000000];
       
     }*/
 
@@ -32,77 +35,87 @@ final class CompetitorEvent {
 
     $dataIds    = array_column($data, 'ID');
 
-    if(count($data) == 0) {
+    if($this->allDelete($deal_id, $data)) {
 
-      if($this->create($deal_id, [], 'ALL_DELETE')) {
+       return true;
 
-       // echo 'все удалены <br>';
+    }
+
+    if($this->addOne($deal_id, $currentIds, $dataIds, $data)) {
+
+         
+    }
+
+    if($this->oneDelete($deal_id, $currentIds, $dataIds, $currentData)) {
 
 
-      } else {
+    }
 
-       //echo 'ошибка';
 
+    return true;
+
+  }
+
+  private function addOne(int $deal_id, array &$current, array &$new, array &$data) : bool {
+
+    if($diff = array_diff($new, $current)) {
+ 
+      foreach($diff as $key => $value) {
+
+          $index = array_search($value, $new);
+
+          if($index !== false) {
+
+            if(!$this->create($deal_id, $data, 'NEW', $data[$index]['URL'])) {
+
+
+            } 
+          }
+       }
+
+      return true;
+
+    }
+
+    return false;
+  }
+
+  private function oneDelete(int $deal_id, array &$current, array &$new, array &$data) : bool {
+
+    if($diff = array_diff($current, $new)) {
+
+      foreach($diff as $key => $value) {
+
+        $index = array_search($value,  $current);
+
+        if($index !== false) {
+
+          if(!$this->create($deal_id, $data, 'ONE_DELETE', $data[$index]['URL'])) {
+
+             //  echo 'удалён один конкурент <br>';
+
+          }
+        }
       }
 
       return true;
 
     }
 
-    #array_push($dataIds, 12314141);
+    return false;
+  }
 
-    if($diff = array_diff($dataIds,$currentIds)) {
- 
-       foreach($diff as $key => $value) {
+  private function allDelete(int $deal_id, array &$data) : bool {
 
-            $index = array_search($value, $dataIds);
+    if(count($data) == 0) {
 
-            if($index !== false) {
+       if(!$this->create($deal_id, [], 'ALL_DELETE')) {
 
-               if($this->create($deal_id, $data, 'NEW', $data[$index]['URL'])) {
+          return false;
 
-                  // echo 'добавлен новый конкурент <br>';
-
-
-               } else {
-
-                //  echo 'ошибка';
-
-               }
-
-
-            }
-         
        }
-       
 
-    }
-  
-    #array_push( $currentIds, 775541145);
-
-    if($diff = array_diff($currentIds, $dataIds)) {
-
-      foreach($diff as $key => $value) {
-
-        $index = array_search($value,  $currentIds);
-
-        if($index !== false) {
-
-           if($this->create($deal_id, $data, 'ONE_DELETE', $currentData[$index]['URL'])) {
-
-             //  echo 'удалён один конкурент <br>';
-
-
-           } else {
-
-            //  echo 'ошибка';
-
-           }
-
-
-        }
-     
-     }
+       return true;
 
     }
 
@@ -110,7 +123,7 @@ final class CompetitorEvent {
 
   }
 
-  public function create(int $deal_id, array $data, string $event = '', string $link = '') : bool {
+  private function create(int $deal_id, array &$data, string $event = '', string $link = '') : bool {
 
     global $DB;
 
@@ -123,8 +136,6 @@ final class CompetitorEvent {
         return true;
 
     }
-
-    echo $err_mess.__LINE__;
 
     return false;
 
@@ -179,7 +190,6 @@ final class CompetitorEvent {
     
 
   }
-
 
   private function query(string $sql)  {
 
