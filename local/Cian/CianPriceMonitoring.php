@@ -3,7 +3,8 @@ namespace Cian;
 
 use \Bitrix\Main\Web\HttpClient,
     \Cian\CrmObject,
-    \Cian\Logger;
+    \Cian\Logger,
+    \Stat\CompetitorEvent;
 
 final class CianPriceMonitoring {
 
@@ -124,7 +125,13 @@ final class CianPriceMonitoring {
            
                if(CrmObject::setPrice($object['ID'], $price, $price_step)) {
            
-                  if($object_id && CrmObject::actuality($object_id))
+                  $event = new CompetitorEvent();
+
+                  $event->run($object['ID'], $competitors);
+
+                  Logger::log($competitors);
+
+                  if($object_id)
 
                      return ['ID' => $object['ID'], 'status' => 'цена обновлена'];
 
@@ -486,6 +493,7 @@ final class CianPriceMonitoring {
      if($item['user']['agencyName'] != self::OWNER_COMPANY_NAME) {
 
         $result[] = [
+           'ID'    => $item['id'],
            'TITLE' => $item['geo']['userInput'],
            'PRICE' => $this->extractPrice($item['dealType'], $item),
            'URL'   => $item['fullUrl']
