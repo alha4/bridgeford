@@ -132,7 +132,7 @@
 
    }
 
-   public static function setCompetitors(int $id, array $data) : bool {
+   public static function setCompetitors(int $id, array &$data) : bool {
 
      $crm_object = new \CCrmDeal(false);
 

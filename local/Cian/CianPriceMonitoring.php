@@ -160,12 +160,19 @@ final class CianPriceMonitoring {
 
            }
          } else {
+
+          $event = new CompetitorEvent();
+
+          $event->dispatch($object_id, $data = []);
+
+          CrmObject::setCompetitors($object_id, $data = []);
   
-          if($object_id)
+          if($object_id) {
 
             return ['error' => 'нет данных'];
 
-         }
+          }
+        }
        }
       }
    } else {
@@ -188,7 +195,7 @@ final class CianPriceMonitoring {
   *
   *@var string $search_type - тип поиска [Аренда,Продажа,Коммерческая]
   */
- private function buildRequest(array $data) : array {
+ private function buildRequest(array &$data) : array {
 
   $square_gte = round($data['SQUARE'] - (($data['SQUARE']) / 100 * self::SQUARE_PRECENT));
 
@@ -258,7 +265,7 @@ final class CianPriceMonitoring {
   *"@return array|bool геокодированные поля адреса
   *
   */
- public function getGeocodedAdress(array $address) : ?array {
+ public function getGeocodedAdress(array &$address) : ?array {
 
    if($address['IS_DECODED'] == 'Y') {
 
@@ -309,7 +316,7 @@ final class CianPriceMonitoring {
   * @return array результат список предложений
   *
   */
- private function searchOffers(array $data) : array {
+ private function searchOffers(array &$data) : array {
   
   $request  = json_encode($this->buildRequest($data));
 
@@ -362,7 +369,7 @@ final class CianPriceMonitoring {
   * @return array геокодированный адрес 
   *
   */
- private function geocoded(array $data) : ?array {
+ private function geocoded(array &$data) : ?array {
 
   $response = json_decode( $this->httpClient()->post(self::CIAN_API_GEOCODED_URL, json_encode($data)), 1);
 
@@ -396,7 +403,7 @@ final class CianPriceMonitoring {
   *@method  adressToString  метод формирования строки адреса для метода coordinate
   */
 
- private function adressToString(array $address) : string {
+ private function adressToString(array &$address) : string {
 
   if(strlen($address['CITY']) > 0 && $address['CITY'] != self::DEFAULT_CITY) {
 
@@ -412,7 +419,7 @@ final class CianPriceMonitoring {
  /**
   *@method prepareAdressString метод формирования строки адреса для метода geocoded
   */
- private function prepareAdressString(array $address) : string {
+ private function prepareAdressString(array &$address) : string {
 
   if(strlen($address['CITY']) > 0 && $address['CITY'] != self::DEFAULT_CITY) {
 
@@ -444,7 +451,7 @@ final class CianPriceMonitoring {
 
  }
 
- private function getMinPrice(array $data) : float {
+ private function getMinPrice(array &$data) : float {
 
   $dealType = $data[0]['dealType'];
 
@@ -468,7 +475,7 @@ final class CianPriceMonitoring {
 
  }
 
- private function extractPrice(string $dealType, array $item) : int {
+ private function extractPrice(string $dealType, array &$item) : int {
 
   if($dealType == 'sale') {
 
@@ -484,7 +491,7 @@ final class CianPriceMonitoring {
   *@method getOffersList список предложений [название, стоимость, url на циан] 
   */
 
- private function getOffersList(array $data) : array {
+ private function getOffersList(array &$data) : array {
 
     $result = [];
 

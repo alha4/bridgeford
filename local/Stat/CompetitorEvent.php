@@ -2,6 +2,8 @@
 
 namespace Stat;
 
+use \Cian\Logger;
+
 final class CompetitorEvent {
 
   private const EXISTS = 'SELECT ID FROM bf_stat_event WHERE DEAL_ID = %d';
@@ -12,7 +14,7 @@ final class CompetitorEvent {
 
   private const CREATE_EVENT = "INSERT INTO bf_stat_event (DEAL_ID, DATA, EVENT, LINK) VALUES(%d, '%s', '%s', '%s')";
 
-  public function dispatch(int $deal_id, array $data) : bool {
+  public function dispatch(int $deal_id, array &$data) : bool {
 
     if(!$this->exists($deal_id)) {
 
@@ -109,7 +111,7 @@ final class CompetitorEvent {
 
     if(count($data) == 0) {
 
-       if(!$this->create($deal_id, [], 'ALL_DELETE')) {
+       if(!$this->create($deal_id, $data = [], 'ALL_DELETE')) {
 
           return false;
 
