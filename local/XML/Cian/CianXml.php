@@ -14,7 +14,23 @@ final class CianXml extends ExportBase {
                    '1' => 'Sale',
                    '2' => 'Sale'
                 ];
+              
+  private const TITLE_ALIAS = [
 
+                  '0' => 'Аренда помещения',
+                  '1' => 'Помещение на продажу',
+                  '2' => 'Арендный бизнес'
+            
+                ];
+            
+            
+  private const TITLE_ALIAS_SYNONYM = [
+            
+                  '0' => 'Помещение в аренду',
+                  '1' => 'Продажа помещения'
+            
+                ];
+            
   private const SERVICE_TYPE = [
 
                   '198' => 'free',
@@ -121,21 +137,23 @@ final class CianXml extends ExportBase {
 
     while($row = $object->Fetch()) {
 
-      $title = $this->getTitle($row, \CCrmDeal::GetCategoryID($row['ID']));
+      $category_id =  \CCrmDeal::GetCategoryID($row['ID']);
+
+      $title = $this->getTitle($row, $category_id);
 
       $xml_string.= '<object>';
       $xml_string.= sprintf("<ExternalId>%s</ExternalId>", $row['ID']);
       $xml_string.= sprintf("<Title>%s</Title>", $title);
 
-      $xml_string.= sprintf("<Category>%s</Category>", $this->getCategory($row['UF_CRM_1540384807664'], \CCrmDeal::GetCategoryID($row['ID'])));
+      $xml_string.= sprintf("<Category>%s</Category>", $this->getCategory($row['UF_CRM_1540384807664'], $category_id));
 
-      if($row['UF_CRM_1545906357580']) {
+      if($category_id == self::RENT_BUSSINES) {
 
-        $xml_string.= sprintf("<Description>%s - %s</Description>", $title, $row['UF_CRM_1540471409']);
+          $xml_string.= sprintf("<Description>%s %s</Description>", $title, $row['UF_CRM_1540471409']);
 
       } else {
- 
-        $xml_string.= sprintf("<Description>%s</Description>", $row['UF_CRM_1540471409']);
+     
+          $xml_string.= sprintf("<Description>%s</Description>", $row['UF_CRM_1540471409']);
 
       }
 
@@ -182,6 +200,45 @@ final class CianXml extends ExportBase {
     return $xml_string;
 
   }
+
+  private function getTitle(array $row, int $category_id) : string {
+
+    $square = ($category_id == self::RENT_BUSSINES) ? $row['UF_CRM_1541076330647'] : $row['UF_CRM_1540384944'];
+
+    $region = $this->enumValue((int)$row['UF_CRM_1540203111'],'UF_CRM_1540203111');
+    $region.= ', ';
+    
+    switch($category_id) {
+
+      case self::RENT :
+
+      return strtoupper(sprintf("%s: %s, %s %s метров", self::TITLE_ALIAS[$category_id], 
+                                                        self::TITLE_ALIAS_SYNONYM[$category_id],$region, $square));
+
+      break;
+
+      case self::SALE :
+
+      return strtoupper(sprintf("%s: %s, %s %s метров", self::TITLE_ALIAS[$category_id], 
+                                                        self::TITLE_ALIAS_SYNONYM[$category_id], $region, $square));
+
+      break;
+
+      case self::RENT_BUSSINES :
+
+      if($row['UF_CRM_1545906357580']) {
+
+          return strtoupper(sprintf("%s: окупаемость - %s", self::TITLE_ALIAS[$category_id],  $row['UF_CRM_1544431330']));
+
+      }
+
+      return strtoupper(sprintf("%s", self::TITLE_ALIAS[$category_id]));
+
+      break;
+
+    }
+
+  }  
   
   private function getAdsServices(array $data)  : string {
 
