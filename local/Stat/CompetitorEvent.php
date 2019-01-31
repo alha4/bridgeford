@@ -24,15 +24,6 @@ final class CompetitorEvent {
 
     $currentData = $this->getData($deal_id);
 
-    /*
-    if($deal_id == 7) {
-
-       unset($data[array_rand($data)]);
-
-       $data[] = ['URL' => time(), 'ID'=> time(), 'TITLE' => 'Новый тест', 'PRICE' => 70000000];
-      
-    }*/
-
     $currentIds = array_column($this->getData($deal_id), 'ID');
 
     $dataIds    = array_column($data, 'ID');

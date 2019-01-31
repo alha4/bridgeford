@@ -35,7 +35,9 @@ if (!empty($arResult['BUTTONS']))
 
 if(isset($arResult['SONET_SUBSCRIBE']) && is_array($arResult['SONET_SUBSCRIBE'])):
 	$subscribe = $arResult['SONET_SUBSCRIBE'];
-?><script type="text/javascript">
+?>
+
+<script type="text/javascript">
 BX.ready(
 	function()
 	{

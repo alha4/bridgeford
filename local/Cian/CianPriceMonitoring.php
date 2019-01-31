@@ -129,8 +129,6 @@ final class CianPriceMonitoring {
 
                   $event->dispatch($object['ID'], $competitors);
 
-                  //Logger::log($competitors);
-
                   if($object_id)
 
                      return ['ID' => $object['ID'], 'status' => 'цена обновлена'];

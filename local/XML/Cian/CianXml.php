@@ -8,12 +8,32 @@ final class CianXml extends ExportBase {
 
   protected $fileName = '/cian_commerc.xml';
 
+  private const RENT = 0;
+
+  private const SALE = 1;
+
+  private const RENT_BUSSINES = 2;
+  
   private const CATEGORY = [
 
                    '0' => 'Rent',
                    '1' => 'Sale',
                    '2' => 'Sale'
                 ];
+
+  private const TITLE_ALIAS = [
+
+                  '0' => 'Аренда помещения',
+                  '1' => 'Помещение на продажу',
+                  '2' => 'Арендный бизнес'
+               ];
+
+
+  private const TITLE_ALIAS_SYNONYM = [
+
+                '0' => 'Помещение в аренду',
+                '1' => 'Продажа помещения',
+             ];
 
   private const SERVICE_TYPE = [
 
@@ -108,12 +128,12 @@ final class CianXml extends ExportBase {
 
     $filter = ["CHECK_PERMISSIONS" => "N", "UF_CRM_1545199624" => self::STATUS_OBJECT, "UF_CRM_1543837331299" => 1];
 
-    $select = ["UF_CRM_1540202817","UF_CRM_1540202900","UF_CRM_1540202889","UF_CRM_1540202908",
+    $select = ["UF_CRM_1540202817","UF_CRM_1540202900","UF_CRM_1540202889","UF_CRM_1540202908", "UF_CRM_1540203111",
                "UF_CRM_1540886934","UF_CRM_1540384807664","UF_CRM_1540384963","UF_CRM_1541076330647",
                "UF_CRM_1540371585","UF_CRM_1540385060","OPPORTUNITY","UF_CRM_1540371261836","UF_CRM_1540301873849",
                "UF_CRM_1540456473","UF_CRM_1540456608","UF_CRM_1540381458431","UF_CRM_1540532735882","UF_CRM_1540471409",
-               "UF_CRM_1541004853118","UF_CRM_1540385040","UF_CRM_1540385112","UF_CRM_1540532330","UF_CRM_1540532419",
-               "UF_CRM_1544172451","UF_CRM_1540976407661","UF_CRM_1540977227270","UF_CRM_1540977306391"];
+               "UF_CRM_1541004853118","UF_CRM_1540385040","UF_CRM_1540385112","UF_CRM_1540532330","UF_CRM_1540532419", "UF_CRM_1540384944",
+               "UF_CRM_1544172451","UF_CRM_1540976407661","UF_CRM_1540977227270","UF_CRM_1540977306391","UF_CRM_1544431330"];
 
     $xml_string = '<feed><feed_version>2</feed_version>';
 
@@ -123,6 +143,8 @@ final class CianXml extends ExportBase {
 
       $xml_string.= '<object>';
       $xml_string.= sprintf("<ExternalId>%s</ExternalId>", $row['ID']);
+      $xml_string.= sprintf("<Title>%s</Title>", $this->getTitle($row, \CCrmDeal::GetCategoryID($row['ID'])));
+
       $xml_string.= sprintf("<Category>%s</Category>", $this->getCategory($row['UF_CRM_1540384807664'], \CCrmDeal::GetCategoryID($row['ID'])));
       $xml_string.= sprintf("<Description>%s</Description>", $row['UF_CRM_1540471409']);
       $xml_string.= sprintf("<Address>%s</Address>", $this->getAddress($row));
@@ -166,6 +188,39 @@ final class CianXml extends ExportBase {
     $xml_string.= '</feed>';
 
     return $xml_string;
+
+  }
+
+  private function getTitle(array $row, int $category_id) : string {
+
+    $square = ($category_id == self::RENT_BUSSINES) ? $row['UF_CRM_1541076330647'] : $row['UF_CRM_1540384944'];
+
+    $region = $this->enumValue((int)$row['UF_CRM_1540203111'],'UF_CRM_1540203111');
+    $region.= ', ';
+    
+    switch($category_id) {
+
+      case self::RENT :
+
+      return sprintf("%s: %s, %s %s метров", self::TITLE_ALIAS[$category_id], 
+                                             self::TITLE_ALIAS_SYNONYM[$category_id],$region, $square);
+
+      break;
+
+      case self::SALE :
+
+      return sprintf("%s: %s, %s %s метров", self::TITLE_ALIAS[$category_id], 
+                                             self::TITLE_ALIAS_SYNONYM[$category_id], $region, $square);
+
+      break;
+
+      case self::RENT_BUSSINES :
+
+      return sprintf("%s: %s, окупаемость - %s", self::TITLE_ALIAS[$category_id], self::TITLE_ALIAS[$category_id], $row['UF_CRM_1544431330']);
+
+      break;
+
+    }
 
   }
 
