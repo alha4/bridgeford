@@ -8,7 +8,7 @@ final class CompetitorEvent {
 
   private const EXISTS = 'SELECT ID FROM bf_stat_event WHERE DEAL_ID = %d';
 
-  private const GET_DATA  = 'SELECT DATA FROM bf_stat_event WHERE DEAL_ID = %d ORDER BY DEAL_ID DESC';
+  private const GET_DATA  = 'SELECT DATA FROM bf_stat_event WHERE DEAL_ID = %d ORDER BY DATE_UPDATE DESC';
 
   private const GET_EVENTS = 'SELECT * FROM bf_stat_event WHERE DEAL_ID = %d ORDER BY DATE_UPDATE DESC';
 
@@ -34,16 +34,8 @@ final class CompetitorEvent {
 
     }
 
-    if($this->addOne($deal_id, $currentIds, $dataIds, $data)) {
-
-         
-    }
-
-    if($this->oneDelete($deal_id, $currentIds, $dataIds, $currentData)) {
-
-
-    }
-
+    $this->addOne($deal_id, $currentIds, $dataIds, $data);
+    $this->oneDelete($deal_id, $currentIds, $dataIds, $currentData);
 
     return true;
 
@@ -59,10 +51,8 @@ final class CompetitorEvent {
 
           if($index !== false) {
 
-            if(!$this->create($deal_id, $data, 'NEW', $data[$index]['URL'])) {
+             $this->create($deal_id, $data, 'NEW', $data[$index]['URL']);  
 
-
-            } 
           }
        }
 
@@ -83,11 +73,8 @@ final class CompetitorEvent {
 
         if($index !== false) {
 
-          if(!$this->create($deal_id, $data, 'ONE_DELETE', $data[$index]['URL'])) {
+           $this->create($deal_id, $data, 'ONE_DELETE', $data[$index]['URL']);   
 
-             //  echo 'удалён один конкурент <br>';
-
-          }
         }
       }
 
@@ -102,13 +89,7 @@ final class CompetitorEvent {
 
     if(count($data) == 0) {
 
-       if(!$this->create($deal_id, $data = [], 'ALL_DELETE')) {
-
-          return false;
-
-       }
-
-       return true;
+        return $this->create($deal_id, $data = [], 'ALL_DELETE');
 
     }
 
@@ -118,17 +99,26 @@ final class CompetitorEvent {
 
   private function create(int $deal_id, array &$data, string $event = '', string $link = '') : bool {
 
-    global $DB;
+    global $APPLICATION;
 
     $sql   = sprintf(self::CREATE_EVENT, $deal_id, json_encode($data,JSON_UNESCAPED_UNICODE), $event, $link);
-    $query = $DB->Query($sql, false, $err_mess.__LINE__);
+    $query = $this->query($sql);
 
     if($query->AffectedRowsCount() > 0) {
-
 
         return true;
 
     }
+
+    $strError = '';
+
+    if($e = $APPLICATION->GetException()) {
+
+        $strError = $e->GetString();
+
+    }
+
+    Logger::log([$deal_id,$event,$data,$strError]);
 
     return false;
 
@@ -136,11 +126,8 @@ final class CompetitorEvent {
 
   public function getEvents(int $deal_id) : array {
 
-    global $DB;
-
     $sql   = sprintf(self::GET_EVENTS, $deal_id);
-
-    $query = $DB->Query($sql, false, $err_mess.__LINE__);
+    $query = $this->query($sql);
 
     $data = [];
 
@@ -156,11 +143,8 @@ final class CompetitorEvent {
 
   private function getData(int $id) : array {
 
-    global $DB;
-
     $sql   = sprintf(self::GET_DATA, $id);
-
-    $query = $DB->Query($sql, false, $err_mess.__LINE__);
+    $query = $this->query($sql);
 
     return json_decode($query->Fetch()['DATA'], 1);
 
@@ -168,10 +152,8 @@ final class CompetitorEvent {
 
   private function exists(int $deal_id) : bool {
 
-    global $DB;
-
     $sql   = sprintf(self::EXISTS, $deal_id);
-    $query = $DB->Query($sql, false, $err_mess.__LINE__);
+    $query = $this->query($sql);
 
     if($query->SelectedRowsCount() > 0) {
 
@@ -181,12 +163,13 @@ final class CompetitorEvent {
 
     return false;
     
-
   }
 
   private function query(string $sql)  {
 
-
+    global $DB;
+    
+    return $DB->Query($sql, false, $err_mess.__LINE__);
 
   }
 }
