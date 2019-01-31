@@ -69,7 +69,8 @@ final class BridgefordXml extends ExportBase {
                "UF_CRM_1540381545640","UF_CRM_1540384944","UF_CRM_1540471409","UF_CRM_1540532330",
                "UF_CRM_1540385060","UF_CRM_1540385112","UF_CRM_1540384963","UF_CRM_1540371585",
                "UF_CRM_1540385040","UF_CRM_1540385262","UF_CRM_1540202908","UF_CRM_1540895685",
-               "UF_CRM_1544524903217","UF_CRM_1540895373","ASSIGNED_BY_ID","UF_CRM_1540392018"];
+               "UF_CRM_1544524903217","UF_CRM_1540895373","ASSIGNED_BY_ID","UF_CRM_1540392018",
+               "UF_CRM_1545906357580","UF_CRM_1544431330","UF_CRM_1541076330647"];
     
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -79,10 +80,12 @@ final class BridgefordXml extends ExportBase {
 
       $category_id = \CCrmDeal::GetCategoryID($row['ID']);
 
+      $title = $this->getTitle($row, $category_id);
+
       $xml_string.= sprintf('<offer internal-id="%s">', $row['ID']);
       $xml_string.= sprintf('<type>%s</type>', self::TYPE[ $category_id ]);
 
-      if($category_id == 1 || $category_id == 2) {
+      if($category_id == self::SALE || $category_id == self::RENT_BUSSINES) {
 
         $xml_string.= sprintf('<private-sale>%s</private-sale>', $row['UF_CRM_1541004853118'] ? 'YES' : 'NO');
 
@@ -126,7 +129,18 @@ final class BridgefordXml extends ExportBase {
       $xml_string.= sprintf('<price>%s</price>',(int)$row['OPPORTUNITY']);
       $xml_string.= sprintf('<is-basement>%s</is-basement>', $row['UF_CRM_1540384916112'] ? 'YES' : 'NO');
       $xml_string.= sprintf('<is-mansion>%s</is-mansion>',   $row['UF_CRM_1540371938'] ? 'YES' : 'NO');
-      $xml_string.= sprintf('<description>%s</description>', $row['UF_CRM_1540471409']);
+
+      if($row['UF_CRM_1545906357580']) {
+      
+          $xml_string.= sprintf('<description>%s - %s</description>', $title, $row['UF_CRM_1540471409']);
+
+      } else {
+
+          $xml_string.= sprintf('<description>%s</description>', $row['UF_CRM_1540471409']);
+
+      }
+
+
       $xml_string.= sprintf('<photo>%s</photo>', $this->getPhotos((array)$row['UF_CRM_1540532330']));
       $xml_string.= sprintf('<ceiling>%s</ceiling>', $row['UF_CRM_1540385060']);
       $xml_string.= sprintf('<electricity>%s</electricity>', $row['UF_CRM_1540385112']);

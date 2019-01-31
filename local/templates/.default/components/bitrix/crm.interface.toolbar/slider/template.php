@@ -78,9 +78,23 @@ $this->SetViewTarget('inside_pagetitle', 10000);
  <div class="ui-btn-double ui-btn-primary">
  <button id="update_price" class="ui-btn-main">Обновить цены конкурентов</button>
  </div> 
-
+ <div class="ui-btn-double ui-btn-primary">
+ <button id="add_contact" class="ui-btn-main">Добавить контакт</button>
+ </div> 
  <script>
 	"use strict";
+
+	BX.bind(BX('add_contact'),'click', function(e) {
+		
+		BX.SidePanel.Instance.open("/crm/contact/details/0/", {
+                                      cacheable : false,
+                                      requestMethod : "post",
+                                      requestParams  : {
+                                        sessid  : "<?=bitrix_sessid()?>"
+                                      }
+                                    });
+
+	});
 	
 	 BX.bind(BX('actuality_object'), 'click', function(e) {
 

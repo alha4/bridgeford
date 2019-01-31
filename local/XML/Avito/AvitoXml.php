@@ -44,10 +44,10 @@ final class AvitoXml extends ExportBase {
 
     $filter = ["CHECK_PERMISSIONS" => "N", "UF_CRM_1545199624" => self::STATUS_OBJECT, "UF_CRM_1543834582" => 1];
 
-    $select = ["OPPORTUNITY","UF_CRM_1540886934","ASSIGNED_BY_ID","UF_CRM_1540202817",
-               "UF_CRM_1540202908","UF_CRM_1540202889","UF_CRM_1540202900","UF_CRM_1540471409",
-               "UF_CRM_1540381545640","UF_CRM_1540384944","UF_CRM_1540384807664","UF_CRM_1541056338255",
-               "UF_CRM_1540532735882","UF_CRM_1540532330","UF_CRM_1540384963","UF_CRM_1540371585"];
+    $select = ["OPPORTUNITY","UF_CRM_1540886934","ASSIGNED_BY_ID","UF_CRM_1540202817","UF_CRM_1545906357580",
+               "UF_CRM_1540202908","UF_CRM_1540202889","UF_CRM_1540202900","UF_CRM_1540471409", "UF_CRM_1544431330",
+               "UF_CRM_1540381545640","UF_CRM_1540384944","UF_CRM_1540384807664","UF_CRM_1541056338255", "UF_CRM_1540203111",
+               "UF_CRM_1540532735882","UF_CRM_1540532330","UF_CRM_1540384963","UF_CRM_1540371585","UF_CRM_1541076330647"];
     
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -56,6 +56,8 @@ final class AvitoXml extends ExportBase {
     while($row = $object->Fetch()) {
 
       $category_id = \CCrmDeal::GetCategoryID($row['ID']);
+
+      $title = $this->getTitle($row, $category_id);
 
       $xml_string.= '<Ad>';
 
@@ -75,7 +77,14 @@ final class AvitoXml extends ExportBase {
 
       $xml_string.= sprintf('<Address>%s</Address>', $this->getAddress($row));
 
-      $xml_string.= sprintf('<Description>%s</Description>', $row['UF_CRM_1540471409']);
+      if($row['UF_CRM_1545906357580']) {
+
+          $xml_string.= sprintf('<Description>%s - %s</Description>', $title, $row['UF_CRM_1540471409']);
+
+      } else {
+  
+          $xml_string.= sprintf('<Description>%s</Description>', $row['UF_CRM_1540471409']);
+      }
 
       $xml_string.= '<Category>Коммерческая недвижимость</Category>';
 
