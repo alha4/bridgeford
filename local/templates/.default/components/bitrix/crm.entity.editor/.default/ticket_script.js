@@ -47,6 +47,24 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
         this.initializeEventListener();
     }
 
+    if(this._entityId > 0) {
+
+      this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
+      this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');
+      this.registerView(TicketModel.ON_SEARCH, 'showCommisionFields');
+      this.registerView(TicketModel.ON_SEARCH, 'showClientContactFields');
+      this.registerView(TicketModel.ON_SEARCH, 'showPlannedRunFields');
+   
+      setTimeout(() => {
+ 
+        this.initializeViews(); 
+        this.showSections();
+        this.showAllFields();
+
+       }, 1000);
+
+   }   
+
   },
 
   getTicketCategoryID : function() {

@@ -2287,24 +2287,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						},1000);
 
 				 }
-
-				 if(this._entityId > 0) {
-
-				   this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
-			     this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');
-			  	 this.registerView(TicketModel.ON_SEARCH, 'showCommisionFields');
-				   this.registerView(TicketModel.ON_SEARCH, 'showClientContactFields');
-			     this.registerView(TicketModel.ON_SEARCH, 'showPlannedRunFields');
-				
-			  	 setTimeout(() => {
-			
-				  	 this.initializeViews(); 
-				  	 this.showSections();
-					   this.showAllFields();
-
-			   	 }, 1000);
-
-			  }   
 			}
    
 			if(this._entityTypeId == this._ENTITY_TYPE.DEAL) { 
