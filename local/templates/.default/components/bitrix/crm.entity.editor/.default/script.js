@@ -1926,12 +1926,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				const month = "0." + number.substr(monthIndex + 1),
 
-				      monthValue = parseInt(parseFloat(month) * 365 / 30);
-
 							dateYear = number.substr(0, monthIndex);
 							
 				let   yearText,
-				      monthText;
+							monthText,
+							monthValue = parseInt(parseFloat(month) * 365 / 30);
 
 				if(dateYear == 1) {
 
@@ -1947,8 +1946,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				}
 
+				if(monthValue == 0) {
+
+				  	monthValue = monthText = '';
 				
-				if(monthValue == 1) {
+				} else if(monthValue == 1) {
 
 					monthText = 'месяц';
 
@@ -1962,19 +1964,25 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				}
 
+				if(monthValue > 0) {
+
+           monthValue = ' и ' +  monthValue;
+
+				}
+
 				console.log(month, monthValue);
 				
 				if(dateYear > 0) {
 
-				 return `${dateYear} ${yearText}, ${monthValue} ${monthText}`;
+				 return `${dateYear} ${yearText} ${monthValue} ${monthText}.`;
 
 				}
 
-				return `${monthValue} ${monthText}`;
+				return `${monthValue} ${monthText}.`;
 
 			}
 
-			return `${number} ${yearText}`;
+			return `${number} ${yearText}.`;
 
 		},
 

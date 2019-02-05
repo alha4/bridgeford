@@ -41,6 +41,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializePlannedRunEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'showPlannedRunFields');
     this.registerEventListener(TicketModel.ON_SEARCH, 'showAllFields');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'showCommercFields');
 
     if(!this._entityId) {
 
@@ -54,12 +55,14 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
       this.registerView(TicketModel.ON_SEARCH, 'showCommisionFields');
       this.registerView(TicketModel.ON_SEARCH, 'showClientContactFields');
       this.registerView(TicketModel.ON_SEARCH, 'showPlannedRunFields');
+      this.registerView(TicketModel.ON_SEARCH, 'showCommercFields');
    
       setTimeout(() => {
  
         this.initializeViews(); 
         this.showSections();
         this.showAllFields();
+        this.showCommercFields();
 
        }, 1000);
 
@@ -79,13 +82,6 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   },
 
-  getTypeTicket : function() {
-
-
-
-
-  },
-
   getTypeBuilding : function() {
 
    if(this.nodeSelect('UF_CRM_1545389958')) {
@@ -96,6 +92,32 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
    return this.getTextValue(this.node('UF_CRM_1545389958'));
 
+  },
+
+  showCommercFields : function() {
+
+    const fieldsRent = ['UF_CRM_1547218455352','UF_CRM_1547218493343','UF_CRM_1547218667182','UF_CRM_1547218758','UF_CRM_1547218826'],
+
+          fieldsRentBusiness = ['UF_CRM_1547628348754','UF_CRM_1547628374048'];
+
+    if(this.getTypeBuilding() == 362 ||
+       this.getTypeBuilding() == 'Помещение в аренду') {
+    
+       for(var uf of fields) {
+
+          this.showField(this.node(uf));
+
+       }
+
+    } else if(this.getTypeBuilding() == 364 ||
+              this.getTypeBuilding() == 'Арендный бизнес') {
+
+        for(var uf of fieldsRentBusiness) {
+
+           this.showField(this.node(uf));
+        
+        }
+    }
   },
 
   showSections : function() {
@@ -462,13 +484,15 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
             const priceMAP  = parseInt(this.getTextValue(this.node('UF_CRM_1547629103665')).replace(/\s+/ig,"") ) * 12;//МАП 
             
-                  paybackValue =((priceRental + nds) / priceMAP).toFixed(1);
+                  paybackValue = ((priceRental + nds) / priceMAP).toFixed(1);
 
-								  cashing.value = (priceMAP / (priceRental + nds)) * 100 + "%";	
+                  cashing.value = (priceMAP / (priceRental + nds)) * 100 + "%";	
+
+                  console.log(priceMAP, paybackValue);
 
                   payback.value = this.precentToDate(paybackValue);
                   
-                  console.log(priceMAP);
+                  
          }
         
   },

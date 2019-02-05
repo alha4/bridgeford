@@ -9,6 +9,8 @@ $event = EventManager::getInstance();
 
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setGeoData');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setSquareClone');
+$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setPaybackAutotext');
+
 $event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'setTiketSquareClone');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRaiting');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
@@ -231,9 +233,25 @@ function setGeoData(&$arFields) : void {
 
     }
 
-   // file_put_contents($_SERVER['DOCUMENT_ROOT'].'/log.txt', print_r( $fields  ,1).date("d/m/Y H:i:s")."\r\n");
-
   }
+}
+
+function setPaybackAutotext(&$arFields) : void {
+
+   $UF = new CUserTypeManager;
+
+   $fields = [
+ 
+     'UF_CRM_1545906357580' => 1
+
+   ];
+
+   if(!$UF->Update("CRM_DEAL", $arFields['ID'], $fields)) {
+
+      file_put_contents($_SERVER['DOCUMENT_ROOT'].'/log.txt', print_r( $fields  ,1).date("d/m/Y H:i:s")."\r\n");
+
+   }
+
 }
 
 
