@@ -18,7 +18,7 @@ $moreItems = array();
 $communicationPanel = null;
 $documentButton = null;
 $enableMoreButton = false;
-
+$categoryID = CCrmDeal::GetCategoryID($arParams['ENTITY_ID']);
 
 foreach($arParams['BUTTONS'] as $item)
 {
@@ -66,23 +66,124 @@ $this->SetViewTarget('inside_pagetitle', 10000);
 <?if($USER->IsAdmin() || $USER->GetID() == $brokerID || $brokerID == GENERAL_BROKER):?>
 <div class="ui-btn-double ui-btn-primary">
  <button id="actuality_object" class="ui-btn-main">Актуализировать</button>
- </div>
- <div class="ui-btn-double ui-btn-primary">
+</div>
 
-<form action="/local/mpdf/pdf_export.php" method="post">
-  <input type="hidden" name="doc_id" value="<?=$arParams['ENTITY_ID']?>">
-	<input id="pdf_export" type="submit" class="ui-btn-main" value="PDF экcпорт">
-</form>
- </div> 
+<div class="ui-btn-double ui-btn-primary">
+<button id="toolbar_pdf_<?=$arParams['ENTITY_ID']?>" class="ui-btn ui-btn-md ui-btn-light-border ui-btn-dropdown ui-btn-themes crm-btn-dropdown-document">PDF экcпорт</button>
+</div> 
+
 <?endif;?> 
  <div class="ui-btn-double ui-btn-primary">
- <button id="update_price" class="ui-btn-main">Обновить цены конкурентов</button>
+ <button id="update_price" class="ui-btn-main">Обновить стратегии</button>
  </div> 
  <div class="ui-btn-double ui-btn-primary">
  <button id="add_contact" class="ui-btn-main">Добавить контакт</button>
  </div> 
+ <div class="ui-btn-double ui-btn-primary">
+ <button id="search_similar" class="ui-btn-main">Подобрать похожие</button>
+ </div> 
+<script>
+
+var PDF = {};
+
+PDF.generate = function(typePDF) {
+
+	BX.SidePanel.Instance.open("/local/mpdf/pdf_export.php", {
+                                      cacheable : false,
+                                      requestMethod : "post",
+                                      requestParams  : {
+																				sessid  : "<?=bitrix_sessid()?>",
+																				doc_id  : <?=$arParams['ENTITY_ID']?>,
+																				template : typePDF 
+                                      }
+                                    });
+  
+};
+
+</script>
+ <?
+	 $pdfItems = [];
+
+	 $pdfItems[] = array(
+
+		 'ID' => 1,
+		 'SORT' => 1,
+		 'MODULE_ID' => 'crm',
+		 'text' => 'Без шапки',
+		 'CODE' => 'OUT_HEAD',
+		 'ACTIVE' => 'Y',
+		 'onclick' => sprintf("PDF.generate('%s')", 'OUT_HEAD')
+
+	 );
+
+	 $pdfItems[] = array(
+
+		'ID' => 2,
+		'SORT' => 2,
+		'MODULE_ID' => 'crm',
+		'text' => 'Только шапка',
+		'CODE' => 'ONLY_HEAD',
+		'ACTIVE' => 'Y',
+		'onclick' => sprintf("PDF.generate('%s')", 'ONLY_HEAD')
+
+
+	);
+
+	$pdfItems[] = array(
+
+		'ID' =>3,
+		'SORT' => 3,
+		'MODULE_ID' => 'crm',
+		'text' => 'Шапка + брокер',
+		'CODE' => 'BROKER_HEAD',
+		'ACTIVE' => 'Y',
+		'onclick' => sprintf("PDF.generate'%s')", 'BROKER_HEAD')
+
+	);
+
+	$pdfItems[] = array(
+
+		'ID' => 4,
+		'SORT' => 4,
+		'MODULE_ID' => 'crm',
+		'text' => 'Только брокер',
+		'CODE' => 'BROKER_ONLY',
+		'ACTIVE' => 'Y',
+		'onclick' => sprintf("PDF.generate('%s')",  'BROKER_ONLY')
+
+	);
+
+	$PdfButtonId = 'toolbar_pdf_'.$arParams['ENTITY_ID'];
+ 
+ ?>
  <script>
 	"use strict";
+
+  BX.bind(BX('<?=$PdfButtonId?>'),'click', function(e) {
+		
+     BX.PopupMenu.show('<?=CUtil::JSEscape($PdfButtonId);?>_menu', BX('<?=CUtil::JSEscape($PdfButtonId);?>'), 
+		      <?=CUtil::PhpToJSObject($pdfItems);?>, {
+					offsetLeft: 0,
+					offsetTop: 0,
+					closeByEsc: true,
+					className: 'document-toolbar-menu'
+				});
+
+  });
+
+
+	BX.bind(BX('search_similar'),'click', function(e) {
+		
+		BX.SidePanel.Instance.open("/crm/search/", {
+                                      cacheable : false,
+                                      requestMethod : "post",
+                                      requestParams  : {
+																				sessid  : "<?=bitrix_sessid()?>",
+																				id  : <?=$arParams['ENTITY_ID']?>
+                                      }
+                                    });
+
+	});
 
 	BX.bind(BX('add_contact'),'click', function(e) {
 		

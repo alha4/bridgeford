@@ -10,10 +10,11 @@ final class PdfController {
 
   const RENT_BUSSINES = 2;
    
-  
   public static function run() : void {
 
     $doc_id  = (int)$_REQUEST['doc_id'];
+
+    $template_type = $_REQUEST['template'];
 
     $request = \CCrmDeal::GetCategoryID($doc_id);
 
@@ -21,7 +22,7 @@ final class PdfController {
 
        case self::RENT :
 
-            \PDF\Rent\RentBuilding::instance()->export($doc_id);
+            \PDF\Rent\RentBuilding::instance()->export( $doc_id, \PDF\RentTemplate::instance($template_type) );
 
        break;
 

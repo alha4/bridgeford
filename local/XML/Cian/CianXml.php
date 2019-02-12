@@ -212,15 +212,13 @@ final class CianXml extends ExportBase {
 
       case self::RENT :
 
-      return strtoupper(sprintf("%s: %s, %s %s метров", self::TITLE_ALIAS[$category_id], 
-                                                        self::TITLE_ALIAS_SYNONYM[$category_id],$region, $square));
+      return strtoupper(sprintf("%s, %s %s метров",  self::TITLE_ALIAS_SYNONYM[$category_id],$region, $square));
 
       break;
 
       case self::SALE :
 
-      return strtoupper(sprintf("%s: %s, %s %s метров", self::TITLE_ALIAS[$category_id], 
-                                                        self::TITLE_ALIAS_SYNONYM[$category_id], $region, $square));
+      return strtoupper(sprintf("%s, %s %s метров",  self::TITLE_ALIAS_SYNONYM[$category_id], $region, $square));
 
       break;
 
@@ -228,7 +226,7 @@ final class CianXml extends ExportBase {
 
       if($row['UF_CRM_1545906357580']) {
 
-          return strtoupper(sprintf("%s: окупаемость - %s", self::TITLE_ALIAS[$category_id],  $row['UF_CRM_1544431330']));
+          return strtoupper(sprintf("%s, окупаемость - %s", self::TITLE_ALIAS[$category_id],  $row['UF_CRM_1544431330']));
 
       }
 

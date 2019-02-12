@@ -33,6 +33,11 @@ final class RentBuilding extends PdfExport {
 
   ];
 
+  protected function getTemplate() : string {
+
+
+  }
+
   protected function buildMacros(int $doc_id) : array {
 
     $sort = ["ID" => "DESC"];

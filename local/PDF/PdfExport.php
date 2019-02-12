@@ -8,8 +8,6 @@ abstract class PdfExport {
 
   protected $filePrefix;
 
-  protected $templatePath;
-
   protected const OBJECT_TYPE = [
 
                        '0' => 'Аренда',
@@ -18,8 +16,9 @@ abstract class PdfExport {
                   ];
 
   protected const STREET_TYPE = 37;
+
   
-  public function export(int $doc_id) : void {
+  public function export(int $doc_id, TemplateFactory $templateFactory) : void {
    
     $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
     $fontDirs = $defaultConfig['fontDir'];
@@ -51,7 +50,7 @@ abstract class PdfExport {
 
     $mpdf->CSSselectMedia = 'mpdf';
 
-    $mpdf->WriteHTML($this->getMacros($doc_id));
+    $mpdf->WriteHTML($this->getMacros($doc_id, $templateFactory));
 
     $dateFile = date("d.m.Y-H:i:s");
 
@@ -65,9 +64,9 @@ abstract class PdfExport {
 
   }
 
-  private function getMacros(int $doc_id) : string {
+  private function getMacros(int $doc_id, TemplateFactory $templateFactory) : string {
 
-    $fileTemplate = $this->templatePath.'/template.html';
+    $fileTemplate = $templateFactory->getTemplate();
 
     if(!file_exists($fileTemplate)) {
 
