@@ -1575,9 +1575,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			 this.showCompetitorsFields();
 
-			 console.log('запуск якоря');
-
-       
 		},
 
 		showCompetitorsFields : function() {
@@ -1633,21 +1630,23 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
       if(e.target.nodeName == 'INPUT') {
 
-				 const price =  e.target.value;
+				 const cian_id =  e.target.value;
 
 				 BX.showWait(e.target);
 
-				 BX.ajax.post("/local/ajax/anchor_save.php", {'entityId' : this._entityId, 'price' : price }, function(response){
+				 BX.ajax.post("/local/ajax/anchor_save.php", {'entityId' : this._entityId, 'price' : cian_id }, function(response){
 					 
 					 response = JSON.parse(response);
 
 					 if(response.success) {
 
-					  	mainAnchor.value =  price;
+					  	mainAnchor.value =  cian_id;
 
 					 }
 
 					 BX.closeWait(e.target);
+
+					 location.reload();
 					
 				 });	 
 			}
