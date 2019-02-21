@@ -30,14 +30,10 @@ abstract class PdfExport {
 
      'fontdata' => $fontData + [
 
-     'merriweather' => [
-        'I' => 'merriweatherboldIt.ttf',
-        'R' => 'merriweatherboldIt.ttf'
-      ],
-
       'firasanscondensed' => [
-        'R' => 'firasanscondensedextralight.ttf',
-        'I' => 'firasanscondensedextralight.ttf',
+        'R' => 'firasanscondensedregular.ttf',
+        'I' => 'firasanscondenseditalic.ttf',
+        'B' => 'firasanscondensedbold.ttf',
       ],
 
       'default_font' => 'firasanscondensed'

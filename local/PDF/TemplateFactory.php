@@ -44,54 +44,29 @@ abstract class TemplateFactory {
 
         case self::WITH_OUT_HEADER : 
 
-              return sprintf("%s%s", $this->templateFolder, $this->withOutHeader());
+              return sprintf("%s%s", $this->templateFolder, $this->withOutHeaderPath);
 
         break;
 
         case self::ONLY_HEADER : 
 
-              return sprintf("%s%s", $this->templateFolder, $this->onlyHeader());
+              return sprintf("%s%s", $this->templateFolder, $this->onlyHeaderPath);
 
         break;
 
         case self::BROKER_HEADER : 
 
-              return sprintf("%s%s", $this->templateFolder, $this->brokerHeader());
+              return sprintf("%s%s", $this->templateFolder, $this->brokerHeaderPath);
 
         break;
 
         case self::ONLY_BROKER : 
 
-              return sprintf("%s%s", $this->templateFolder,$this->withBroker());
+              return sprintf("%s%s", $this->templateFolder, $this->withBrokerPath);
 
         break;
 
     }
     
   }
-
-  protected function withOutHeader() : string { 
- 
-    return $this->withOutHeaderPath;
-
-  }
-
-  protected function onlyHeader() : string { 
- 
-    return $this->onlyHeaderPath;
-
-  }
-
-  protected function brokerHeader() : string { 
- 
-    return $this->brokerHeaderPath;
-
-  }
-
-  protected function withBroker() : string { 
- 
-    return $this->withBrokerPath;
-
-  }
-
 }

@@ -18,7 +18,6 @@ $moreItems = array();
 $communicationPanel = null;
 $documentButton = null;
 $enableMoreButton = false;
-$categoryID = CCrmDeal::GetCategoryID($arParams['ENTITY_ID']);
 
 foreach($arParams['BUTTONS'] as $item)
 {
@@ -54,6 +53,37 @@ $this->SetViewTarget('inside_pagetitle', 10000);
 
 ?><div id="<?=htmlspecialcharsbx($toolbarID)?>" class="pagetitle-container pagetitle-align-right-container">
 
+<?if(!$arParams['ENTITY_TYPE_ID']) : ?>
+
+<div class="ui-btn-double ui-btn-primary">
+  <button id="search_object" class="ui-btn-main">Подобрать объекты</button>
+</div> 
+<?php
+
+ $ticket = array_pop(explode('_', $arParams['TOOLBAR_ID']));
+
+
+?>
+<script>
+
+BX.bind( BX('search_object'), 'click', function(e) {
+		
+		BX.SidePanel.Instance.open("/crm/search/ticket/" , {
+                                      cacheable : false,
+                                      requestMethod : "post",
+                                      requestParams  : {
+																				sessid  : "<?=bitrix_sessid()?>",
+																				id  : <?=$ticket ?>,
+																				type : 'deal'
+                                      }
+                                    });
+
+	});
+
+</script>
+
+
+<?endif?>
 <?if($arParams['ENTITY_TYPE_ID'] == CCrmOwnerType::Deal) : ?>
 
 <?
@@ -82,11 +112,15 @@ $this->SetViewTarget('inside_pagetitle', 10000);
  <div class="ui-btn-double ui-btn-primary">
  <button id="search_similar" class="ui-btn-main">Подобрать похожие</button>
  </div> 
+ <div class="ui-btn-double ui-btn-primary">
+  <button id="search_ticket" class="ui-btn-main">Подобрать заявки</button>
+ </div> 
 <script>
 
 var PDF = {};
 
 PDF.generate = function(typePDF) {
+
 
 	BX.SidePanel.Instance.open("/local/mpdf/pdf_export.php", {
                                       cacheable : false,
@@ -96,7 +130,14 @@ PDF.generate = function(typePDF) {
 																				doc_id  : <?=$arParams['ENTITY_ID']?>,
 																				template : typePDF 
                                       }
-                                    });
+																		});
+																		
+	
+
+																
+	setTimeout(function() {
+			BX.SidePanel.Instance.close();
+	},1000);																
   
 };
 
@@ -137,7 +178,7 @@ PDF.generate = function(typePDF) {
 		'text' => 'Шапка + брокер',
 		'CODE' => 'BROKER_HEAD',
 		'ACTIVE' => 'Y',
-		'onclick' => sprintf("PDF.generate'%s')", 'BROKER_HEAD')
+		'onclick' => sprintf("PDF.generate('%s')", 'BROKER_HEAD')
 
 	);
 
@@ -171,6 +212,19 @@ PDF.generate = function(typePDF) {
 
   });
 
+	BX.bind(BX('search_ticket'),'click', function(e) {
+		
+		BX.SidePanel.Instance.open("/crm/search/lead/", {
+                                      cacheable : false,
+                                      requestMethod : "post",
+                                      requestParams  : {
+																				sessid  : "<?=bitrix_sessid()?>",
+																				id  : <?=$arParams['ENTITY_ID']?>,
+																				type : 'lead'
+                                      }
+                                    });
+
+	});
 
 	BX.bind(BX('search_similar'),'click', function(e) {
 		
@@ -179,7 +233,8 @@ PDF.generate = function(typePDF) {
                                       requestMethod : "post",
                                       requestParams  : {
 																				sessid  : "<?=bitrix_sessid()?>",
-																				id  : <?=$arParams['ENTITY_ID']?>
+																				id  : <?=$arParams['ENTITY_ID']?>,
+																				type : 'deal'
                                       }
                                     });
 

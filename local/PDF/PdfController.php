@@ -22,13 +22,13 @@ final class PdfController {
 
        case self::RENT :
 
-            \PDF\Rent\RentBuilding::instance()->export( $doc_id, \PDF\RentTemplate::instance($template_type) );
+            \PDF\Rent\RentBuilding::instance()->export($doc_id, \PDF\RentTemplate::instance($template_type));
 
        break;
 
        case self::SALE :
 
-            \PDF\Sale\SaleBuilding::instance()->export($doc_id);
+            \PDF\Sale\SaleBuilding::instance()->export($doc_id, \PDF\SaleTemplate::instance($template_type));
 
        break;
 

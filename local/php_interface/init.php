@@ -254,5 +254,43 @@ function setPaybackAutotext(&$arFields) : void {
 
 }
 
+function enumValue(int $value_id, string $code, ?string $entity = 'CRM_DEAL') : string {
+
+  $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => $entity, "FIELD_NAME" => $code));
+  $entity = $entityResult->Fetch();
+  
+  $enumResult = CUserFieldEnum::GetList(['ID' => "DESC"], ["ID" => $value_id,"USER_FIELD_ID" => $entity['ID']]);
+
+  while($enum = $enumResult->GetNext()) {
+
+      if($enum['ID'] == $value_id) {
+
+         return $enum['VALUE'];
+
+      }
+    }
+
+    return '';
+  }
+
+function enumID(string $value, string $code, ?string $entity = 'CRM_DEAL') : int {
+
+  $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => $entity, "FIELD_NAME" => $code));
+  $entity = $entityResult->Fetch();
+
+  $enumResult = CUserFieldEnum::GetList(['VALUE' => "DESC"], ["USER_FIELD_ID" => $entity['ID'], "VALUE" => $value]);
+   
+  while($enum = $enumResult->GetNext()) {
+
+    if($enum['VALUE'] == $value) {
+  
+         return $enum['ID'];
+  
+      }
+    }
+
+   return -1;
+ }
+
 
 

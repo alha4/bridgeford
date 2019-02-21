@@ -117,7 +117,9 @@ final class CianPriceMonitoring {
 
             if(CrmObject::setCompetitors($object['ID'], $competitors)) {
 
-              $price = $object['MAIN_ANCHOR'] > 0 ? $object['MAIN_ANCHOR'] : $this->getMinPrice($response);
+              $price = CrmObject::findPrice($object['ID'], $object['MAIN_ANCHOR']);
+
+              $price = $price > 0 ? $price : $this->getMinPrice($response);
 
               if($price > 0) {
 

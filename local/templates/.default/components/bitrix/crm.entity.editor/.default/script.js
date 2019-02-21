@@ -1575,6 +1575,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			 this.showCompetitorsFields();
 
+			 console.log('запуск якоря');
+
        
 		},
 
@@ -1586,7 +1588,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 const competitors = this.nodeInput('UF_CRM_1542029126'),
 				       mainAnchor  = this.nodeInput('UF_CRM_1542029182'),
 				       priceStrategies = document.querySelector('#section_strategii_avtomaticheskogo_tsenoobrazovaniya');
-				 
+
+
 				 if(competitors && competitors.value) {
 
 						const competitors_list = JSON.parse(competitors.value),
@@ -2416,7 +2419,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						case this._CATEGORY.TO_SALE :
 
 		   			this.registerView(this._CATEGORY.TO_SALE, 'showGeoFields');
-			  		this.registerView(this._CATEGORY.TO_SALE, 'getGeoData');
+						this.registerView(this._CATEGORY.TO_SALE, 'getGeoData');
 			  	  this.registerView(this._CATEGORY.TO_SALE, 'showReadyToMoveFields');
 			  		this.registerView(this._CATEGORY.TO_SALE, 'showBuildingFields');
 				  	this.registerView(this._CATEGORY.TO_SALE, 'showLandFields');
@@ -2431,7 +2434,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						case this._CATEGORY.TO_BUSSINES :
 
 				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showGeoFields');
-				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'getGeoData');
+						this.registerView(this._CATEGORY.TO_BUSSINES, 'getGeoData');
 			    	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDescriptionFields');
 				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showBuildingFields');
 				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showLandFields');

@@ -33,10 +33,6 @@ final class RentBuilding extends PdfExport {
 
   ];
 
-  protected function getTemplate() : string {
-
-
-  }
 
   protected function buildMacros(int $doc_id) : array {
 
@@ -48,7 +44,7 @@ final class RentBuilding extends PdfExport {
               "UF_CRM_1540471471728","UF_CRM_1548410231729","UF_CRM_1540203111","UF_CRM_1543406565","OPPORTUNITY",
               "UF_CRM_1540384944","UF_CRM_1540554743072","UF_CRM_1541056049","UF_CRM_1540384963","UF_CRM_1540371585",
               "UF_CRM_1540371261836","UF_CRM_1540385060","UF_CRM_1540385112","UF_CRM_1540385262",'UF_CRM_1540385040',
-              "UF_CRM_1540203015","UF_CRM_1540456473"];
+              "UF_CRM_1540203015","UF_CRM_1540456473","UF_CRM_1540471409","UF_CRM_1540532330"];
 
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -79,11 +75,29 @@ final class RentBuilding extends PdfExport {
       '#ELECTRIC#'   => $arResult['UF_CRM_1540385112'],
       '#OVERHOUL#'   => $this->enumValue((int)$arResult['UF_CRM_1540385262'],'UF_CRM_1540385262'),
       '#INPUT#'      => self::INPUTTYPE[$arResult["UF_CRM_1540385040"]],
-      '#CURRENCY#'   => self::CURRENCY[$arResult['UF_CRM_1540456473']]
+      '#CURRENCY#'   => self::CURRENCY[$arResult['UF_CRM_1540456473']],
+      '#DESCRIPTION#' => $arResult['UF_CRM_1540471409'],
+      '#IMAGES#'      => $this->getImages($arResult['UF_CRM_1540532330'])
 
     ];
 
     return  $arFields;
+
+  }
+
+  private function getImages(array $data) : string {
+
+      $html_img = '';
+
+      foreach($data as $k=>$file_id) {
+
+
+        $html_img.= sprintf("%s<td class='obj_img'><img src='%s' width='310' height='210'>", ($k % 2 == 0  ?  "<tr>" : '')  ,\CFile::GetPath($file_id));
+
+
+      }
+
+      return $html_img;
 
   }
 

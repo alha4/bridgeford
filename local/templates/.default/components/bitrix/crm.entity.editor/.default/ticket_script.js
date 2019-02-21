@@ -29,6 +29,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
      
     }
 
+
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');
@@ -103,7 +104,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
     if(this.getTypeBuilding() == 362 ||
        this.getTypeBuilding() == 'Помещение в аренду') {
     
-       for(var uf of fields) {
+       for(var uf of fieldsRent) {
 
           this.showField(this.node(uf));
 

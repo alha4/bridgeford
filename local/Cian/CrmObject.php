@@ -22,6 +22,7 @@
   * UF_CRM_1542029182 - главный якорь
   * UF_CRM_1542089326915 - кол-во конкурентов
   * OPPORTUNITY - стоимость объекта циан
+  * UF_CRM_1542029126 - конкуренты [(json)string]
   */
  final class CrmObject {
 
@@ -47,7 +48,7 @@
 
       }
 
-      $select = ['UF_CRM_1540202889','UF_CRM_1542029182','UF_CRM_1541076330647','UF_CRM_1542955977','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667','UF_CRM_1541753539107','CATEGORY_ID'];
+      $select = ['UF_CRM_1542029126','UF_CRM_1540202889','UF_CRM_1542029182','UF_CRM_1541076330647','UF_CRM_1542955977','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667','UF_CRM_1541753539107','CATEGORY_ID'];
 
       $arResult = [];
 
@@ -174,6 +175,26 @@
      self::$LAST_ERROR = $deal->LAST_ERROR;
 
      return false;
+
+   }
+
+   public static function findPrice(int $object_id, string $cian_id) : float {
+  
+     $competitors = \CCrmDeal::GetList($sort, ['CHECK_PERMISSIONS' => 'N', 'ID' => $object_id], ['UF_CRM_1542029126']);
+
+     $arCompetitors = json_decode($competitors->Fetch()['UF_CRM_1542029126'], 1);
+
+     foreach($arCompetitors as $item) {
+
+       if($item['ID'] == $cian_id) {
+
+          return (float)$item['PRICE'];
+
+       }
+
+     }
+
+     return 0.0;
 
    }
 
