@@ -13,8 +13,8 @@ final class RentBuilding extends PdfExport {
 
   private const RENT_TYPE = [
 
-     '0' => 'Открытая аренда',
-     '1' => 'Закрытая аренда'
+     '0' => ' ',
+     '1' => 'закрытая продажа,'
 
   ];
 
@@ -27,9 +27,17 @@ final class RentBuilding extends PdfExport {
 
   private const CURRENCY =  [
 
-    "144" => 'Руб.',
-    "145" => 'Usd',
-    "146" => 'Eur'
+    "144" => 'руб.',
+    "145" => 'usd',
+    "146" => 'eur'
+
+  ];
+
+  private const CURRENCY_CODE =  [
+
+    "144" => 'RUB',
+    "145" => 'USD',
+    "146" => 'EUR'
 
   ];
 
@@ -64,9 +72,9 @@ final class RentBuilding extends PdfExport {
       '#AREA#'       => $this->enumValue((int)$arResult['UF_CRM_1540203111'],'UF_CRM_1540203111'),
       '#METRO#'      => $this->IblockEnumValue($arResult['UF_CRM_1543406565']),
       '#METRO_TIME#' => $this->enumValue((int)$arResult['UF_CRM_1540203015'],'UF_CRM_1540203015'),
-      '#PRICE#'      => (int)$arResult['OPPORTUNITY'],
+      '#PRICE#'      => $this->getPrice((int)$arResult['OPPORTUNITY'], $arResult['UF_CRM_1540456473']),
       '#SQUARE#'     => $arResult['UF_CRM_1540384944'],
-      '#PRICE_1YEAR#' => $arResult['UF_CRM_1540554743072'],
+      '#PRICE_1YEAR#'=> $this->getPrice((int)$arResult['UF_CRM_1540554743072'],$arResult['UF_CRM_1540456473']),
       '#INDEXS#'     => $arResult['UF_CRM_1541056049'] ? : 0,
       '#FLOOR#'      => $arResult['UF_CRM_1540384963'],
       '#FLOORS#'     => $arResult['UF_CRM_1540371585'],
@@ -102,6 +110,13 @@ final class RentBuilding extends PdfExport {
        'PHONE' => $arUser['PERSONAL_PHONE']
 
     ];
+  }
+
+  private function getPrice(int $price, string $currency) : string {
+
+
+    return \SaleFormatCurrency($price, self::CURRENCY_CODE[$currency]);
+
   }
 
   private function getImages(array $data) : string {
@@ -148,7 +163,7 @@ final class RentBuilding extends PdfExport {
 
     }
 
-    return sprintf("Россия, %s, %s-й %s %s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202908'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202900']);
+    return sprintf("Россия, %s, %s %s %s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
 
   }
 
