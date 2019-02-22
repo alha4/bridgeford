@@ -6,8 +6,6 @@ abstract class TemplateFactory {
 
   private $templateFolder = __DIR__.'/templates';
 
-  protected $templatePath;
-
   protected $withOutHeaderPath;
 
   protected $onlyHeaderPath;

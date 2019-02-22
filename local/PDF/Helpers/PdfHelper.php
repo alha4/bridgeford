@@ -64,6 +64,76 @@ protected function enumValue(int $value_id, string $code) : string {
 
  }
 
+ protected function getPrice(int $price, string $currency) : string {
+
+    return \SaleFormatCurrency($price, self::CURRENCY_CODE[$currency]);
+
+ }
+
+ protected function getBroker(int $ID) : array {
+
+  $user = \CUser::GetList($sort = 'ID', $order = 'desc', ['ID' => $ID], ['SECECT' => ['NAME','LAST_NAME','EMAIL','PERSONAL_PHONE'] ]);
+
+  $arUser = $user->Fetch();
+
+  return [
+
+     'FULL_NAME' => sprintf("%s %s", $arUser['NAME'], $arUser['LAST_NAME']),
+     'EMAIL' => $arUser['EMAIL'],
+     'PHONE' => $arUser['PERSONAL_PHONE']
+
+  ];
+ 
+ }
+
+ protected function getCeilingPrefix(int $value) : string {
+
+  if($value < 2) {
+
+      return 'р';
+
+  }
+  
+  return $value % 2 == 0 ? 'ра' : 'ров';
+
+ }
+
+ protected function getLocationMap(int $file_id) : string {
+
+  $file = \CFile::GetFileArray($file_id);
+
+  return sprintf("%s", $file['SRC']);
+
+ }
+
+ protected function getAddress(array $row) : string {
+
+  if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
+
+      return sprintf("Россия, %s, %s %s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
+
+  }
+
+  return sprintf("Россия, %s, %s %s %s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
+
+ }
+
+ protected function getImages(array $data) : string {
+
+  $html_img = '';
+
+  foreach($data as $k=>$file_id) {
+
+
+    $html_img.= sprintf("%s<td class='obj_img'><img src='%s' width='310' height='210'>", ($k % 2 == 0  ?  "<tr>" : '')  ,\CFile::GetPath($file_id));
+
+
+  }
+
+  return $html_img;
+
+ }
+
  protected function getContactFullName(int $user_id) : string {
  
    $order = array('ID' => 'DESC');
