@@ -14,7 +14,14 @@ final class CompetitorEvent {
 
   private const CREATE_EVENT = "INSERT INTO bf_stat_event (DEAL_ID, DATA, EVENT, LINK) VALUES(%d, '%s', '%s', '%s')";
 
-  public function dispatch(int $deal_id, array &$data, bool $is_main_anchor = false) : bool {
+  public function dispatch(int $deal_id, array &$data) : bool {
+
+
+    array_walk($data, function(&$item) {
+
+       $item['TITLE'] = str_repeat("\n", "",  $item['TITLE']);
+
+    });
 
     if(!$this->exists($deal_id)) {
 
@@ -28,12 +35,6 @@ final class CompetitorEvent {
 
     $dataIds    = array_column($data, 'ID');
 
-    if($is_main_anchor) {
-
-       return $this->mainDelete($deal_id);
-
-    }
-
     if($this->allDelete($deal_id, $data)) {
 
        return true;
@@ -44,16 +45,6 @@ final class CompetitorEvent {
     $this->oneDelete($deal_id, $currentIds, $dataIds, $currentData);
 
     return true;
-
-  }
-
-  private function mainDelete(int $deal_id) : bool {
-
-    $deal = \CCrmDeal::GetList(['ID' => 'DESC'], ['CHECK_PERMISSIONS' => 'N', 'ID' => $deal_id], ['UF_CRM_1542029126']);
-
-    $data = json_decode($deal->Fetch()['UF_CRM_1542029126'], 1);
-
-    return $this->create($deal_id, $data, 'MAIN_DELETE');  
 
   }
 
@@ -184,7 +175,9 @@ final class CompetitorEvent {
   private function query(string $sql)  {
 
     global $DB;
-    
+
+    $sql = str_replace("\n","", $sql);
+
     return $DB->Query($sql, false, $err_mess.__LINE__);
 
   }

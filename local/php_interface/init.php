@@ -2,8 +2,20 @@
 
 use \Bitrix\Main\EventManager,
     \Raiting\RaitingFactory;
-    
+
+const CIAN_ROOT_CLASS_PATH = '/local/Cian';
+const STAT_ROOT_CLASS_PATH = '/local/Stat';
+const LOG_PATH = '/local/Cian/log.txt';
+const REQUEST_LOG = 'Y';
 const GENERAL_BROKER = 15;
+
+Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
+     '\Cian\CianPriceMonitoring' => CIAN_ROOT_CLASS_PATH.'/CianPriceMonitoring.php',
+     '\Cian\CrmObject'           => CIAN_ROOT_CLASS_PATH.'/CrmObject.php',
+     '\Cian\Logger'              => CIAN_ROOT_CLASS_PATH.'/Logger.php',
+     '\Stat\CompetitorEvent'     => STAT_ROOT_CLASS_PATH.'/CompetitorEvent.php'
+));   
+    
 
 $event = EventManager::getInstance();
 
@@ -20,7 +32,7 @@ require_once $_SERVER['DOCUMENT_ROOT']."/local/Cian/CianPriceMonitoring.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/local/Cian/CrmObject.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/local/Raiting/RaitingFactory.php";
 
-
+ 
 /**
  * UF_CRM_1545649289833 - Реальная цена 
  * UF_CRM_1540456417 - Стоимость аренды за все помещение в месяц

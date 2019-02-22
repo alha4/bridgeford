@@ -67,7 +67,7 @@ final class CianPriceMonitoring {
 
   /**
    * @const array CIAN_PRICE_TYPE 
-   * dealType - в зависимости от типа предложения поле цены price | priceTotalPerMonthRur
+   * dealType -  тип сделки
    * sale - Помещение на продажу 
    * rent - Помещение в аренду & Арендный бизнес
    */
@@ -85,39 +85,35 @@ final class CianPriceMonitoring {
   }
   /**
   * 
-  *@param int $object_id ID сделки необязательный параметр
+  *@var array $objects - список объектов недвижимости
   *
-  *@var array $objects список объектов недвижимости
+  *@return array - результат выполнения
   *
-  *@return array
-  *
-  *@throws Exception - ошибка
+  *@throws Exception - ошибки
   *
   *CATEGORY_ID - направление сделки
   */
-  public function run(?int $object_id = 0) : ?array {
+  public function run(array $objects, $crontab = false) : ?array {
 
-    $objects = CrmObject::getAll( $object_id );
+    foreach($objects as $object) {
 
-    if($objects) {
+      $object_id = $object['ID'];
 
-      foreach($objects as $object) {
+      $geodecode = $this->getGeocodedAdress($object);
 
-        $geodecode = $this->getGeocodedAdress($object);
-
-        if($geodecode) {
+      if($geodecode) {
    
-          $geodecode['CATEGORY_ID'] = $object['CATEGORY_ID'];
+         $geodecode['CATEGORY_ID'] = $object['CATEGORY_ID'];
 
-          $response = $this->searchOffers($geodecode);
+         $response = $this->searchOffers($geodecode);
 
-          if(count($response) > 0) {
+         if(count($response) > 0) {
 
             $competitors = $this->getOffersList($response);
 
-            if(CrmObject::setCompetitors($object['ID'], $competitors)) {
+            if(CrmObject::setCompetitors($object_id, $competitors)) {
 
-              $price = CrmObject::findPrice($object['ID'], $object['MAIN_ANCHOR']);
+              $price = CrmObject::findPrice($object_id, $object['MAIN_ANCHOR']);
 
               $price = $price > 0 ? $price : $this->getMinPrice($response);
 
@@ -125,20 +121,19 @@ final class CianPriceMonitoring {
 
                $price_step = $object['PRICE_STEP'];
            
-               if(CrmObject::setPrice($object['ID'], $price, $price_step)) {
+               if(CrmObject::setPrice($object_id, $price, $price_step)) {
            
                   $event = new CompetitorEvent();
+                  $event->dispatch($object_id, $competitors);
 
-                  $event->dispatch($object['ID'], $competitors);
+                  if(!$crontab)
 
-                  if($object_id)
-
-                     return ['ID' => $object['ID'], 'status' => 'цена обновлена'];
+                     return ['ID' => $object_id, 'status' => 'цена обновлена'];
 
 
                } else {
   
-                if($object_id)
+                if(!$crontab)
 
                    throw new \Exception('произошла ошибка обновления цены');
 
@@ -146,7 +141,7 @@ final class CianPriceMonitoring {
 
               } else {
 
-                if($object_id)
+                if(!$crontab)
 
                   throw new \Exception('произошла ошибка цена не может быть = 0');
 
@@ -154,7 +149,7 @@ final class CianPriceMonitoring {
 
            } else {
 
-              if($object_id)
+              if(!$crontab)
 
                  throw new \Exception('произошла ошибка обновления списка конкурентов');
 
@@ -167,21 +162,17 @@ final class CianPriceMonitoring {
 
           CrmObject::setCompetitors($object_id, $data = []);
   
-          if($object_id) {
+          if(!$crontab) {
 
             return ['error' => 'нет данных'];
 
-          }
         }
-       }
       }
-   } else {
-     
-    if($object_id)
+    }
+  }
 
-       return ['error' => 'проверьте Активировано ли автоматическое ценообразование'];
+  return null;
 
-   }
  }
 
  /**
@@ -369,7 +360,7 @@ final class CianPriceMonitoring {
   * @return array геокодированный адрес 
   *
   */
- private function geocoded(array &$data) : ?array {
+ private function geocoded(array &$data) : array {
 
   $response = json_decode( $this->httpClient()->post(self::CIAN_API_GEOCODED_URL, json_encode($data)), 1);
 
@@ -395,12 +386,13 @@ final class CianPriceMonitoring {
 
   }
 
-  return false;
+  return [];
 
  }
 
  /**
-  *@method  adressToString  метод формирования строки адреса для метода coordinate
+  *@method adressToString  метод формирования строки адреса для метода coordinate
+  *@return string
   */
 
  private function adressToString(array &$address) : string {
@@ -417,7 +409,8 @@ final class CianPriceMonitoring {
  }
 
  /**
-  *@method prepareAdressString метод формирования строки адреса для метода geocoded
+  *@method  prepareAdressString - формирования строки адреса для метода geocoded
+  *@param  array &$address - массив с полями адреса
   */
  private function prepareAdressString(array &$address) : string {
 
@@ -488,9 +481,8 @@ final class CianPriceMonitoring {
  }
 
  /**
-  *@method getOffersList список предложений [название, стоимость, url на циан] 
+  *@method array getOffersList - список предложений [ид объекта, название, стоимость, url] 
   */
-
  private function getOffersList(array &$data) : array {
 
     $result = [];

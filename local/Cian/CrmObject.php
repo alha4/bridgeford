@@ -36,7 +36,7 @@
 
    public static $LAST_ERROR;
 
-   public static function getAll(?int $object_id = 0) : array {
+   public static function getAll(?int $object_id) : array {
 
       $sort   = ['UF_CRM_1541678101879' => 'DESC'];
 

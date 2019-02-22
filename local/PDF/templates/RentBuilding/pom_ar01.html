@@ -1,147 +1,83 @@
-<!doctype html>
-<html lang="ru">
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>PDF</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="style.css"/>
+  <link href="style.css" type="text/css" rel="stylesheet" media="mpdf">
 </head>
 <body>
-
-
-	<div class="page">
+<table width="100%" class="head">
+<tr><td width="267"><img src="logo.png" width="267" height="123" alt=""></td></tr>
+<td width="40" align="center">
 	
-		<div class="top">
-		
-			<div class="col-3">
-				<div class="logo">
-				</div>
-			</div>
-		
-			<div class="col-3 tc">
-				<p>КОНСТАНТИН ПЕТРОВ
-				<p>+7 495 <strong>945 0 459</strong>
-				<p>info@broker.ru			
-			</div>
-			
-			<div class="col-3 tr">
-				<p>+7 495 <strong>248 0 428</strong>
-				<p>info@bridgeford.ru
-				<p>bridgeford.ru			
-			</div>
-		
-		</div>
-		
-		<div class="title">
-			<div class="h1 red">АРЕНДА ПОМЕЩЕНИЯ</div>
-			<div class="h2">#ADDRESS#</div>
-			<div class="h3">#RENT_TYPE#, <strong>Лот #LOT#</strong></div>
-		</div>
-		
-		<div class="map">
-		
-			<div class="col-left">
-				<img src="img/map.png">
-			</div>
-			
-			<div class="col-right">
-				<div class="h4">МЕСТОПОЛОЖЕНИЕ</div>
-				<p>Округ: <strong>#AREA#</strong>
-				<p>Адрес: <span>#ADDR#</span>
-				<p>Метро: <span>м. #METRO#</span>, <b>#METRO_TIME#</b>
+<div class="row head_row broker_name">#BROKER_NAME#</div><br>
+<div class="row head_row"><b class="phone">#BROKER_PHONE#</b></div><br>
+<div class="row head_row">#BROKER_EMAIL#</div>
 
-				<div class="h4" style="margin-top: 60px;">Помещение</div>
-				<p>Стоимость аренды: <strong style="font-size:24px">#PRICE# #CURRENCY#</strong> в месяц
-				<p>Общая площадь: <strong>#SQUARE# м2</strong>
-				<p>Стоимость за 1 кв.м. в год: <strong>#PRICE_1YEAR# #CURRENCY#</strong>
-				<p><strong>Индексация: <span style="font-size:24px;">#INDEXS# % </span></strong>				
-			</div>
-		
-		</div>
-		
-		<div class="description">
-		
-			<div class="cl3">
-				<div class="h4"> </div>
-				<p>Этаж: <strong>#FLOOR#</strong>
-				<p>Этажность дома: <strong>#FLOORS#</strong>
-				<p>Тип здания: <span>#BUILDING#</span>
-				<p>Тип помещения: <strong>#BUILD_TYPE#</strong>
-			</div>
-			
-			<div class="cl3">
-				<div class="h4">ПАРАМЕТРЫ ПОМЕЩЕНИЯ</div>
-				<p>Высота потолков: <strong>#CEILING# метра</strong>
-				<p>Эл. мощность: <strong>#ELECTRIC# кВт</strong>
-				<p>Ремонт: <span>#OVERHOUL#</span>
-				<p>Вход: <span>#INPUT#<</span>
-			</div>
-			
-			<div class="cl3">
-				<div class="h4"> </div>
-				<p>Общая площадь: <strong>#SQUARE# м2</strong>
-				<p>Торговая площадь: <strong>#SQUARE# м2</strong>
-			</div>
-		
-		</div>
-		
-		<div class="bot">
-			#ADDRESS#
-		</div>
-
-	</div>
-	
-	<div class="sep"></div>
-	
-	<div class="page">
-	
-		<div class="top">
-		
-			<div class="col-3">
-				<div class="logo">
-				</div>
-			</div>
-		
-			<div class="col-3 tc">
-				<p>КОНСТАНТИН ПЕТРОВ
-				<p>+7 495 <strong>945 0 459</strong>
-				<p>info@broker.ru			
-			</div>
-			
-			<div class="col-3 tr">
-				<p>+7 495 <strong>248 0 428</strong>
-				<p>info@bridgeford.ru
-				<p>bridgeford.ru			
-			</div>
-		
-		</div>
-		
-		<div class="text">
-		
-		<div class="h4">ОБЩЕЕ ОПИСАНИЕ ОБЪЕКТА</div>
-			#DESCRIPTION#
-		</div>
-		
-		<div class="images">
-		
-			<img src="img/1.png">
-			<img src="img/2.png">
-			<img src="img/3.png">
-			<img src="img/4.png">
-		
-		</div>
-		
-		
-		<div class="bot">
-			#ADDRESS#
-		</div>
-
-	</div>	
-	
-	
-
-
-
-
+</td>
+<td width="30%" align="right">
+<div class="row head_row">+7 495 <b class="phone">248 0 428</b></div><br>
+<div class="row head_row">info@bridgeford.ru</div><br>
+<div class="row head_row">bridgeford.ru</div>
+</td>
+</table>
+<table width="100%">
+<tr><td colspan="3" align="center"><h1>#TYPE# ПОМЕЩЕНИЯ</h1></td></tr>
+<tr><td colspan="3" align="center"><h2>#ADDRESS#</h2></td></tr>
+<tr><td colspan="3" align="center"><h5>#RENT_TYPE#, Лот #LOT#</h5></td></tr>
+<tr><td colspan="2" rowspan="2" class="description" valign="top">
+<img src="#MAP#" width="500" height="415" class="map">
+</td> 
+<td class="location"><br><h3>МЕСТОПОЛОЖЕНИЕ</h3><br>
+<div class="row">Округ: <b>#AREA#</b></div><br>
+<div class="row">Адрес: #ADDR#</div><br>
+<div class="row">Метро: #METRO#, <b>#METRO_TIME#</b></div>
+</td>
+<tr><td class="pom"><h3>ПОМЕЩЕНИЕ</h3><br>
+<div class="row">Стоимость: <b class="price">#PRICE# #CURRENCY#</b></div><br>
+<div class="row">Общая площадь: <b>#SQUARE# м<sup>2</sup></b></div><br>
+<div class="row">Стоимость за 1 м<sup>2</sup> в год: <b>#PRICE_1YEAR# #CURRENCY#</b></div><br>
+<div class="row">Индексация: <b>#INDEXS# %</b></div><br>
+</td>
+<tr>
+  <td colspan="3" class="parameters" align="center"><h3>ПАРАМЕТРЫ ПОМЕЩЕНИЯ</h3></td>
+</tr>
+<tr class="row_column">
+  <td>
+		<div class="row">Этаж: <b>#FLOOR#</b></div><br>
+		<div class="row">Этажность дома: <b>#FLOORS#</b></div><br>
+		<div class="row">Тип здания: <b>#BUILDING#</b></div><br>
+		<div class="row">Тип помещения:<b>#BUILD_TYPE#</b></div><br>
+  </td>
+  <td>
+		<div class="row">Высота потолков: <b>#CEILING# мет#CEIL_PREFIX#</b></div><br>
+		<div class="row">Эл. мощность:<b>#ELECTRIC# кВт</b></div><br>
+		<div class="row">Ремонт:  <b>#OVERHOUL#</b></div><br>
+		<div class="row">Вход: <b>#INPUT#</b></div><br>
+  </td>
+  <td class="row_square"><br>
+		<div class="row">Общая площадь: <b>#SQUARE# м<sup>2</sup></b></div><br>
+		<div class="row">орговая площадь: <b>#SQUARE# м<sup>2</sup></b></div>
+  </td>
+</tr>
+<!-- <tr><td colspan="3" align="center"><div class="line"></div><br><h6>#ADDRESS#</h6></td></tr> -->
+</table>
+<table width="100%" class="head">
+		<tr><td width="267"><img src="logo.png" width="267" height="123" alt=""></td></tr>
+		<td width="40%" align="center">
+				<div class="row head_row broker_name">#BROKER_NAME#</div><br>
+				<div class="row head_row"><b class="phone">#BROKER_PHONE#</b></div><br>
+				<div class="row head_row">#BROKER_EMAIL#</div>	
+				</td>
+		<td width="30%" align="right">
+		<div class="row head_row">+7 495 <b class="phone">248 0 428</b></div><br>
+		<div class="row head_row">info@bridgeford.ru</div><br>
+		<div class="row head_row">bridgeford.ru</div>
+		</td>
+</table>
+<table class="general_description" width="100%">
+<tr><td><h3>ОБЩЕЕ ОПИСАНИЕ ОБЪЕКТА</h3><br><br></td></tr>
+<tr><td colspan="2"><p>#DESCRIPTION#</p></td></tr>
+#IMAGES#
+<tr><td colspan="2" align="center" class="addr_bottom"><div class="line"></div><br><h6>#ADDRESS#</h6></td></tr>
+</table>
 </body>
 </html>

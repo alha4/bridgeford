@@ -61,7 +61,7 @@ div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-block-walle
 div[data-cid="UF_CRM_1542955977"], /* Гео-данные */
 div[data-cid="UF_CRM_1541076330647"], /* Площадь объекта  */
 div[data-cid="UF_CRM_1543504475389"], /* Длительность каникул, мес */
-
+.crm-entity-card-widget-title-edit-icon,
 .pagetitle-sub {
   display:none;
 }
@@ -71,6 +71,7 @@ div[data-cid="UF_CRM_1542089326915"] { /* кол-во конкурентов */
 /*
  поля только для чтения
 */
+.crm-entity-card-widget-title :before,
 div[data-cid="UF_CRM_1545649289833"] :before, /*  Реальная цена */
 div[data-cid="UF_CRM_1542089326915"] :before, /* кол-во конкурентов */
 div[data-cid="UF_CRM_1540554743072"] :before, /* стоимость за 1 кв.м. в год */
@@ -93,6 +94,9 @@ div[data-cid="UF_CRM_1544528494"] :before { /* Признак актуально
   left: 0px;
   z-index: 9111;
   background: #e8ecee00;
+}
+.crm-entity-card-widget-title :before {
+   width: calc(100% - 70px)
 }
 div[data-cid="UF_CRM_1545649289833"] .field-item input,
 div[data-cid="UF_CRM_1542089326915"] .field-item input,

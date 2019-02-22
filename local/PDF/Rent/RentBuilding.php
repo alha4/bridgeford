@@ -44,7 +44,7 @@ final class RentBuilding extends PdfExport {
               "UF_CRM_1540471471728","UF_CRM_1548410231729","UF_CRM_1540203111","UF_CRM_1543406565","OPPORTUNITY",
               "UF_CRM_1540384944","UF_CRM_1540554743072","UF_CRM_1541056049","UF_CRM_1540384963","UF_CRM_1540371585",
               "UF_CRM_1540371261836","UF_CRM_1540385060","UF_CRM_1540385112","UF_CRM_1540385262",'UF_CRM_1540385040',
-              "UF_CRM_1540203015","UF_CRM_1540456473","UF_CRM_1540471409","UF_CRM_1540532330"];
+              "UF_CRM_1540203015","UF_CRM_1540456473","UF_CRM_1540471409","UF_CRM_1540532330","UF_CRM_1540886934"];
 
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -64,25 +64,44 @@ final class RentBuilding extends PdfExport {
       '#AREA#'       => $this->enumValue((int)$arResult['UF_CRM_1540203111'],'UF_CRM_1540203111'),
       '#METRO#'      => $this->IblockEnumValue($arResult['UF_CRM_1543406565']),
       '#METRO_TIME#' => $this->enumValue((int)$arResult['UF_CRM_1540203015'],'UF_CRM_1540203015'),
-      '#PRICE#'      => $arResult['OPPORTUNITY'],
+      '#PRICE#'      => (int)$arResult['OPPORTUNITY'],
       '#SQUARE#'     => $arResult['UF_CRM_1540384944'],
       '#PRICE_1YEAR#' => $arResult['UF_CRM_1540554743072'],
-      '#INDEXS#'     => $arResult['UF_CRM_1541056049'],
+      '#INDEXS#'     => $arResult['UF_CRM_1541056049'] ? : 0,
       '#FLOOR#'      => $arResult['UF_CRM_1540384963'],
       '#FLOORS#'     => $arResult['UF_CRM_1540371585'],
       '#BUILDING#'   => $this->enumValue((int)$arResult['UF_CRM_1540371261836'],'UF_CRM_1540371261836'),
       '#CEILING#'    => $arResult['UF_CRM_1540385060'],
+      '#CEIL_PREFIX#' => $this->getCeilingPrefix($arResult['UF_CRM_1540385060']), 
       '#ELECTRIC#'   => $arResult['UF_CRM_1540385112'],
       '#OVERHOUL#'   => $this->enumValue((int)$arResult['UF_CRM_1540385262'],'UF_CRM_1540385262'),
       '#INPUT#'      => self::INPUTTYPE[$arResult["UF_CRM_1540385040"]],
       '#CURRENCY#'   => self::CURRENCY[$arResult['UF_CRM_1540456473']],
       '#DESCRIPTION#' => $arResult['UF_CRM_1540471409'],
-      '#IMAGES#'      => $this->getImages($arResult['UF_CRM_1540532330'])
+      '#IMAGES#'      => $this->getImages($arResult['UF_CRM_1540532330']),
+      '#BROKER_NAME#' => $this->getBroker($arResult['UF_CRM_1540886934'])['FULL_NAME'],
+      '#BROKER_PHONE#'=> $this->getBroker($arResult['UF_CRM_1540886934'])['PHONE'],
+      '#BROKER_EMAIL#'=> $this->getBroker($arResult['UF_CRM_1540886934'])['EMAIL']
 
     ];
 
     return  $arFields;
 
+  }
+
+  private function getBroker(int $ID) : array {
+
+    $user = \CUser::GetList($sort = 'ID', $order = 'desc', ['ID' => $ID], ['SECECT' => ['NAME','LAST_NAME','EMAIL','PERSONAL_PHONE'] ]);
+
+    $arUser = $user->Fetch();
+
+    return [
+
+       'FULL_NAME' => sprintf("%s %s", $arUser['NAME'], $arUser['LAST_NAME']),
+       'EMAIL' => $arUser['EMAIL'],
+       'PHONE' => $arUser['PERSONAL_PHONE']
+
+    ];
   }
 
   private function getImages(array $data) : string {
@@ -107,6 +126,18 @@ final class RentBuilding extends PdfExport {
   
     return sprintf("%s", $file['SRC']);
  
+  }
+
+  private function getCeilingPrefix(int $value) : string {
+
+    if($value < 2) {
+
+        return 'р';
+
+    }
+    
+    return $value % 2 == 0 ? 'ра' : 'ров';
+
   }
 
   private function getAddress(array $row) : string {

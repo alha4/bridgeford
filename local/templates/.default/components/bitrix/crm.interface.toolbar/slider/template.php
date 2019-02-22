@@ -280,7 +280,7 @@ PDF.generate = function(typePDF) {
 
 		 BX.showWait(BX('update_price'));
 		 
-      BX.ajax.post('/local/crons/cian_pricer.php', {'id' : <?=$arParams['ENTITY_ID']?>} , function(response) {
+      BX.ajax.post('/local/ajax/cian_strategy.php', {'id' : <?=$arParams['ENTITY_ID']?>} , function(response) {
 
 				response = JSON.parse(response);
 
