@@ -5,15 +5,19 @@ use \Bitrix\Main\EventManager,
 
 const CIAN_ROOT_CLASS_PATH = '/local/Cian';
 const STAT_ROOT_CLASS_PATH = '/local/Stat';
+const SEARCH_ROOT_CLASS_PATH = '/local/Search';
 const LOG_PATH = '/local/Cian/log.txt';
 const REQUEST_LOG = 'Y';
 const GENERAL_BROKER = 15;
+const FILTER_PRECENT = 33;
 
 Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
      '\Cian\CianPriceMonitoring' => CIAN_ROOT_CLASS_PATH.'/CianPriceMonitoring.php',
      '\Cian\CrmObject'           => CIAN_ROOT_CLASS_PATH.'/CrmObject.php',
      '\Cian\Logger'              => CIAN_ROOT_CLASS_PATH.'/Logger.php',
-     '\Stat\CompetitorEvent'     => STAT_ROOT_CLASS_PATH.'/CompetitorEvent.php'
+     '\Stat\CompetitorEvent'     => STAT_ROOT_CLASS_PATH.'/CompetitorEvent.php',
+     '\Search\SimilarObject'     => SEARCH_ROOT_CLASS_PATH."/SimilarObject.php",
+     '\Search\SimilarTicket'     => SEARCH_ROOT_CLASS_PATH."/SimilarTicket.php"
 ));   
     
 
