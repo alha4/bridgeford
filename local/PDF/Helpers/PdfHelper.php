@@ -110,11 +110,11 @@ protected function enumValue(int $value_id, string $code) : string {
 
   if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
 
-      return sprintf("Россия, %s, %s %s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
+      return sprintf("Россия, %s, %s д.%s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
 
   }
 
-  return sprintf("Россия, %s, %s %s %s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
+  return sprintf("Россия, %s, %s %s д.%s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
 
  }
 

@@ -35,6 +35,13 @@ final class CompetitorEvent {
 
     $dataIds    = array_column($data, 'ID');
 
+
+    if($data[0] == -1) {
+
+       return $this->mainDelete($deal_id, $currentData);
+    }
+
+
     if($this->allDelete($deal_id, $data)) {
 
        return true;
@@ -97,6 +104,18 @@ final class CompetitorEvent {
     if(count($data) == 0) {
 
         return $this->create($deal_id, $data = [], 'ALL_DELETE');
+
+    }
+
+    return false;
+
+  }
+
+  private function mainDelete(int $deal_id, array &$data) : bool {
+
+    if($this->create($deal_id, $data, 'MAIN_DELETE')) {
+
+        return true;
 
     }
 
