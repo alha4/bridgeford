@@ -70,8 +70,10 @@ protected function enumValue(int $value_id, string $code) : string {
 
  }
 
- protected function getBroker(int $ID) : array {
+ protected function getBroker(?int $ID) : array {
 
+  if(!$ID) return [];
+  
   $user = \CUser::GetList($sort = 'ID', $order = 'desc', ['ID' => $ID], ['SECECT' => ['NAME','LAST_NAME','EMAIL','PERSONAL_PHONE'] ]);
 
   $arUser = $user->Fetch();
@@ -94,7 +96,7 @@ protected function enumValue(int $value_id, string $code) : string {
 
   }
   
-  return $value % 2 == 0 ? 'ра' : 'ров';
+  return $value % 2 == 0 || $value == 3 ? 'ра' : 'ров';
 
  }
 

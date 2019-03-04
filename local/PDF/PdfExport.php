@@ -11,8 +11,8 @@ abstract class PdfExport {
   protected const OBJECT_TYPE = [
 
                     '0' => 'Аренда',
-                    '1' => 'Продажа',
-                    '2' => 'Аренда'
+                    '1' => 'Продажа помещения',
+                    '2' => 'Продажа арендного бизнеса'
                   ];
 
   protected const RENT_TYPE = [
@@ -98,7 +98,7 @@ abstract class PdfExport {
 
     if(!file_exists($fileTemplate)) {
 
-      throw new \Exception('Не найден файл pdf шаблона');
+      throw new \Exception("Не найден $fileTemplate файл pdf шаблона");
     
     }
     

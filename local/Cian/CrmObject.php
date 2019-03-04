@@ -198,6 +198,22 @@
 
    }
 
+   public static function finMinPrice() : float {
+
+    $prices = array_column($concurent,'PRICE');
+
+    $origin_price = $prices;
+
+    rsort($prices);
+
+    $min_price = array_pop($prices);
+
+    $index = array_search($min_price, $origin_price);
+
+    unset($origin_price);
+    
+   }
+
    public static function actuality(int $object_id) : bool {
 
     $deal = new \CCrmDeal(false);

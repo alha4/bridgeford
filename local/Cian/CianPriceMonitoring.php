@@ -321,7 +321,17 @@ final class CianPriceMonitoring {
 
   if($response['status'] == self::CIAN_API_RESPONSE_SUCCESS || $response['data']['offersSerialized']) {
 
-     return $response['data']['offersSerialized'];
+    return array_filter($response['data']['offersSerialized'], function(&$item) {
+
+        if($item['user']['agencyName'] != self::OWNER_COMPANY_NAME) {
+
+          return true;
+
+        }
+
+        return false;
+
+    });
 
   }
 
@@ -329,6 +339,28 @@ final class CianPriceMonitoring {
 
   return []; 
 
+ }
+
+  /**
+  *@method array getOffersList - список предложений [ид объекта, название, стоимость, url] 
+  */
+  private function getOffersList(array &$data) : array {
+
+    $result = [];
+
+    foreach($data as $item) {
+
+      $result[] = [
+           'ID'    => $item['id'],
+           'TITLE' => $item['geo']['userInput'],
+           'PRICE' => $this->extractPrice($item['dealType'], $item),
+           'URL'   => $item['fullUrl']
+       ];
+
+    }
+
+    return $result;
+    
  }
 
  /**
@@ -446,13 +478,14 @@ final class CianPriceMonitoring {
 
  private function getMinPrice(array &$data) : float {
 
-  $dealType = $data[0]['dealType'];
+  $dealType = current($data)['dealType'];
 
   if($dealType == 'sale') {
 
     $data = array_column($data, 'bargainTerms');
 
   }
+
 
   $prices = array_column($data, $this->getPriceType($dealType) );
   $prices = array_unique($prices);
@@ -478,31 +511,6 @@ final class CianPriceMonitoring {
 
   return  $item[$this->getPriceType($dealType)];
    
- }
-
- /**
-  *@method array getOffersList - список предложений [ид объекта, название, стоимость, url] 
-  */
- private function getOffersList(array &$data) : array {
-
-    $result = [];
-
-    foreach($data as $item) {
-
-     if($item['user']['agencyName'] != self::OWNER_COMPANY_NAME) {
-
-        $result[] = [
-           'ID'    => $item['id'],
-           'TITLE' => $item['geo']['userInput'],
-           'PRICE' => $this->extractPrice($item['dealType'], $item),
-           'URL'   => $item['fullUrl']
-         ];
-
-      }
-    }
-
-    return $result;
-    
  }
 
  private function httpClient() : HttpClient {
