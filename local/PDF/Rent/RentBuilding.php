@@ -52,6 +52,12 @@ final class RentBuilding extends PdfExport {
 
     ];
 
+    if($arFields['#INDEXS#'] == 0 || $arFields['#INDEXS#'] == '0' || !$arFields['#INDEXS#']) {
+
+      $arFields['#INDEXS_DISPLAY#'] = 'none';
+      
+    }
+
     return  $arFields;
 
   }
