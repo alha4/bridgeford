@@ -1,7 +1,8 @@
 <?
 
 use \Bitrix\Main\EventManager,
-    \Raiting\RaitingFactory;
+    \Raiting\RaitingFactory,
+    \Bitrix\Main\Web\HttpClient;
 
 const CIAN_ROOT_CLASS_PATH = '/local/Cian';
 const STAT_ROOT_CLASS_PATH = '/local/Stat';
@@ -10,6 +11,7 @@ const LOG_PATH = '/local/Cian/log.txt';
 const REQUEST_LOG = 'Y';
 const GENERAL_BROKER = 15;
 const FILTER_PRECENT = 33;
+const YANDEX_API_KEY = '5e926399-e46a-4846-a809-c3d370aa399e';
 
 Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
      '\Cian\CianPriceMonitoring' => CIAN_ROOT_CLASS_PATH.'/CianPriceMonitoring.php',
@@ -32,11 +34,62 @@ $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRaiting');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRealPrice');
 
+$event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setMapLocation');
+
 require_once $_SERVER['DOCUMENT_ROOT']."/local/Cian/CianPriceMonitoring.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/local/Cian/CrmObject.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/local/Raiting/RaitingFactory.php";
 
- 
+
+
+/**
+ * UF_CRM_1540202889 - Тип улицы 
+ * UF_CRM_1540202900 - Название улицы 
+ * UF_CRM_1540202908 - Номер дома
+ * UF_CRM_1540202817 - Город 
+ * UF_CRM_1540202667 - Регион
+ * 
+ */
+  
+function setMapLocation(&$arFields) : array {
+
+  $required_fields = ['UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667'];
+
+  $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], $required_fields);
+
+  $data = $crm_object->Fetch();
+
+  $adress = sprintf("Россия,Москва,%s+%s,дом+%s", enumValue($data['UF_CRM_1540202889'],'UF_CRM_1540202889'), $data['UF_CRM_1540202900'], $data['UF_CRM_1540202908']);
+
+  $http = new HttpClient();
+
+  $result = json_decode($http->get(sprintf("https://geocode-maps.yandex.ru/1.x/?apikey=%s&geocode=%s&format=json&lang=ru_RU&rspn=0", YANDEX_API_KEY, $adress )) ,1);
+
+
+  $ll = str_replace(' ',',', $result['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']);
+
+  $mapUrl = "https://static-maps.yandex.ru/1.x/?ll=$ll&size=500,420&z=16&l=map&pt=$ll,pmwtm1~$ll,pmwtm99";
+
+  $arFile = CFile::MakeFileArray($mapUrl);
+
+  $type = array_pop(explode('/',$arFile['type']));
+
+  $arFile['name'] ="{$arFile['name']}.{$type}";
+  $arFile['del'] = 'Y';
+  $arFile['MODULE_ID'] = 'crm';
+
+  $fileID = CFile::SaveFile($arFile, 'crm_deal_map');
+
+  $arFields['UF_CRM_1548410231729'] = $arFile ;
+
+  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($fileID  ,1).date("d/m/Y H:i:s")."\r\n");
+
+  return $arFields;
+
+
+}
+
+
 /**
  * UF_CRM_1545649289833 - Реальная цена 
  * UF_CRM_1540456417 - Стоимость аренды за все помещение в месяц
@@ -287,7 +340,7 @@ function enumValue(int $value_id, string $code, ?string $entity = 'CRM_DEAL') : 
     }
 
     return '';
-  }
+}
 
 function enumID(string $value, string $code, ?string $entity = 'CRM_DEAL') : int {
 
@@ -307,6 +360,7 @@ function enumID(string $value, string $code, ?string $entity = 'CRM_DEAL') : int
 
    return -1;
  }
+
 
 
 
