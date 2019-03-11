@@ -4,6 +4,7 @@ namespace XML;
 abstract class ExportBase {
 
    use \XML\Helpers\CrmHelper;
+   use \XML\Helpers\Description;
 
    protected $fileName;
 

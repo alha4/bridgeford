@@ -7,6 +7,7 @@ use \Bitrix\Main\EventManager,
 const CIAN_ROOT_CLASS_PATH = '/local/Cian';
 const STAT_ROOT_CLASS_PATH = '/local/Stat';
 const SEARCH_ROOT_CLASS_PATH = '/local/Search';
+const XML_CLASS_PATH = '/local/XML';
 const LOG_PATH = '/local/Cian/log.txt';
 const REQUEST_LOG = 'Y';
 const GENERAL_BROKER = 15;
@@ -19,10 +20,10 @@ Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
      '\Cian\Logger'              => CIAN_ROOT_CLASS_PATH.'/Logger.php',
      '\Stat\CompetitorEvent'     => STAT_ROOT_CLASS_PATH.'/CompetitorEvent.php',
      '\Search\SimilarObject'     => SEARCH_ROOT_CLASS_PATH."/SimilarObject.php",
-     '\Search\SimilarTicket'     => SEARCH_ROOT_CLASS_PATH."/SimilarTicket.php"
+     '\Search\SimilarTicket'     => SEARCH_ROOT_CLASS_PATH."/SimilarTicket.php",
+     '\XML\Helpers\Description'  => XML_CLASS_PATH.'/Helpers/Description.php',
 ));   
     
-
 $event = EventManager::getInstance();
 
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setGeoData');

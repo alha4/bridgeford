@@ -47,7 +47,8 @@ final class AvitoXml extends ExportBase {
     $select = ["OPPORTUNITY","UF_CRM_1540886934","ASSIGNED_BY_ID","UF_CRM_1540202817",
                "UF_CRM_1540202908","UF_CRM_1540202889","UF_CRM_1540202900","UF_CRM_1540471409",
                "UF_CRM_1540381545640","UF_CRM_1540384944","UF_CRM_1540384807664","UF_CRM_1541056338255",
-               "UF_CRM_1540532735882","UF_CRM_1540532330","UF_CRM_1540384963","UF_CRM_1540371585","UF_CRM_1541076330647"];
+               "UF_CRM_1540532735882","UF_CRM_1540532330","UF_CRM_1540384963","UF_CRM_1540371585","UF_CRM_1541076330647",
+               "UF_CRM_1540974006","UF_CRM_1552294499136"];
     
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -75,7 +76,7 @@ final class AvitoXml extends ExportBase {
 
       $xml_string.= sprintf('<Address>%s</Address>', $this->getAddress($row));
 
-      $xml_string.= sprintf('<Description>%s</Description>', $row['UF_CRM_1540471409']);
+      $xml_string.= sprintf('<Description>%s</Description>', $this->getDescription((array)$row['UF_CRM_1540974006'],$row['UF_CRM_1540471409'], (bool)$row['UF_CRM_1552294499136']));
 
       $xml_string.= '<Category>Коммерческая недвижимость</Category>';
 

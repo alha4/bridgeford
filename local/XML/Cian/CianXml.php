@@ -129,7 +129,8 @@ final class CianXml extends ExportBase {
                "UF_CRM_1540371585","UF_CRM_1540385060","OPPORTUNITY","UF_CRM_1540371261836","UF_CRM_1540301873849",
                "UF_CRM_1540456473","UF_CRM_1540456608","UF_CRM_1540381458431","UF_CRM_1540532735882","UF_CRM_1540471409",
                "UF_CRM_1541004853118","UF_CRM_1540385040","UF_CRM_1540385112","UF_CRM_1540532330","UF_CRM_1540532419", "UF_CRM_1540384944",
-               "UF_CRM_1544172451","UF_CRM_1540976407661","UF_CRM_1540977227270","UF_CRM_1540977306391","UF_CRM_1544431330"];
+               "UF_CRM_1544172451","UF_CRM_1540976407661","UF_CRM_1540977227270","UF_CRM_1540977306391","UF_CRM_1544431330",
+               "UF_CRM_1540974006","UF_CRM_1552294499136"];
 
     $xml_string = '<feed><feed_version>2</feed_version>';
 
@@ -153,7 +154,7 @@ final class CianXml extends ExportBase {
 
       } else {
      
-          $xml_string.= sprintf("<Description>%s</Description>", $row['UF_CRM_1540471409']);
+          $xml_string.= sprintf("<Description>%s</Description>", $this->getDescription((array)$row['UF_CRM_1540974006'],$row['UF_CRM_1540471409'], (bool)$row['UF_CRM_1552294499136']));
 
       }
 
