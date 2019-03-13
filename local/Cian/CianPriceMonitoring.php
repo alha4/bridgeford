@@ -28,6 +28,13 @@ final class CianPriceMonitoring {
 
   private const OWNER_COMPANY_NAME = 'Bridgeford Capital';
 
+  private const ERROR_PRICE_UPDATE = 'ошибка обновления цены';
+
+  private const ERROR_PRICE_ZERO  = 'ошибка цена не может быть <= 0';
+
+  private const ERROR_COMPETITORS_UPDATE = 'ошибка обновления списка конкурентов';
+
+
   private $http_headers = ["Host"    => "api.cian.ru",
                            "Origin"  => "https://www.cian.ru",
                            "Referer" => false,
@@ -133,25 +140,44 @@ final class CianPriceMonitoring {
 
                } else {
   
-                if(!$crontab)
+                if(!$crontab) {
 
-                   throw new \Exception('произошла ошибка обновления цены');
+                    throw new \Exception(self::ERROR_PRICE_UPDATE);
+
+                } else {
+
+                   Logger::log(['объект' => $object_id, 'данные' => $response, 'error' => self::ERROR_PRICE_UPDATE]);
+
+                }
 
                }
 
               } else {
 
-                if(!$crontab)
+                if(!$crontab) {
 
-                  throw new \Exception('произошла ошибка цена не может быть = 0');
+                  throw new \Exception(self::ERROR_PRICE_ZERO);
+
+                } else {
+
+                  Logger::log(['объект' => $object_id, 'данные' => $response, 'error' => self::ERROR_PRICE_ZERO]);
+
+                }
 
              }
 
            } else {
 
-              if(!$crontab)
+              if(!$crontab) {
 
-                 throw new \Exception('произошла ошибка обновления списка конкурентов');
+                 throw new \Exception(self::ERROR_COMPETITORS_UPDATE);
+
+              } else {
+
+                Logger::log(['объект' => $object_id, 'данные' => $competitors, 'ответ' => $response, 'error' => self::ERROR_COMPETITORS_UPDATE]);
+
+
+              }
 
            }
          } else {
@@ -543,6 +569,8 @@ final class CianPriceMonitoring {
 
     $referer[] = "https://www.cian.ru/kupit-kvartiru-1-komn-ili-2-komn/";
     $referer[] = "https://www.cian.ru/cat.php?deal_type=sale&engine_version=2&offer_type=flat&region=1&room1=1&room2=1";
+    $referer[] = "https://cian.ru/cat.php?currency=2&deal_type=rent&engine_version=2&minprice=10000&offer_type=offices&office_type%5B0%5D=1&region=176245";
+
 
     return $referer[array_rand($referer)];
 

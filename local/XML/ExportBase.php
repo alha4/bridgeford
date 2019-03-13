@@ -43,7 +43,7 @@ abstract class ExportBase {
 
      if($xml->save($_SERVER['DOCUMENT_ROOT'].$this->fileName)) {
 
-        echo 'файл выгружен: ', $_SERVER['DOCUMENT_ROOT'].$this->fileName;
+        echo  $_SERVER['SERVER_NAME'].$this->fileName;
 
      }
 
