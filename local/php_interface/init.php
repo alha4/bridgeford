@@ -83,7 +83,7 @@ function setMapLocation(&$arFields) : array {
 
   $arFields['UF_CRM_1548410231729'] = $arFile ;
 
-  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($fileID  ,1).date("d/m/Y H:i:s")."\r\n");
+  #file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($fileID  ,1).date("d/m/Y H:i:s")."\r\n");
 
   return $arFields;
 

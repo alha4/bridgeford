@@ -26,6 +26,14 @@ abstract class ExportBase {
 
    ];
 
+   protected const SEMANTIC_CODE = [
+
+       '0' => 'UF_CRM_1540974006',
+       '1' => 'UF_CRM_1544172451',
+       '2' => 'UF_CRM_1544172560'
+
+   ];
+
    protected const HOST = 'https://crm.bridgeford.ru';
  
    abstract protected function buildXml() : string;

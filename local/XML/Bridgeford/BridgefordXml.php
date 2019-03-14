@@ -70,7 +70,7 @@ final class BridgefordXml extends ExportBase {
                "UF_CRM_1540385060","UF_CRM_1540385112","UF_CRM_1540384963","UF_CRM_1540371585",
                "UF_CRM_1540385040","UF_CRM_1540385262","UF_CRM_1540202908","UF_CRM_1540895685",
                "UF_CRM_1544524903217","UF_CRM_1540895373","ASSIGNED_BY_ID","UF_CRM_1540392018",
-               "UF_CRM_1540974006","UF_CRM_1552294499136"];
+               "UF_CRM_1540974006","UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136"];
     
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -79,6 +79,10 @@ final class BridgefordXml extends ExportBase {
     while($row = $object->Fetch()) {
 
       $category_id = \CCrmDeal::GetCategoryID($row['ID']);
+
+      $semantic_code = self::SEMANTIC_CODE[$category_id];
+
+      $semantic = (array)$row[$semantic_code];
 
       $xml_string.= sprintf('<offer internal-id="%s">', $row['ID']);
       $xml_string.= sprintf('<type>%s</type>', self::TYPE[ $category_id ]);
@@ -127,7 +131,7 @@ final class BridgefordXml extends ExportBase {
       $xml_string.= sprintf('<price>%s</price>',(int)$row['OPPORTUNITY']);
       $xml_string.= sprintf('<is-basement>%s</is-basement>', $row['UF_CRM_1540384916112'] ? 'YES' : 'NO');
       $xml_string.= sprintf('<is-mansion>%s</is-mansion>',   $row['UF_CRM_1540371938'] ? 'YES' : 'NO');
-      $xml_string.= sprintf('<description>%s</description>', $this->getDescription((array)$row['UF_CRM_1540974006'],$row['UF_CRM_1540471409'], (bool)$row['UF_CRM_1552294499136']));
+      $xml_string.= sprintf('<description>%s</description>', $this->getDescription($semantic, $semantic_code, $row['UF_CRM_1540471409'], (bool)$row['UF_CRM_1552294499136']));
       $xml_string.= sprintf('<photo>%s</photo>', $this->getPhotos((array)$row['UF_CRM_1540532330']));
       $xml_string.= sprintf('<ceiling>%s</ceiling>', $row['UF_CRM_1540385060']);
       $xml_string.= sprintf('<electricity>%s</electricity>', $row['UF_CRM_1540385112']);
