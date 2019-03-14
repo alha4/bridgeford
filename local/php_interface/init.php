@@ -69,7 +69,7 @@ function setMapLocation(&$arFields) : array {
 
   $ll = str_replace(' ',',', $result['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']);
 
-  $mapUrl = "https://static-maps.yandex.ru/1.x/?ll=$ll&size=500,420&z=16&l=map&pt=$ll,pmwtm1~$ll,pmwtm99";
+  $mapUrl = "https://static-maps.yandex.ru/1.x/?ll=$ll&size=500,420&z=16&l=map&pt=$ll,pmwtm1~$ll,pmwtm{$data['UF_CRM_1540202908']}";
 
   $arFile = CFile::MakeFileArray($mapUrl);
 
