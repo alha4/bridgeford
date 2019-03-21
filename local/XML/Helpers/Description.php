@@ -61,7 +61,18 @@ trait Description {
                  #echo $index,' ', $text, '<br>';
                  #echo $arFields[$index],'<br>';
 
-                 $row_value = enumValue($arFields[$index], $index) ? : $arFields[$index];
+                 if($index  == 'UF_CRM_1543406565') {
+
+                    $row_value = iblockValue($arFields[$index]);
+
+                    #echo  $row_value,'<br>';
+
+
+                 } else {
+
+                    $row_value = enumValue($arFields[$index], $index) ? : $arFields[$index];
+
+                 }
 
                  $auto_text.= str_replace($index, $row_value , $text);
                  $auto_text.= ',';
@@ -72,7 +83,7 @@ trait Description {
 
             if(is_array($arFields[$code])) {
 
-              // echo $code,'<br>';
+               // echo $code,'<br>';
 
                $auto_text.= $value;
                $auto_text.= implode(',', array_map(function($item) use($code) {

@@ -364,6 +364,12 @@ function enumID(string $value, string $code, ?string $entity = 'CRM_DEAL') : int
    return -1;
  }
 
+ function iblockValue(int $id) : string {
+
+   return \CIBlockElement::GetByID($id)->Fetch()['NAME'];
+
+ }
+
 
 
 
