@@ -8,6 +8,7 @@ const CIAN_ROOT_CLASS_PATH = '/local/Cian';
 const STAT_ROOT_CLASS_PATH = '/local/Stat';
 const SEARCH_ROOT_CLASS_PATH = '/local/Search';
 const XML_CLASS_PATH = '/local/XML';
+const SEMANTIC_CLASS_PATH = '/local/XML/Semantic';
 const LOG_PATH = '/local/Cian/log.txt';
 const REQUEST_LOG = 'Y';
 const GENERAL_BROKER = 15;
@@ -22,6 +23,7 @@ Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
      '\Search\SimilarObject'     => SEARCH_ROOT_CLASS_PATH."/SimilarObject.php",
      '\Search\SimilarTicket'     => SEARCH_ROOT_CLASS_PATH."/SimilarTicket.php",
      '\XML\Helpers\Description'  => XML_CLASS_PATH.'/Helpers/Description.php',
+     '\Semantic\SemanticFactory' => SEMANTIC_CLASS_PATH.'/SemanticFactory.php'
 ));   
     
 $event = EventManager::getInstance();
@@ -83,7 +85,7 @@ function setMapLocation(&$arFields) : array {
 
   $arFields['UF_CRM_1548410231729'] = $arFile ;
 
-  #file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($fileID  ,1).date("d/m/Y H:i:s")."\r\n");
+  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($fileID  ,1).date("d/m/Y H:i:s")."\r\n");
 
   return $arFields;
 
