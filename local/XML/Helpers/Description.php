@@ -8,77 +8,110 @@ trait Description {
 
   protected $cache = [];
 
-  protected function getDescription(int $category, array &$semantic, array &$arFields, string $description, bool $is_autotext) : string {
+  protected function getDescription(int $category, array &$semantic, array &$arFields) : string {
 
-    if($is_autotext) {
+    $path = SemanticFactory::create($category);
 
-      $path = SemanticFactory::create($category);
+    $arSemantic = $this->loadSemantic($path);
 
-      $arSemantic = $this->loadSemantic($path);
+    #echo $path,'<br>';
 
-      #echo $path,'<br>';
+    $auto_text = '';
 
-      $auto_text = '';
+     /**
+     * Cемантика
+     */
 
-      /**
-       * Cемантика
-       */
+    foreach($semantic as $value) {
 
-      foreach($semantic as $value) {
+      $text  = $this->parse($arSemantic[$value], $arFields);
 
-         $text  = $this->parse($arSemantic[$value], $arFields);
+      $auto_text.= $text;
 
-         $auto_text.= $text;
+      if($text) {
 
-         if($text) {
-
-           $auto_text.= ',';
-
-         }
+         $auto_text.= ',';
 
        }
 
-       /**
-        * Остальные поля
-        */
+      }
 
-       foreach($arSemantic as $code=>$value) {
+      /**
+      * Остальные поля
+      */
 
-         #echo $code,'<br>';
+      foreach($arSemantic as $code=>$value) {
 
-         if(array_key_exists($code, $arFields)) {
+        if(array_key_exists($code, $arFields)) {
 
            /**
             *  множественное
             */
 
-           if(is_array($arSemantic[$code])) {
+          if(is_array($arSemantic[$code])) {
 
-              $multi_text = $arSemantic[$code];
+             $multi_text = $arSemantic[$code];
 
-              foreach($multi_text as $index => $text) {
+             foreach($multi_text as $index => $text) {
 
-                 #echo $index,' ', $text, '<br>';
-                 #echo $arFields[$index],'<br>';
+               #echo $index,' ', $text, '<br>';
+               #echo $arFields[$index],'<br>';
 
-                 if($index  == 'UF_CRM_1543406565') {
+               if($index  == 'UF_CRM_1543406565') {
 
-                    $row_value = iblockValue($arFields[$index]);
+                  $row_value = iblockValue($arFields[$index]);
 
                     #echo  $row_value,'<br>';
 
+                } else {
+                    #echo $code,'<br>';
 
-                 } else {
+                  if($index == 'STREET' || $index == 'PLACE') {
 
-                    $row_value = enumValue($arFields[$index], $index) ? : $arFields[$index];
+                      #echo $index,' ', print_r($multi_text[$index],1);
 
-                 }
+                    if($arFields['UF_CRM_1540202889'] == self::STREET_TYPE) {
 
-                 $auto_text.= str_replace($index, $row_value , $text);
-                 $auto_text.= ',';
+                        foreach($multi_text['STREET'] as $key=>$location) {
 
+                          #print_r([$key,$location]);
+
+                          $row_value = enumValue((int)$arFields[$key], $key) ? : $arFields[$key];
+
+                          #echo $key,' ',$row_value,'<br>';
+
+                          $auto_text.= str_replace($key, $row_value , $location);
+
+                          $auto_text.= ',';
+
+                        }
+
+                     } else {
+
+                      foreach($multi_text['PLACE'] as $key=>$location) {
+
+                         #print_r([$key,$location]);
+
+                         $row_value = enumValue((int)$arFields[$key], $key) ? : $arFields[$key];
+
+                         #echo $key,' ',$row_value,'<br>';
+
+                         $auto_text.= str_replace($key, $row_value , $location);
+
+                         $auto_text.= ',';
+
+                      }
+                     }
+
+                  } else {
+
+                   $row_value = enumValue((int)$arFields[$index], $index) ? : $arFields[$index];
+                   $auto_text.= str_replace($index, $row_value , $text);
+                   $auto_text.= ',';
+
+                }
               }
-
+            }
            } else {
 
             if(is_array($arFields[$code])) {
@@ -110,16 +143,12 @@ trait Description {
               $auto_text.= ',';
 
              }
-          }
-         }
-       }
-
-
-      return substr($auto_text,0,-1);
-
+        }
+      }
    }
 
-   return $description;
+
+   return substr($auto_text,0,-1);
 
   }
 

@@ -51,7 +51,7 @@ final class AvitoXml extends ExportBase {
                "UF_CRM_1540974006","UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136","UF_CRM_1540203015",
                "UF_CRM_1540385060","UF_CRM_1540385040","UF_CRM_1540385112","UF_CRM_1540392018","UF_CRM_1540456417",
                "UF_CRM_1540554743072","UF_CRM_1540371261836","UF_CRM_1540384916112","UF_CRM_1540456737395","UF_CRM_1543406565",
-               "UF_CRM_1540203015"];
+               "UF_CRM_1540203015","UF_CRM_1540202667","UF_CRM_1540203111"];
     
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -83,7 +83,7 @@ final class AvitoXml extends ExportBase {
 
       $xml_string.= sprintf('<Address>%s</Address>', $this->getAddress($row));
 
-      $xml_string.= sprintf('<Description>%s</Description>', $this->getDescription($category_id, $semantic, $row, $row['UF_CRM_1540471409'], (bool)$row['UF_CRM_1552294499136']));
+      $xml_string.= sprintf('<Description>%s</Description>', (bool)$row['UF_CRM_1552294499136'] ? $this->getDescription($category_id, $semantic, $row) : $row['UF_CRM_1540471409']);
      
       $xml_string.= '<Category>Коммерческая недвижимость</Category>';
 
@@ -143,7 +143,7 @@ final class AvitoXml extends ExportBase {
  
   }
 
-  private function getAddress(array $row) : string {
+  protected function getAddress(array $row) : string {
 
     if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
 
