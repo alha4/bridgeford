@@ -58,6 +58,11 @@ $this->SetViewTarget('inside_pagetitle', 10000);
 <div class="ui-btn-double ui-btn-primary">
   <button id="search_object" class="ui-btn-main">Подобрать объекты</button>
 </div> 
+
+<div class="ui-btn-double ui-btn-primary">
+ <button id="add_contact" class="ui-btn-main">Добавить контакт</button>
+</div> 
+
 <?php
 
  $ticket = array_pop(explode('_', $arParams['TOOLBAR_ID']));
@@ -65,6 +70,18 @@ $this->SetViewTarget('inside_pagetitle', 10000);
 
 ?>
 <script>
+
+BX.bind(BX('add_contact'),'click', function(e) {
+		
+		BX.SidePanel.Instance.open("/crm/contact/details/0/", {
+                                      cacheable : false,
+                                      requestMethod : "post",
+                                      requestParams  : {
+                                        sessid  : "<?=bitrix_sessid()?>"
+                                      }
+                                    });
+
+});
 
 BX.bind( BX('search_object'), 'click', function(e) {
 		
@@ -94,6 +111,8 @@ BX.bind( BX('search_object'), 'click', function(e) {
 ?>
 
 <?if($USER->IsAdmin() || $USER->GetID() == $brokerID || $brokerID == GENERAL_BROKER):?>
+
+
 <div class="ui-btn-double ui-btn-primary">
  <button id="actuality_object" class="ui-btn-main">Актуализировать</button>
 </div>

@@ -97,7 +97,12 @@ final class YandexXml extends ExportBase {
                "UF_CRM_1540532330","UF_CRM_1540471409","UF_CRM_1540384963","UF_CRM_1540385040",
                "UF_CRM_1540385112","UF_CRM_1540301873849","UF_CRM_1541056221","UF_CRM_1540385060",
                "UF_CRM_1543406565","UF_CRM_154020301","UF_CRM_1540384807664","UF_CRM_1540202908",
-               "UF_CRM_1540203015","UF_CRM_1540202807","UF_CRM_1540202766","UF_CRM_1540974006","UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136"];
+               "UF_CRM_1540203015","UF_CRM_1540202807","UF_CRM_1540202766","UF_CRM_1540974006",
+               "UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136","UF_CRM_1540371938",
+              "UF_CRM_1540202817","UF_CRM_1540456737395","UF_CRM_1540384944","UF_CRM_1540392018",
+              "UF_CRM_1540456417","UF_CRM_1540554743072","UF_CRM_1540371585","UF_CRM_1541072013901",
+              "UF_CRM_1541072151310","UF_CRM_1540371455","UF_CRM_1541055237379","UF_CRM_1544431330",
+              "UF_CRM_1541056313"];
 
     $date_create = gmdate('c');
 
@@ -186,7 +191,7 @@ final class YandexXml extends ExportBase {
       $xml_string.= sprintf('<ceiling-height>%s</ceiling-height>', $row['UF_CRM_1540385060']);
       $xml_string.= sprintf('<entrance-type>%s</entrance-type>', self::INPUTTYPE[$row["UF_CRM_1540385040"]]);
       $xml_string.= sprintf('<electric-capacity>%s</electric-capacity>', $row['UF_CRM_1540385112']);
-      $xml_string.= sprintf('<description>%s</description>', $this->getDescription($semantic, $semantic_code, $row['UF_CRM_1540471409'], (bool)$row['UF_CRM_1552294499136']));
+      $xml_string.= sprintf('<description>%s</description>', (bool)$row['UF_CRM_1552294499136'] ? $this->getDescription($category_id, $semantic, $row) : $row['UF_CRM_1540471409']);
 
       if($row['UF_CRM_1540301873849']) {
       

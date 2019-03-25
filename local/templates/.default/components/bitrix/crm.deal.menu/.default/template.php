@@ -56,7 +56,9 @@ endif;
 
 if(isset($arResult['CATEGORY_SELECTOR']) && is_array($arResult['CATEGORY_SELECTOR'])):
 	$categorySelector = $arResult['CATEGORY_SELECTOR'];
-?><script type="text/javascript">
+?>
+
+<script type="text/javascript">
 	BX.ready(
 		function()
 		{
@@ -103,7 +105,8 @@ endif;
 
 if(isset($arResult['CATEGORY_CHANGER'])):
 	$categoryChanger = $arResult['CATEGORY_CHANGER'];
-?><script type="text/javascript">
+?>
+<script type="text/javascript">
 	BX.ready(
 		function()
 		{

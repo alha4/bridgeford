@@ -8,13 +8,13 @@ trait Description {
 
   protected $cache = [];
 
+  private static $OZS = 76;
+
   protected function getDescription(int $category, array &$semantic, array &$arFields) : string {
 
     $path = SemanticFactory::create($category);
 
     $arSemantic = $this->loadSemantic($path);
-
-    #echo $path,'<br>';
 
     $auto_text = '';
 
@@ -23,36 +23,81 @@ trait Description {
      */
 
     foreach($semantic as $value) {
+    
+      if(is_array($arSemantic[$value]) && array_key_exists("LOGIC", $arSemantic[$value])) {
+
+        $logics = $arSemantic[$value]['LOGIC'];
+
+        foreach($logics as $logic) {
+
+          foreach($logic as $field => $condition) {
+
+            if((bool)in_array($field, $semantic) == $condition) {
+
+              #echo $field,' ',$value,' ', $condition;
+
+              $text = $this->parse($arSemantic[$value]['TEXT'], $arFields);
+
+              $auto_text.= $text;
+
+              if($text) {
+
+                $auto_text.= ',';
+
+             }
+
+            //echo $auto_text;
+          
+           } 
+         }
+      }
+    } else {
 
       $text  = $this->parse($arSemantic[$value], $arFields);
 
-      $auto_text.= $text;
-
       if($text) {
 
+         $auto_text.= $text;
          $auto_text.= ',';
 
-       }
-
       }
+     }
+    }
 
-      /**
-      * Остальные поля
-      */
+    /**
+    * Остальные поля
+    */
 
-      foreach($arSemantic as $code=>$value) {
+    foreach($arSemantic as $code=>$value) {
 
-        if(array_key_exists($code, $arFields)) {
+      if(array_key_exists($code, $arFields)) {
 
-           /**
-            *  множественное
-            */
 
-          if(is_array($arSemantic[$code])) {
+        if($arFields['UF_CRM_1540371261836'] != self::$OZS && $code == 'UF_CRM_1540202667') {
 
-             $multi_text = $arSemantic[$code];
+          #echo $arFields['UF_CRM_1540371261836'],'<br>';
 
-             foreach($multi_text as $index => $text) {
+          continue; 
+
+        } 
+        
+        if($arFields['UF_CRM_1540371938'] == 0 && $arFields['UF_CRM_1540371261836'] != self::$OZS
+      
+                 && $code == 'UF_CRM_1540371938') {
+
+          continue; 
+        
+        }
+
+         /**
+          *  множественное
+          */
+
+         if(is_array($arSemantic[$code])) {
+
+            $multi_text = $arSemantic[$code];
+
+            foreach($multi_text as $index => $text) {
 
                #echo $index,' ', $text, '<br>';
                #echo $arFields[$index],'<br>';
@@ -64,8 +109,7 @@ trait Description {
                     #echo  $row_value,'<br>';
 
                 } else {
-                    #echo $code,'<br>';
-
+                  
                   if($index == 'STREET' || $index == 'PLACE') {
 
                       #echo $index,' ', print_r($multi_text[$index],1);
@@ -105,14 +149,14 @@ trait Description {
 
                   } else {
 
-                   $row_value = enumValue((int)$arFields[$index], $index) ? : $arFields[$index];
-                   $auto_text.= str_replace($index, $row_value , $text);
-                   $auto_text.= ',';
+                    $row_value = enumValue((int)$arFields[$index], $index) ? : $arFields[$index];
+                    $auto_text.= str_replace($index, $row_value , $text);
+                    $auto_text.= ',';
 
                 }
               }
             }
-           } else {
+          } else {
 
             if(is_array($arFields[$code])) {
 
@@ -142,11 +186,10 @@ trait Description {
                 
               $auto_text.= ',';
 
-             }
+            }
         }
       }
    }
-
 
    return substr($auto_text,0,-1);
 
