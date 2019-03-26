@@ -1776,7 +1776,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		hideField : function(node) {
 
-			node.classList.remove("show-field"); 
+			if(node)
+
+			   node.classList.remove("show-field"); 
 			
 		},
 		

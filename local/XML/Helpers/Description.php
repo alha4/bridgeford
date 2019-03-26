@@ -16,12 +16,13 @@ trait Description {
 
     $arSemantic = $this->loadSemantic($path);
 
+    $semantic_code = self::SEMANTIC_CODE[$category];
+
     $auto_text = '';
 
      /**
      * Cемантика
      */
-
     foreach($semantic as $value) {
     
       if(is_array($arSemantic[$value]) && array_key_exists("LOGIC", $arSemantic[$value])) {
@@ -32,9 +33,9 @@ trait Description {
 
           foreach($logic as $field => $condition) {
 
-            if((bool)in_array($field, $semantic) == $condition) {
+            if(in_array($field, $semantic) !== false) {
 
-              #echo $field,' ',$value,' ', $condition;
+              #echo $index,' ',$field,' - <br>';
 
               $text = $this->parse($arSemantic[$value]['TEXT'], $arFields);
 
@@ -45,13 +46,32 @@ trait Description {
                 $auto_text.= ',';
 
              }
-
-            //echo $auto_text;
           
            } 
          }
+       }
+      } else {
+
+      if($value == 322) {
+
+        if(strpos($arFields['UF_CRM_1544431330'],'лет') !== false) {
+
+           $year = (int)$arFields['UF_CRM_1544431330'];
+
+           if($year > 8) {
+
+              echo 'пропуск';
+
+              continue;
+
+           }
+
+
+        }
+
       }
-    } else {
+
+      #echo $value,'<br>';
 
       $text  = $this->parse($arSemantic[$value], $arFields);
 
