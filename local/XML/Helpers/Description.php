@@ -16,7 +16,7 @@ trait Description {
 
     $path = SemanticFactory::create($category);
 
-    $arSemantic = $this->loadSemantic($path);
+    $arSemantic = &$this->loadSemantic($path);
 
     $auto_text = '';
 
@@ -85,40 +85,54 @@ trait Description {
 
 
       } elseif(array_key_exists($code, $arFields))  {
-      /**
-       * остальные поля
-       *  
-       */
-
-        if($arFields['UF_CRM_1540371261836'] != self::$OZS && $code == 'UF_CRM_1540202667') {
-
-           continue; 
-
-        } 
-      
-        if($arFields['UF_CRM_1540371938'] == 0 && $arFields['UF_CRM_1540371261836'] != self::$OZS
     
-           && $code == 'UF_CRM_1540371938') {
-
-           continue; 
-      
-        }
-
-  
         if(is_array($arSemantic[$code])) {
+
+          $type = false;
+
+         if($arFields['UF_CRM_1540371261836'] == self::$OZS && $code == 'UF_CRM_1540202667' && 
+            $arFields['UF_CRM_1540371938'] == 0) {
+
+      
+              $code = 'UF_CRM_1540202667';
+
+              $type = 'ОЗС';
+
+              unset($arSemantic['UF_CRM_1540371938'], $arSemantic['UF_CRM_1540384807664']);
+
+          } elseif($arFields['UF_CRM_1540371261836'] == self::$OZS && $code == 'UF_CRM_1540371938' &&
+             $arFields['UF_CRM_1540371938'] == 1) {
+
+              $code = 'UF_CRM_1540371938';
+
+              $type = 'ОЗС + новостройка';
+
+              unset($arSemantic['UF_CRM_1540202667'], $arSemantic['UF_CRM_1540384807664']);
+
+          } elseif($arFields['UF_CRM_1540371261836'] != self::$OZS && $arFields['UF_CRM_1540371938'] == 0 && 
+              $code == 'UF_CRM_1540384807664') {
+
+              $code = 'UF_CRM_1540384807664';
+
+              $type = 'Тип здания';
+
+              unset($arSemantic['UF_CRM_1540202667'], $arSemantic['UF_CRM_1540371938']);
+
+          } 
+
+          if(!$type) {
+
+             continue;
+
+          }
 
           $multi_text = $arSemantic[$code];
 
           foreach($multi_text as $index => $text) {
 
-             #echo $index,' ', $text, '<br>';
-             #echo $arFields[$index],'<br>';
-
              if($index  == 'UF_CRM_1543406565') {
 
                 $row_value = iblockValue($arFields[$index]);
-
-                  #echo  $row_value,'<br>';
 
               } else {
                 
@@ -142,7 +156,7 @@ trait Description {
 
                       }
 
-                   } elseif($index == 'PLACE') {
+                   } elseif($arFields['UF_CRM_1540202889'] != self::STREET_TYPE  && $index == 'PLACE') {
 
                     foreach($multi_text['PLACE'] as $key=>$location) {
 
@@ -162,7 +176,6 @@ trait Description {
                 } else {
 
                   if($arFields['UF_CRM_1540202667'] == self::$MOSKOW && $index == 'UF_CRM_1540202817') {
-
 
                      continue;
 
