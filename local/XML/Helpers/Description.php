@@ -10,6 +10,8 @@ trait Description {
 
   private static $OZS = 76;
 
+  private static $MOSKOW = 26;
+
   protected function getDescription(int $category, array &$semantics, array &$arFields) : string {
 
     $path = SemanticFactory::create($category);
@@ -61,8 +63,6 @@ trait Description {
              $year = (int)$arFields['UF_CRM_1544431330'];
   
              if($year > 8) {
-  
-               // echo 'пропуск';
   
                 continue;
   
@@ -124,7 +124,7 @@ trait Description {
                 
                 if($index == 'STREET' || $index == 'PLACE') {
 
-                    #echo $index,' ', print_r($multi_text[$index],1);
+                 #echo $index,' ', print_r($multi_text[$index],1);
 
                   if($arFields['UF_CRM_1540202889'] == self::STREET_TYPE && $index == 'STREET') {
 
@@ -161,8 +161,15 @@ trait Description {
 
                 } else {
 
+                  if($arFields['UF_CRM_1540202667'] == self::$MOSKOW && $index == 'UF_CRM_1540202817') {
+
+
+                     continue;
+
+                  }
+
                   $row_value = enumValue((int)$arFields[$index], $index) ? : $arFields[$index];
-                  $auto_text.= str_replace($index, $row_value , $text);
+                  $auto_text.= str_replace($index, $this->regionMorphology($row_value), $text);
                   $auto_text.= ',';
 
               }
@@ -239,6 +246,17 @@ trait Description {
     }
 
     return $text;
+
+  }
+
+  protected function regionMorphology(?string $value) : string {
+
+    $in = ['Москва','Новая'];
+
+    $out = ['Москве','Новой'];
+
+    return str_replace($in, $out, $value);
+
 
   }
 
