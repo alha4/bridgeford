@@ -61,11 +61,11 @@ trait Description {
          }
        } else {
         
-        /**
-         * 
-         * Высоколиквидный объект
-         * UF_CRM_1544431330 - окупаемость
-         */
+       /**
+       * 
+       * Высоколиквидный объект
+       * UF_CRM_1544431330 - окупаемость
+       */
        if($code == self::$HIGHLY_LIQUID_OBJECT) {
   
          if(strpos($arFields['UF_CRM_1544431330'],'лет') !== false) {
@@ -91,12 +91,15 @@ trait Description {
       } 
       /**
       * остальные польз-е поля (не из семантики) 
+      * UF_CRM_1540371938 - особняк
+      * UF_CRM_1540371455 - новостройка
+      * 
       */
      } elseif(array_key_exists($code, $arFields))  {
         
-        /**
-         * составной текст из множества полей
-         */
+       /**
+       * составной текст из множества полей
+       */
        if(is_array($arSemantic[$code])) {
 
          $type = false;
@@ -104,17 +107,20 @@ trait Description {
          if($arFields['UF_CRM_1540371261836'] == self::$OZS && $code == 'UF_CRM_1540202667' && 
             $arFields['UF_CRM_1540371938'] == 0) {
 
-      
             $code = 'UF_CRM_1540202667';
 
-            $type = 'ОЗС';
+            $type = true;
+
+            //'ОЗС'
 
          } elseif($arFields['UF_CRM_1540371261836'] == self::$OZS && $code == 'UF_CRM_1540371938' &&
            $arFields['UF_CRM_1540371938'] == 1) {
 
            $code = 'UF_CRM_1540371938';
 
-           $type = 'ОЗС + особняк';
+           $type = true;
+           
+           //'ОЗС + особняк'
 
            
          } elseif($arFields['UF_CRM_1540371261836'] != self::$OZS && $code == 'UF_CRM_1540371455' &&
@@ -122,21 +128,25 @@ trait Description {
 
            $code == 'UF_CRM_1540371455';
 
-           $type = 'Новостройка';
+           $type = true;
+
+           //'Новостройка'
             
          } elseif($arFields['UF_CRM_1540371261836'] != self::$OZS && $code == 'UF_CRM_1540384807664' &&
            $arFields['UF_CRM_1540371938'] == 0 && $arFields['UF_CRM_1540371455'] != self::$NEW_BUILDING) {
 
            $code = 'UF_CRM_1540384807664';
 
-           $type = 'Тип здания';
+           $type = true;
+           
+           //'Тип здания'
 
          } 
 
          if(!$type && in_array($code, self::$MAIN_TITLE_ADVERTISING)) {
 
              continue;
-
+             
          } 
 
          $arText = $arSemantic[$code];
