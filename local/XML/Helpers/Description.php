@@ -20,8 +20,17 @@ trait Description {
 
   private static $METRO = 'UF_CRM_1543406565';
 
+  /**
+   * $MAIN_TITLE_ADVERTISING - коды полей для главного первого абзаца объявления
+  */
+
   private static $MAIN_TITLE_ADVERTISING = ['UF_CRM_1540384807664','UF_CRM_1540202667','UF_CRM_1540371938','UF_CRM_1540371455'];
 
+  /**
+   * @param int $category - ид направления
+   * @param array &$semantics - выбранные чекбоксы раздела семантика
+   * @param array &$arFields - остальные пользовательские поля 
+   */
   protected function getDescription(int $category, array &$semantics, array &$arFields) : string {
 
     $path = SemanticFactory::create($category);
@@ -30,10 +39,15 @@ trait Description {
 
     $auto_text = '';
 
+    /**
+     * @var $arSemantic - массив из файла семантики
+     * @var $code - код поля
+     */
+
     foreach($arSemantic as $code => $semantic) {
 
       /**
-       * поля раздела семантики
+       * если поле из раздела семантики
        */
      if(is_numeric($code) && in_array($code, $semantics)) {
 
@@ -63,7 +77,7 @@ trait Description {
         
        /**
        * 
-       * Высоколиквидный объект
+       * $HIGHLY_LIQUID_OBJECT - Высоколиквидный объект
        * UF_CRM_1544431330 - окупаемость
        */
        if($code == self::$HIGHLY_LIQUID_OBJECT) {
@@ -90,7 +104,7 @@ trait Description {
         }
       } 
       /**
-      * остальные польз-е поля (не из семантики) 
+      * если польз-е поле (не из раздела семантики) 
       * UF_CRM_1540371938 - особняк
       * UF_CRM_1540371455 - новостройка
       * 
@@ -151,16 +165,26 @@ trait Description {
 
          $arText = $arSemantic[$code];
 
-         foreach($arText as $index => $milti_text) {
+         /**
+          * @var $index - код поля
+          */
+
+         foreach($arText as $index => $multi_text) {
 
           if($index == self::$METRO) {
 
             $row_value = iblockValue($arFields[$index]);
 
-            $auto_text.= str_replace($index, $row_value, $milti_text);
+            $auto_text.= str_replace($index, $row_value, $multi_text);
             $auto_text.= ',';
 
           } else {
+
+            /**
+             * UF_CRM_1540202889 - тип адреса (улица,проезд,площадь,проспект..)
+             * если улица
+             * @var $key - код поля
+             */
                 
             if($arFields['UF_CRM_1540202889'] == self::STREET_TYPE && $index == 'STREET') {
 
@@ -173,6 +197,7 @@ trait Description {
 
               $auto_text.= ',';
      
+              /** если не улица */
             } elseif($arFields['UF_CRM_1540202889'] != self::STREET_TYPE && $index == 'PLACE') {
 
               foreach($arText['PLACE'] as $key=>$location) {
@@ -192,7 +217,7 @@ trait Description {
 
               if($arFields['UF_CRM_1540202667'] == self::$MOSKOW && $index == 'UF_CRM_1540202817') {
 
-                continue;
+                 continue;
 
               }
 
@@ -202,7 +227,7 @@ trait Description {
 
               if($arFields['UF_CRM_1540202667'] != self::$MOSKOW && $index == 'UF_CRM_1540203111') {
 
-                  continue;
+                 continue;
 
               }
 
@@ -210,7 +235,7 @@ trait Description {
 
               if($row_value) {
                 
-                $auto_text.= str_replace($index, $this->regionMorphology($row_value), $milti_text);
+                $auto_text.= str_replace($index, $this->regionMorphology($row_value), $multi_text);
                 $auto_text.= ',';
 
               }
@@ -267,11 +292,20 @@ trait Description {
 
   }
 
+  /**
+   * загрузка файла семантики
+   */
   protected function loadSemantic(string $path) : array {
 
     if(!file_exists($path)) {
 
         throw new \Error('файл семантики не найден!');
+
+    }
+
+    if(!is_readable($path)) {
+      
+        throw new \Error('файл семантики не доступен для чтения!');
 
     }
 
@@ -285,7 +319,11 @@ trait Description {
 
   }
 
-  protected function parse(?string $text, &$arFields) : ?string {
+  /**
+   * @param string $text - текст из файла семантики
+   * @param array &$arFields - поля для замены фраз
+   */
+  protected function parse(?string $text, array &$arFields) : ?string {
 
     foreach($arFields as $code=>$value) {
 
