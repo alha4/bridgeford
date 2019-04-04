@@ -42,8 +42,6 @@ trait Description {
 
     $last_semantic_code = array_pop(array_values($semantics));
 
-    #echo print_r($last_semantic_index).'<br>';
-
     $auto_text = '';
 
     /**
@@ -74,9 +72,19 @@ trait Description {
                 $logic_text = $this->parse($arSemantic[$code]['TEXT'], $arFields);
   
                 if($logic_text) {
+
                    $auto_text.= $logic_text;
-                   $auto_text.= ',';
-                }
+
+                   if($last_semantic_code != $code) {
+
+                      $auto_text.= ',';
+       
+                   } else {
+       
+                      $auto_text.= '.';
+       
+                  }
+               }
              } 
            }
          }
@@ -106,23 +114,20 @@ trait Description {
        if($semantic_text) {
 
           $auto_text.= $semantic_text;
-          $auto_text.= ',';
+
+          if($last_semantic_code != $code) {
+
+             $auto_text.= ',';
+
+          } else {
+
+             $auto_text.= '.';
+
+          }
 
         }
       }
       
-      /**
-       * если последний пункт семантики
-       */
-
-     /* if($last_semantic_code == $code) {
- 
-        echo $arFields['ID'],' ',$code,'<BR>';
-
-        $auto_text.= '.';
-
-      }*/
-
       /**
       * если польз-е поле (не из раздела семантики) 
       * UF_CRM_1540371938 - особняк
@@ -215,7 +220,7 @@ trait Description {
              
               }
 
-              $auto_text.= ',';
+              $auto_text.= ' ';
      
               /** если не улица */
             } elseif($arFields['UF_CRM_1540202889'] != self::STREET_TYPE && $index == 'PLACE') {
@@ -227,8 +232,8 @@ trait Description {
 
               }
 
-              $auto_text.= ',';
-               
+              $auto_text.= ' ';
+
             } else {
 
               /**
@@ -275,7 +280,7 @@ trait Description {
           } 
         }
 
-        $auto_text.= '. ';
+        $auto_text.= '.';
 
        } else {
 
@@ -291,7 +296,7 @@ trait Description {
 
              }, $arFields[$code]));
 
-             $auto_text.= '. ';
+             $auto_text.= '.';
 
          } else {
 
@@ -302,6 +307,12 @@ trait Description {
           if($text_value) {
 
               #echo $code,' ',$arFields['ID'],' ',  $text,' ,',$text_value,'<br>';
+            
+             if($code == 'UF_CRM_1540371585') {
+
+                $text = $this->floorsName($text_value, $text);
+
+             }
 
              if(strpos($text, $code) !== false) {
  
@@ -314,7 +325,7 @@ trait Description {
 
              if($text_value) {
 
-                $auto_text.= '. ';
+                $auto_text.= '.';
 
              }
           }
@@ -323,7 +334,7 @@ trait Description {
     }
    }
   
-   return substr($auto_text,0,-1);
+   return $auto_text;
 
   }
 
