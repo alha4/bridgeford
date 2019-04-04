@@ -19,11 +19,12 @@ abstract class RoomRaiting {
   }
 
   /**
-   * UF_CRM_1540532735882 - Собственник платит %
+   * UF_CRM_1540532735882 - % от МАП
+   * UF_CRM_1554303694 - % от цены объекта
    */
   protected function sizeCommision() : int {
 
-     $precent = $this->object['UF_CRM_1540532735882'];
+     $precent = $this->object['UF_CRM_1554303694'];
 
      if(!$precent) {
 

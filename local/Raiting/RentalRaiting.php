@@ -6,12 +6,43 @@ use Raiting\RoomRaiting;
 
 class RentalRaiting extends RoomRaiting {
 
+  protected function sizeCommision() : int {
+
+    $precent = $this->object['UF_CRM_1540532735882'];
+     
+    if(!$precent) {
+
+      return 0;
+
+    } elseif($precent == 100) {
+
+      return 3;
+
+    } elseif($precent == 150) {
+
+      return 4;
+
+   } elseif($precent == 200) {
+
+      return 5;
+
+   } elseif($precent == 50) {
+
+      return 2;
+
+   } elseif($precent < 50) {
+
+      return 1;
+
+   }
+
+  }
 
   protected function costObject() : int {
 
     $price = (int)$this->object['UF_CRM_1540456417'];
 
-    file_put_contents($_SERVER['DOCUMENT_ROOT'].'/log.txt', $price);
+    #file_put_contents($_SERVER['DOCUMENT_ROOT'].'/log.txt', $price);
 
     if($price >= 500000 && $price <= 700000) {
 
