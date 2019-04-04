@@ -4,6 +4,7 @@ namespace XML\Helpers;
 
 use \Semantic\SemanticFactory;
 
+
 trait Description {
 
   protected $cache = [];
@@ -26,6 +27,8 @@ trait Description {
 
   private static $MAIN_TITLE_ADVERTISING = ['UF_CRM_1540384807664','UF_CRM_1540202667','UF_CRM_1540371938','UF_CRM_1540371455'];
 
+  private static $PRICES = ["UF_CRM_1540456417","UF_CRM_1540554743072","UF_CRM_1541072013901","UF_CRM_1541072151310"];
+
   /**
    * @param int $category - ид направления
    * @param array &$semantics - выбранные чекбоксы раздела семантика
@@ -36,6 +39,10 @@ trait Description {
     $path = SemanticFactory::create($category);
 
     $arSemantic = &$this->loadSemantic($path);
+
+    $last_semantic_code = array_pop(array_values($semantics));
+
+    #echo print_r($last_semantic_index).'<br>';
 
     $auto_text = '';
 
@@ -102,7 +109,20 @@ trait Description {
           $auto_text.= ',';
 
         }
-      } 
+      }
+      
+      /**
+       * если последний пункт семантики
+       */
+
+     /* if($last_semantic_code == $code) {
+ 
+        echo $arFields['ID'],' ',$code,'<BR>';
+
+        $auto_text.= '.';
+
+      }*/
+
       /**
       * если польз-е поле (не из раздела семантики) 
       * UF_CRM_1540371938 - особняк
@@ -234,14 +254,29 @@ trait Description {
               $row_value = enumValue((int)$arFields[$index], $index) ? : $arFields[$index];
 
               if($row_value) {
+
+                if($index == 'UF_CRM_1540371585') {
+
+                    $multi_text =  $this->floorsName($row_value, $multi_text);
+
+                }
+
+                if(in_array($index,self::$PRICES)) {
+
+                   $row_value = SaleFormatCurrency($row_value,'RUB');
+
+                }
                 
                 $auto_text.= str_replace($index, $this->regionMorphology($row_value), $multi_text);
-                $auto_text.= ',';
+                $auto_text.= ' ';
 
               }
             }
           } 
         }
+
+        $auto_text.= '. ';
+
        } else {
 
         /**
@@ -256,7 +291,7 @@ trait Description {
 
              }, $arFields[$code]));
 
-             $auto_text.= ', ';
+             $auto_text.= '. ';
 
          } else {
 
@@ -279,7 +314,7 @@ trait Description {
 
              if($text_value) {
 
-                $auto_text.= ',';
+                $auto_text.= '. ';
 
              }
           }
@@ -323,7 +358,7 @@ trait Description {
    * @param string $text - текст из файла семантики
    * @param array &$arFields - поля для замены фраз
    */
-  protected function parse(?string $text, array &$arFields) : ?string {
+  private function parse(?string $text, array &$arFields) : ?string {
 
     foreach($arFields as $code=>$value) {
 
@@ -341,7 +376,15 @@ trait Description {
 
   }
 
-  protected function regionMorphology(?string $value) : string {
+  private function floorsName(int $number, string $text) : string {
+
+     $floors = $number > 1 ? 'x' : 'но';
+
+     return str_replace('#FLOORS#', $floors, $text);
+
+  }
+
+  private function regionMorphology(?string $value) : string {
 
     $in = ['Москва','Новая'];
 

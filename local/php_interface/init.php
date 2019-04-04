@@ -71,7 +71,7 @@ function setMapLocation(&$arFields) : array {
 
   $ll = str_replace(' ',',', $result['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']);
 
-  $mapUrl = "https://static-maps.yandex.ru/1.x/?ll=$ll&size=500,420&z=16&l=map&pt=$ll,pmwtm1~$ll,pmwtm{$data['UF_CRM_1540202908']}";
+  $mapUrl = "https://static-maps.yandex.ru/1.x/?ll=$ll&size=500,420&z=16&l=map&pt=$ll,pm2bll";
 
   $arFile = CFile::MakeFileArray($mapUrl);
 
@@ -85,7 +85,7 @@ function setMapLocation(&$arFields) : array {
 
   $arFields['UF_CRM_1548410231729'] = $arFile ;
 
-  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($fileID  ,1).date("d/m/Y H:i:s")."\r\n");
+  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($mapUrl  ,1).date("d/m/Y H:i:s")."\r\n");
 
   return $arFields;
 

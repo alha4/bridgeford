@@ -169,7 +169,8 @@ final class BridgefordXml extends ExportBase {
 
     $xml_string.= '</offers>';
  
-
+    #echo $xml_string;
+    
     return $xml_string;
 
   }
