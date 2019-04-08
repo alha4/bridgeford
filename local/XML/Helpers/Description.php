@@ -77,17 +77,20 @@ trait Description {
 
                    if($last_semantic_code != $code) {
 
-                      $auto_text.= ',';
+                      $auto_text.= ', ';
        
                    } else {
        
-                      $auto_text.= '.';
+                      $auto_text.= '. ';
        
                   }
                }
              } 
            }
          }
+
+        $auto_text.= ' ';
+
        } else {
         
        /**
@@ -117,11 +120,11 @@ trait Description {
 
           if($last_semantic_code != $code) {
 
-             $auto_text.= ',';
+             $auto_text.= ', ';
 
           } else {
 
-             $auto_text.= '.';
+             $auto_text.= '. ';
 
           }
 
@@ -201,7 +204,7 @@ trait Description {
             $row_value = iblockValue($arFields[$index]);
 
             $auto_text.= str_replace($index, $row_value, $multi_text);
-            $auto_text.= ',';
+            $auto_text.= ', ';
 
           } else {
 
@@ -271,6 +274,16 @@ trait Description {
                    $row_value = SaleFormatCurrency($row_value,'RUB');
 
                 }
+
+                 /**
+                 * если код поля Тип здания
+                 */
+
+                if($index == 'UF_CRM_1540371261836') {
+
+                  $row_value = $this->buildMorphology($row_value);
+
+                }
                 
                 $auto_text.= str_replace($index, $this->regionMorphology($row_value), $multi_text);
                 $auto_text.= ' ';
@@ -296,7 +309,7 @@ trait Description {
 
              }, $arFields[$code]));
 
-             $auto_text.= '.';
+             $auto_text.= '. ';
 
          } else {
 
@@ -325,7 +338,7 @@ trait Description {
 
              if($text_value) {
 
-                $auto_text.= '.';
+                $auto_text.= '. ';
 
              }
           }
@@ -400,6 +413,16 @@ trait Description {
     $in = ['Москва','Новая'];
 
     $out = ['Москве','Новой'];
+
+    return str_replace($in, $out, $value);
+
+  }
+
+  private function buildMorphology(string $value) : string {
+
+    $in = ['Жилое','Административное','ОСЗ','Бизнес-центр','Торговый центр','Торгово-офисный центр','Производственный комплекс','Складской комплекс'];
+
+    $out = ['жилом доме','административном','отдельно стоящем здании','бизнес центре','торговом центре','торгово-офисном центре','производственном комплексе','складском комплексе'];
 
     return str_replace($in, $out, $value);
 

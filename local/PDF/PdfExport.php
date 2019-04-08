@@ -18,14 +18,14 @@ abstract class PdfExport {
   protected const RENT_TYPE = [
 
                   '0' => ' ',
-                  '1' => 'закрытая продажа,'
+                  '1' => 'Закрытая продажа,'
                
                  ];
                
   protected const INPUTTYPE = [
                
-                   "96"  =>  "общий",
-                   "95"  =>  "отдельный"
+                   "96"  =>  "Общий",
+                   "95"  =>  "Отдельный"
                
                  ];
                
