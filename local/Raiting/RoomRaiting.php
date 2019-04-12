@@ -99,25 +99,25 @@ abstract class RoomRaiting {
 
         return 5;
 
-    } elseif($price >= 100000000 && $price <= 150000000 ||
-             $price >= 30000000 && $price <= 50000000) {
+    } elseif($price > 100000000 && $price <= 150000000 ||
+             $price >= 30000000 && $price < 50000000) {
 
       return 4;
 
-    } elseif($price >= 150000000 && $price <= 200000000 ||
-             $price >= 20000000 && $price <= 30000000) {
+    } elseif($price > 150000000 && $price <= 250000000 ||
+             $price >= 20000000 && $price < 30000000) {
 
       return 3;
 
-    } elseif($price >= 250000000 && $price <= 350000000) {
+    } elseif($price > 250000000 && $price <= 350000000) {
 
       return 2;
 
-    } elseif($price >= 350000000 && $price <= 1000000000) {
+    } elseif($price > 350000000 && $price <= 1000000000) {
 
       return 1;
 
-    } elseif($price > 1000000000 || $price <= 20000000) {
+    } elseif($price > 1000000000 || $price < 20000000) {
 
       return 0;
 

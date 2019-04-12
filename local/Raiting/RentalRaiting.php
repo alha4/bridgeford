@@ -14,7 +14,7 @@ class RentalRaiting extends RoomRaiting {
 
       return 0;
 
-    } elseif($precent >= 100) {
+    } elseif($precent >= 100 && $precent <= 150) {
 
       return 3;
 
@@ -34,7 +34,7 @@ class RentalRaiting extends RoomRaiting {
 
       return 1;
 
-   }
+   } 
 
   }
 
@@ -48,23 +48,23 @@ class RentalRaiting extends RoomRaiting {
 
         return 5;
 
-    } elseif($price >= 600000 && $price <= 1000000 ||  
-             $price >= 250000 && $price <= 400000) {
+    } elseif($price > 600000 && $price <= 1000000 ||  
+             $price >= 250000 && $price < 400000) {
 
         return 4;
 
-    } elseif($price >= 1000000 && $price <= 1500000 || 
-             $price >= 200000 && $price <= 250000) {
+    } elseif($price > 1000000 && $price <= 1500000 || 
+             $price >= 200000 && $price < 250000) {
 
         return 3;
 
-    } elseif($price >= 1500000 && $price <= 2000000 || 
-             $price >= 150000 && $price <= 200000) {
+    } elseif($price > 1500000 && $price <= 2000000 || 
+             $price >= 150000 && $price < 200000) {
 
         return 2;
 
-    } elseif($price >= 2000000 && $price <= 2500000 || 
-             $price >= 100000 && $price <= 150000) {
+    } elseif($price > 2000000 && $price <= 2500000 || 
+             $price >= 100000 && $price < 150000) {
 
         return 1;
 

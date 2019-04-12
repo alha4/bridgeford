@@ -124,11 +124,17 @@ protected function enumValue(int $value_id, string $code) : string {
 
   $html_img = '';
 
-  foreach($data as $k=>$file_id) {
+  if(count($data) == 1) {
 
+      $html_img.= sprintf("<tr><td class='obj_img' align='center'><img src='%s' width='700' height='400'>", \CFile::GetPath(array_pop($data)));
+ 
+  } else  {
 
-    $html_img.= sprintf("%s<td class='obj_img'><img src='%s' width='310' height='210'>", ($k % 2 == 0  ?  "<tr>" : '')  ,\CFile::GetPath($file_id));
+    foreach($data as $k=>$file_id) {
 
+      $html_img.= sprintf("%s<td class='obj_img'><img src='%s' width='310' height='210'>", ($k % 2 == 0  ?  "<tr>" : '')  ,\CFile::GetPath($file_id));
+
+    }
 
   }
 

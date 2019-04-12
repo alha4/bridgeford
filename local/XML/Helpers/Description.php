@@ -81,7 +81,7 @@ trait Description {
        
                    } else {
        
-                      $auto_text.= '. ';
+                      $auto_text.= '.';
        
                   }
                }
@@ -89,7 +89,7 @@ trait Description {
            }
          }
 
-        $auto_text.= ' ';
+        #$auto_text.= ' ';
 
        } else {
         
@@ -124,7 +124,7 @@ trait Description {
 
           } else {
 
-             $auto_text.= '. ';
+             $auto_text.= '.';
 
           }
 
@@ -204,7 +204,7 @@ trait Description {
             $row_value = iblockValue($arFields[$index]);
 
             $auto_text.= str_replace($index, $row_value, $multi_text);
-            $auto_text.= ', ';
+            $auto_text.= ',';
 
           } else {
 
@@ -222,8 +222,6 @@ trait Description {
                 $auto_text.= str_replace($key, $row_value , $location);
              
               }
-
-              $auto_text.= ' ';
      
               /** если не улица */
             } elseif($arFields['UF_CRM_1540202889'] != self::STREET_TYPE && $index == 'PLACE') {
@@ -234,8 +232,6 @@ trait Description {
                 $auto_text.= str_replace($key, $row_value, $location);
 
               }
-
-              $auto_text.= ' ';
 
             } else {
 
@@ -293,7 +289,7 @@ trait Description {
           } 
         }
 
-        $auto_text.= '.';
+        #$auto_text.= '.';
 
        } else {
 
@@ -305,11 +301,11 @@ trait Description {
             $auto_text.= $arSemantic[$code];
             $auto_text.= implode(',', array_map(function($item) use($code) {
 
-                return enumValue($item, $code);
+                return ' '.enumValue($item, $code);
 
              }, $arFields[$code]));
 
-             $auto_text.= '. ';
+             $auto_text.= '.';
 
          } else {
 
