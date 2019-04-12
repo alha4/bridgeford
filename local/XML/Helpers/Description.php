@@ -261,7 +261,8 @@ trait Description {
 
                 if($index == 'UF_CRM_1540371585') {
 
-                    $multi_text =  $this->floorsName($row_value, $multi_text);
+                 
+                    $multi_text = $this->floorsName( enumValue((int)$arFields['UF_CRM_1555070914'], 'UF_CRM_1555070914'), $multi_text);
 
                 }
 
@@ -289,7 +290,7 @@ trait Description {
           } 
         }
 
-        #$auto_text.= '.';
+        $auto_text.= '.';
 
        } else {
 
@@ -309,6 +310,15 @@ trait Description {
 
          } else {
 
+          /**
+           * если не выбрано UF_CRM_1540384916112 Подвальное помещение пропускаем 
+           */
+          if($code == 'UF_CRM_1540371585' && $arFields['UF_CRM_1540384916112'] != 1) {
+
+              continue;
+
+          }
+          
           $text = $arSemantic[$code];
 
           $text_value = enumValue((int)$arFields[$code], $code) ? : $arFields[$code];
@@ -319,8 +329,8 @@ trait Description {
             
              if($code == 'UF_CRM_1540371585') {
 
-                $text = $this->floorsName($text_value, $text);
-
+                $text = $this->floorsName(enumValue((int)$arFields['UF_CRM_1555070914'], 'UF_CRM_1555070914'), $text);
+                
              }
 
              if(strpos($text, $code) !== false) {
@@ -396,11 +406,9 @@ trait Description {
 
   }
 
-  private function floorsName(int $number, string $text) : string {
+  private function floorsName(string $prefix, string $text) : string {
 
-     $floors = $number > 1 ? 'x' : 'но';
-
-     return str_replace('#FLOORS#', $floors, $text);
+     return str_replace('#FLOORS#', $prefix, $text);
 
   }
 
