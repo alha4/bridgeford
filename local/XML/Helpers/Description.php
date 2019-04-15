@@ -4,7 +4,6 @@ namespace XML\Helpers;
 
 use \Semantic\SemanticFactory;
 
-
 trait Description {
 
   protected $cache = [];
@@ -114,17 +113,22 @@ trait Description {
 
        $semantic_text = $this->parse($arSemantic[$code], $arFields);
 
+
+       /**
+        * если последний элемент семантики ставим точку
+        */
+
        if($semantic_text) {
 
           $auto_text.= $semantic_text;
 
-          if($last_semantic_code != $code) {
+          if($last_semantic_code == $code) {
 
-             $auto_text.= ', ';
+             $auto_text.= '.';
 
           } else {
 
-             $auto_text.= '.';
+             $auto_text.= ', ';
 
           }
 
@@ -223,7 +227,7 @@ trait Description {
              
               }
      
-              /** если не улица */
+              /** если тип адреса не улица */
             } elseif($arFields['UF_CRM_1540202889'] != self::STREET_TYPE && $index == 'PLACE') {
 
               foreach($arText['PLACE'] as $key=>$location) {
@@ -259,16 +263,13 @@ trait Description {
 
               if($row_value) {
 
+                /**
+                 * если код поля этажность
+                 */
+
                 if($index == 'UF_CRM_1540371585') {
 
-                 
                     $multi_text = $this->floorsName( enumValue((int)$arFields['UF_CRM_1555070914'], 'UF_CRM_1555070914'), $multi_text);
-
-                }
-
-                if(in_array($index,self::$PRICES)) {
-
-                   $row_value = SaleFormatCurrency($row_value,'RUB');
 
                 }
 
@@ -290,12 +291,16 @@ trait Description {
           } 
         }
 
-        $auto_text.= '.';
+        /**
+         * конец составного поля
+         */
+        $auto_text.= '. ';
+   
 
        } else {
 
         /**
-         * множественное пользо-е поле 
+         * если множественное польз-е поле 
          */
          if(is_array($arFields[$code])) {
 
@@ -306,6 +311,10 @@ trait Description {
 
              }, $arFields[$code]));
 
+             /**
+              * в конце ставим точку
+              */
+             
              $auto_text.= '.';
 
          } else {
@@ -325,7 +334,11 @@ trait Description {
 
           if($text_value) {
 
-              #echo $code,' ',$arFields['ID'],' ',  $text,' ,',$text_value,'<br>';
+             if(in_array($code,self::$PRICES)) {
+
+                 $text_value = SaleFormatCurrency($text_value,'RUB');
+
+             }
             
              if($code == 'UF_CRM_1540371585') {
 
@@ -342,7 +355,11 @@ trait Description {
                 $auto_text.= $text;
              } 
 
-             if($text_value) {
+             /**
+              * если код поля не цена, в конце ставим точку
+              */
+
+             if($text_value && !in_array($code,self::$PRICES)) {
 
                 $auto_text.= '. ';
 
