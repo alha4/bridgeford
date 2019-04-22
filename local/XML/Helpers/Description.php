@@ -28,12 +28,20 @@ trait Description {
 
   private static $PRICES = ["UF_CRM_1540456417","UF_CRM_1540554743072","UF_CRM_1541072013901","UF_CRM_1541072151310"];
 
+  private static $ADDRESS = ["UF_CRM_1540384807664","UF_CRM_1540202667","UF_CRM_1540371938","UF_CRM_1540371455"];
+
   /**
    * @param int $category - ид направления
    * @param array &$semantics - выбранные чекбоксы раздела семантика
    * @param array &$arFields - остальные пользовательские поля 
    */
   protected function getDescription(int $category, array &$semantics, array &$arFields) : string {
+
+    if(\XML\DEBUG_AUTOTEXT == 'Y') {
+
+
+
+    }
 
     $path = SemanticFactory::create($category);
 
@@ -73,22 +81,12 @@ trait Description {
                 if($logic_text) {
 
                    $auto_text.= $logic_text;
-
-                   if($last_semantic_code != $code) {
-
-                      $auto_text.= ', ';
+                   $auto_text.= '.';
        
-                   } else {
-       
-                      $auto_text.= '.';
-       
-                  }
                }
              } 
            }
          }
-
-        #$auto_text.= ' ';
 
        } else {
         
@@ -115,22 +113,13 @@ trait Description {
 
 
        /**
-        * если последний элемент семантики ставим точку
+        * ставим точку
         */
 
        if($semantic_text) {
 
           $auto_text.= $semantic_text;
-
-          if($last_semantic_code == $code) {
-
-             $auto_text.= '.';
-
-          } else {
-
-             $auto_text.= ', ';
-
-          }
+          $auto_text.= '. ';
 
         }
       }
@@ -294,7 +283,17 @@ trait Description {
         /**
          * конец составного поля
          */
-        $auto_text.= '. ';
+
+        if(in_array($code,self::$ADDRESS) ) {
+
+          $auto_text.= '. ';
+
+        } else {
+
+        
+          $auto_text.= '.';
+
+        }
    
 
        } else {
@@ -312,10 +311,9 @@ trait Description {
              }, $arFields[$code]));
 
              /**
-              * в конце ставим точку
-              */
-             
-             $auto_text.= '.';
+              * в конце множественного поля ставим точку
+             */
+             $auto_text.= '. ';
 
          } else {
 
@@ -368,6 +366,12 @@ trait Description {
         } 
       }   
     }
+   }
+
+   if(\XML\DEBUG_AUTOTEXT == 'Y') {
+
+
+
    }
   
    return $auto_text;

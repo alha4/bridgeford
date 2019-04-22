@@ -1,6 +1,8 @@
 <?php
 namespace XML;
 
+const DEBUG_AUTOTEXT = 'Y';
+
 abstract class ExportBase {
 
    use \XML\Helpers\CrmHelper;
