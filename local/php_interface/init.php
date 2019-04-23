@@ -382,6 +382,14 @@ function enumID(string $value, string $code, ?string $entity = 'CRM_DEAL') : int
   
 }
 
+if (!function_exists('mb_ucfirst'))
+{
+    function mb_ucfirst($value)
+    {
+        return mb_strtoupper(mb_substr($value, 0, 1)) . mb_substr($value, 1);
+    }
+}
+
 
 
 

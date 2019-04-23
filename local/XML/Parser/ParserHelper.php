@@ -30,11 +30,17 @@ trait ParserHelper {
 
   protected function repairMorphology(string $value) : string {
 
-    $in = ['shell & core'];
+    $in = ['Shell and core','От предыдущего арендатора'];
     
-    $out = ['ShellCore'];
+    $out = ['ShellCore','От прошлого арендатора'];
 
     return str_replace($in, $out, $value);
+
+  }
+
+  protected function taxMorphology(string $value) : string {
+
+    return str_replace('ОСН', 'Включая НДС', $value);
 
   }
 
@@ -44,6 +50,12 @@ trait ParserHelper {
 
   }
 
+  protected function getFlag(\DOMElement $node, string $code) : string {
+
+     return strtolower($node->getElementsByTagName($code)[0]->nodeValue) == 'да' ? 1 : 0;
+
+  }
+   
   protected function enumID(string $value, string $code, ?string $entity = 'CRM_DEAL') : int {
 
     $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => $entity, "FIELD_NAME" => $code));
@@ -61,6 +73,19 @@ trait ParserHelper {
       }
   
      return -1;
+
+   }
+
+   protected function getPerson(string $userName) : int {
+
+    $order = array('ID' => 'DESC');
+
+    $filter = array("NAME" => $userName, "CHECK_PERMISSIONS" => "N");
+ 
+    $rsUsers = \CCrmContact::GetList($order, $filter, ["ID"]);
+ 
+    return $rsUsers->Fetch()['ID'] ? : GENERAL_BROKER;
+
    }
 
    protected function getMetro(string $value) {
