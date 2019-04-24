@@ -8,20 +8,18 @@ class ParserFactory {
 
   public function create() : Parser {
 
-     $parser = Application::getInstance()->getContext()->getRequest()->get('parser');
+    $param = Application::getInstance()->getContext()->getRequest()->get('parser');
 
-     switch($parser) {
+    if(!XML_PATH_MAP[$param]) {
 
-       case 1 : 
+       throw new \Error('Не корректный параметр запроса !');
 
-       return Rent::instance(); 
+    }
 
-       break;
+    $objectParser = ObjectParser::instance(); 
+    $objectParser->setPath(XML_PATH_MAP[$param]);
 
-
-     }
-
-
+    return $objectParser;
 
   }
 

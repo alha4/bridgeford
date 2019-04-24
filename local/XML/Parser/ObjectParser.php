@@ -2,21 +2,25 @@
 
 namespace XML\Parser;
 
-use XML\Parser\Parser;
-
-class Rent extends Parser {
-
-  protected static $path = '/rent.xml';
-
-  private const CATEGORY = 0;
-
-  private const TITLE = 'Помещение в аренду';
+class ObjectParser extends Parser {
 
   private const CITY_TYPE = 288;
 
   private const REGION_TYPE = 287;
 
   private const CURRENCY_TYPE = 144;
+
+  private const METRO_TIME_DEFAULT = 290;
+
+  private const METRO_MAX_TIME = 30;
+
+  private const CATEGORY_MAP = [
+
+     'Помещение в аренду'   => 0,
+     'Помещение на продажу' => 1,
+     'Арендный бизнес'      => 2
+       
+  ];
 
   protected function execute(\DOMElement $document) : array {
 
@@ -28,20 +32,21 @@ class Rent extends Parser {
 
       if($item->nodeType == self::$NODE_ELEMENT && $item->nodeName == 'offer') {
 
-         $external_id = $item->getAttribute('internal-id');
+         $type = $item->getElementsByTagName('type')[0]->nodeValue;
 
          $photos = $item->getElementsByTagName('photo')[0]->childNodes;
+
+         $explition = $item->getElementsByTagName('photo-scheme')[0]->childNodes;
 
          $semantic = $item->getElementsByTagName('description-standardized')[0]->childNodes;
 
          $purpose = $item->getElementsByTagName('object-purpose')[0]->childNodes;
 
-    
          $arResult[] =  [
 
-           'ORIGIN_ID'   => $external_id,
-           'CATEGORY_ID' => self::CATEGORY,
-           'TITLE'       => $this->getTitle($item),
+           'ORIGIN_ID'   => $item->getAttribute('internal-id'),
+           'CATEGORY_ID' => self::CATEGORY_MAP[$type],
+           'TITLE'       => $this->getTitle($type, $item),
            'UF_CRM_1540202889'    => $this->enumID($this->getValue($item,'street-type'), 'UF_CRM_1540202889'),
            'UF_CRM_1540371261836' => $this->enumID($this->buildMorphology($this->getValue($item, 'building-type')), 'UF_CRM_1540371261836'),
            'UF_CRM_1540384807664' => $this->enumID($this->roomMorphology($this->getValue($item, 'facility-type')), 'UF_CRM_1540384807664'),
@@ -56,6 +61,7 @@ class Rent extends Parser {
            'UF_CRM_1540371585'    => $this->getValue($item, 'floors-total'),
            'UF_CRM_1540456608'    => $this->enumID($this->taxMorphology($this->getValue($item, 'taxation')), 'UF_CRM_1540456608'),
            'UF_CRM_1540532330'    => $this->getPhoto($photos),
+           'UF_CRM_1540532459'    => $this->getPhoto($explition),
            'UF_CRM_1540895373'    => $this->getPerson($this->getValue($item, 'ActualizationPerson')),
            'UF_CRM_1540886934'    => $this->getPerson($this->getValue($item, 'Broker')),
            'UF_CRM_1540456473'    => self::CURRENCY_TYPE,
@@ -94,19 +100,22 @@ class Rent extends Parser {
 
   }
 
-  private function getPhoto(\DOMNodeList $nodes) : array {
+  private function getPhoto(\DOMNodeList $nodes)  {
 
     $photos = [];
 
     foreach($nodes as $photo) {
 
-      $arFile = \CFile::MakeFileArray($photo->nodeValue);
+    if($photo->nodeValue) {
 
-      $arFile['del'] = 'Y';
-      $arFile['name'] = str_replace([' ','-',','],"", $arFile['name']);
-      $arFile['MODULE_ID'] = 'crm';
+       $arFile = \CFile::MakeFileArray($photo->nodeValue);
 
-      $photos[] = \CFile::SaveFile($arFile,'crm_deal_rent');
+       $arFile['del'] = 'Y';
+       $arFile['MODULE_ID'] = 'crm';
+
+       $photos[] = \CFile::SaveFile($arFile,'crm_deal_rent');
+
+     }
 
     }
     
@@ -120,8 +129,11 @@ class Rent extends Parser {
 
     foreach($semantics as $item) {
 
-      $arResult[] = $this->enumID($item->nodeValue, 'UF_CRM_1540974006');
+      if($enum_id = $this->enumID($item->nodeValue, 'UF_CRM_1540974006') != -1) {
 
+         $arResult[] = $enum_id;
+
+      }
     }
 
     return $arResult;
@@ -134,7 +146,11 @@ class Rent extends Parser {
 
     foreach($semantics as $item) {
 
-      $arResult[] = $this->enumID($item->nodeValue, 'UF_CRM_1540392018');
+      if($enum_id = $this->enumID($item->nodeValue, 'UF_CRM_1540392018') != -1) {
+
+         $arResult[] = $enum_id;
+
+      }
 
     }
 
@@ -144,25 +160,30 @@ class Rent extends Parser {
 
   private function getMetroTime(\DOMElement $node) : int {
 
-    $valueFeet = $this->getValue($node, 'subway-time-feet');
+    $valueFeet      = $this->getValue($node, 'subway-time-feet');
     $valueTransport = $this->getValue($node, 'subway-time-transport');
 
     if($valueFeet) {
 
-        return $this->enumID( sprintf("%s %s",$valueFeet,'минут пешком'), 'UF_CRM_1540203015');
+        return $this->enumID( sprintf("%s %s пешком",$valueFeet, $valueFeet == 1 ? 'минута' : 'минут'), 'UF_CRM_1540203015');
 
     } elseif($valueTransport) {
 
-       return $this->enumID( sprintf("%s %s",$valueFeet,'минут на транспорт'), 'UF_CRM_1540203015');
+      if($valueTransport > self::METRO_MAX_TIME) {
+
+         return $this->enumID( sprintf("Более %s минут на транспорте", $valueTransport), 'UF_CRM_1540203015');
+
+      }
+      
+      return $this->enumID( sprintf("%s минут на транспорте",$valueFeet), 'UF_CRM_1540203015');
 
     }
 
-    return 290;
+    return self::METRO_TIME_DEFAULT;
 
   }
 
   private function getDateActualization(string $dateTime) : string {
-
 
     $date = new \DateTime($dateTime);
 
@@ -170,13 +191,14 @@ class Rent extends Parser {
 
   }
 
-  private function getTitle($item) : string {
+  private function getTitle(string $type, \DOMElement $item) : string {
 
-    return sprintf("%s - %s %s %s", self::TITLE, $this->getValue($item, 'street-name'),  
-                   $this->getValue($item, 'street-type'), $this->getValue($item, 'building-number'));
+    return sprintf("%s - %s %s %s", $type, 
+                   $this->getValue($item, 'street-name'),  
+                   $this->getValue($item, 'street-type'), 
+                   $this->getValue($item, 'building-number')
+                  );
 
   }
-
-
 
 }

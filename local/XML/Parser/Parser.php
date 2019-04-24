@@ -6,7 +6,7 @@ abstract class Parser {
 
   use ParserHelper;
 
-  protected static $path;
+  protected $path;
 
   private $errors = [];
 
@@ -16,9 +16,20 @@ abstract class Parser {
 
   }
 
+  public function setPath(string $path) : void {
+
+     if(!file_exists($_SERVER['DOCUMENT_ROOT'].$path)) {
+
+        throw new \Error("Файл $path не существует."); 
+     }
+
+     $this->path = $_SERVER['DOCUMENT_ROOT'].$path;
+
+  }
+
   public function load() : array {
 
-    $data = $this->execute($this->loadFile());
+    $data = $this->execute($this->loadXML());
     
     foreach($data as $item) {
 
@@ -33,15 +44,15 @@ abstract class Parser {
 
   }
 
-  private function loadFile() : \DOMElement {
+  private function loadXML() : \DOMElement {
 
-    if($dom = \DOMDocument::load(__DIR__.static::$path)) {
+    if($dom = \DOMDocument::load($this->path)) {
 
        return $dom->documentElement;
 
     }
 
-    throw new Error('error load document');
+    throw new Error('error load xml document');
 
   }
 
