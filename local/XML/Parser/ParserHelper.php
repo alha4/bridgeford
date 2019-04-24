@@ -78,11 +78,9 @@ trait ParserHelper {
 
    protected function getPerson(string $userName) : int {
 
-    $order = array('ID' => 'DESC');
-
     $filter = array("NAME" => $userName, "CHECK_PERMISSIONS" => "N");
  
-    $rsUsers = \CCrmContact::GetList($order, $filter, ["ID"]);
+    $rsUsers = \CUser::GetList($sort = "NAME",$order = 'desc', $filter, ['SELECT' => ["ID"]]);
  
     return $rsUsers->Fetch()['ID'] ? : GENERAL_BROKER;
 

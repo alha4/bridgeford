@@ -14,6 +14,8 @@ class ObjectParser extends Parser {
 
   private const METRO_MAX_TIME = 30;
 
+  private const IS_NEW_CONSTRUCTION = 82;
+
   private const CATEGORY_MAP = [
 
      'Помещение в аренду'   => 0,
@@ -91,20 +93,24 @@ class ObjectParser extends Parser {
            'UF_CRM_1544524903217' => $this->getDateActualization($this->getValue($item, 'ActualizationDate')),
            'UF_CRM_1556017573094' => $this->getValue($item, 'autotext'),
            'UF_CRM_1556017644158' => $this->getFlag($item,  'BrokerOnDuty'),
+           'UF_CRM_1540371455'    => $this->getFlag($item,  'is-new-construction') ? self::IS_NEW_CONSTRUCTION : FALSE,
+           'UF_CRM_1552493240038' => $this->getValue($item, 'jk'),
+           'UF_CRM_1541004853118' => $this->getFlag($item,  'private-sale')
+
          ];
 
       }
      }
     
-     return array_splice($arResult,0,3);
+     return array_splice($arResult, 0, LIMIT);
 
   }
 
   private function getPhoto(\DOMNodeList $nodes)  {
 
-    $photos = [];
+    $photos = [1];
 
-    foreach($nodes as $photo) {
+   /* foreach($nodes as $photo) {
 
     if($photo->nodeValue) {
 
@@ -117,7 +123,7 @@ class ObjectParser extends Parser {
 
      }
 
-    }
+    }*/
     
     return $photos;
 
