@@ -6,9 +6,32 @@ use Raiting\BaseRaiting;
 
 class RentalRaiting extends BaseRaiting {
 
+  /**
+   * UF_CRM_1556185907 - double % от МАП
+   * UF_CRM_1556182207180 - Фиксированная оплата
+   * UF_CRM_1556182166156 - Тип вознаграждения
+   * UF_CRM_1540456417    - Стоимость аренды за все помещение в месяц
+   */
   protected function sizeCommision() : int {
 
-    $precent = $this->object['UF_CRM_1540532735882'];
+    $precent = $this->object['UF_CRM_1556185907'];
+
+    if($this->object['UF_CRM_1556182166156'] == self::FIX_PRICE_TYPE) {
+
+       $fixPrice = (float)$this->object['UF_CRM_1556182207180'];
+       $precent = (int) ($fixPrice / 100 / (float)$this->object['UF_CRM_1540456417']);
+
+
+    } else {
+
+      if(strpos($precent,'-') !== false) {
+
+        $maxPrecent = (int)array_pop(explode("-",trim($precent)));
+        $precent = $maxPrecent;
+
+      }
+
+    }
      
     if(!$precent) {
 
@@ -41,8 +64,6 @@ class RentalRaiting extends BaseRaiting {
   protected function costObject() : int {
 
     $price = (int)$this->object['UF_CRM_1540456417'];
-
-    #file_put_contents($_SERVER['DOCUMENT_ROOT'].'/log.txt', $price);
 
     if($price >= 400000 && $price <= 600000) {
 

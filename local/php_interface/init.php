@@ -144,7 +144,7 @@ function setRealPrice(&$arFields) : void {
 }
 
 /**
- * UF_CRM_1556185907 - Собственник платит (в %)
+ * UF_CRM_1556185907 -  % от МАП
  * UF_CRM_1542089326915 - кол-во конкурентов
  * UF_CRM_1541072013901 - Стоимость объекта
  * UF_CRM_1540456417    - Стоимость аренды за все помещение в месяц
@@ -169,8 +169,6 @@ function setRaiting(&$arFields) : void {
     'UF_CRM_1544446024' => $raiting->summ()
 
   ];
-
-  #file_put_contents($_SERVER['DOCUMENT_ROOT'].'/log.txt',  $raiting->summ().' '.print_r(  \CCrmDeal::GetCategoryID($arFields['ID'])  ,1).date("d/m/Y H:i:s")."\r\n");
 
   if(!$UF->Update("CRM_DEAL", $arFields['ID'], $fields)) {
 
