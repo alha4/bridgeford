@@ -14,7 +14,7 @@ final class RentBuilding extends PdfExport {
               "UF_CRM_1540384944","UF_CRM_1540554743072","UF_CRM_1541056049","UF_CRM_1540384963","UF_CRM_1540371585",
               "UF_CRM_1540371261836","UF_CRM_1540385060","UF_CRM_1540385112","UF_CRM_1540385262",'UF_CRM_1540385040',
               "UF_CRM_1540203015","UF_CRM_1540456473","UF_CRM_1540471409","UF_CRM_1540532330","UF_CRM_1540886934",
-               "UF_CRM_1545649289833"];
+              "UF_CRM_1545649289833","UF_CRM_1540532459"];
 
     $arResult = $this->getData($doc_id, $select);
 
@@ -47,6 +47,7 @@ final class RentBuilding extends PdfExport {
       '#CURRENCY#'   => self::CURRENCY[$arResult['UF_CRM_1540456473']],
       '#DESCRIPTION#' => strip_tags($arResult['UF_CRM_1540471409']),
       '#IMAGES#'      => $this->getImages($arResult['UF_CRM_1540532330']),
+      '#EXPLICATION#' => $this->getImages($arResult['UF_CRM_1540532459']),
       '#BROKER_NAME#' => $this->getBroker($arResult['UF_CRM_1540886934'])['FULL_NAME'],
       '#BROKER_PHONE#'=> $this->getBroker($arResult['UF_CRM_1540886934'])['PHONE'],
       '#BROKER_EMAIL#'=> $this->getBroker($arResult['UF_CRM_1540886934'])['EMAIL']

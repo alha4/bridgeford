@@ -156,7 +156,7 @@ PDF.generate = function(typePDF) {
 																
 	setTimeout(function() {
 			BX.SidePanel.Instance.close();
-	},3000);																
+	},8000);																
   
 };
 
