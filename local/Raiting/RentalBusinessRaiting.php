@@ -2,9 +2,9 @@
 
 namespace Raiting;
 
-use Raiting\RoomRaiting;
+use Raiting\BaseRaiting;
 
-class RentalBusinessRaiting extends RoomRaiting {
+class RentalBusinessRaiting extends BaseRaiting {
 
 
 

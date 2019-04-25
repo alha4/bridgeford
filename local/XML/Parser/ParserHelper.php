@@ -76,13 +76,27 @@ trait ParserHelper {
 
    }
 
+   protected function getDate(string $dateTime) : string {
+
+      if(!strtotime($dateTime)) {
+
+         return '';
+         
+      }
+
+      $date = new \DateTime($dateTime);
+
+      return $date->format("d.m.Y");
+
+   }
+
    protected function getPerson(string $userName) : int {
 
-    $filter = array("NAME" => $userName, "CHECK_PERMISSIONS" => "N");
+     $filter = array("NAME" => $userName, "CHECK_PERMISSIONS" => "N");
  
-    $rsUsers = \CUser::GetList($sort = "NAME",$order = 'desc', $filter, ['SELECT' => ["ID"]]);
+     $rsUsers = \CUser::GetList($sort = "NAME",$order = 'desc', $filter, ['SELECT' => ["ID"]]);
  
-    return $rsUsers->Fetch()['ID'] ? : GENERAL_BROKER;
+     return $rsUsers->Fetch()['ID'] ? : GENERAL_BROKER;
 
    }
 

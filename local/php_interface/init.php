@@ -149,10 +149,12 @@ function setRealPrice(&$arFields) : void {
  * UF_CRM_1541072013901 - Стоимость объекта
  * UF_CRM_1540456417    - Стоимость аренды за все помещение в месяц
  * UF_CRM_1544446024    - Рейтинг
+ * UF_CRM_1556182166156 - Тип вознаграждения
+ * UF_CRM_1556182207180 - Фиксированная оплата
  */
 function setRaiting(&$arFields) : void {
 
-  $select = ['UF_CRM_1540456417','UF_CRM_1540532735882','UF_CRM_1542089326915','UF_CRM_1541072013901','UF_CRM_1554303694'];
+  $select = ['UF_CRM_1540456417','UF_CRM_1540532735882','UF_CRM_1542089326915','UF_CRM_1541072013901','UF_CRM_1554303694','UF_CRM_1556182166156','UF_CRM_1556182207180'];
 
   $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], $select);
 

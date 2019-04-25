@@ -35,8 +35,17 @@ abstract class Parser {
 
       if(!$this->exists($item['ORIGIN_ID'])) {
 
-          $this->save($item);
+          $id = $this->save($item);
 
+          if($id) {
+
+             $item['ID'] = $id;
+
+             echo 'запуск события <br>';
+
+             $this->fireEvent($item);
+
+         }
       }
     }
 
@@ -56,7 +65,7 @@ abstract class Parser {
 
   }
 
-  protected function save(array $entity) : bool {
+  protected function save(array $entity) {
 
     $deal = new \CCrmDeal(false);
 
@@ -68,7 +77,7 @@ abstract class Parser {
 
     }
 
-    return true;
+    return $ID;
 
   }
 
@@ -77,6 +86,13 @@ abstract class Parser {
     $entity = \CCrmDeal::GetList(['ORIGIN_ID' => 'DESC'], ['ORIGIN_ID' => $id, 'CHECK_PERMISSIONS' => 'Y'], ['ORIGIN_ID'])->Fetch();
 
     return $entity['ORIGIN_ID'] ? true : false;
+
+  }
+
+
+  protected function fireEvent(array &$event) : bool {
+
+    return true;
 
   }
 

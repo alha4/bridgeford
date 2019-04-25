@@ -2,9 +2,9 @@
 
 namespace Raiting;
 
-use Raiting\RoomRaiting;
+use Raiting\BaseRaiting;
 
-class RentalRaiting extends RoomRaiting {
+class RentalRaiting extends BaseRaiting {
 
   protected function sizeCommision() : int {
 

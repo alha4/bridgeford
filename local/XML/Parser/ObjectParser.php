@@ -2,6 +2,8 @@
 
 namespace XML\Parser;
 
+use \Bitrix\Main\Event;
+
 class ObjectParser extends Parser {
 
   private const CITY_TYPE = 288;
@@ -73,6 +75,7 @@ class ObjectParser extends Parser {
            'UF_CRM_1540203111'    => $this->enumID($this->getValue($item, 'Moscow-area'),'UF_CRM_1540203111'),
            'UF_CRM_1540202817'    => $this->getValue($item, 'town'),
            'UF_CRM_1540385262'    => $this->enumID($this->repairMorphology(mb_ucfirst($this->getValue($item, 'renovation'))), 'UF_CRM_1540385262'),
+           'UF_CRM_1541055237379' => $this->enumID($this->getValue($item, 'leaseholder-standart-name') ,'UF_CRM_1541055237379'),
            'UF_CRM_1540202766'    => $this->getValue($item, 'district'),
            'UF_CRM_1554303694'    => $this->getValue($item, 'Comission'),
            'UF_CRM_1540202807'    => self::CITY_TYPE,
@@ -90,7 +93,8 @@ class ObjectParser extends Parser {
            'UF_CRM_1552294499136' => $this->getFlag($item, 'enabletext'),
            'UF_CRM_1540532917401' => $this->getValue($item, 'CommentComission'),
            'UF_CRM_1556020811397' => $this->getFlag($item, 'whole-building'),
-           'UF_CRM_1544524903217' => $this->getDateActualization($this->getValue($item, 'ActualizationDate')),
+           'UF_CRM_1544524903217' => $this->getDate($this->getValue($item, 'ActualizationDate')),
+           'UF_CRM_1541056313'    => (int)$this->getValue($item, 'lease-duration'),
            'UF_CRM_1556017573094' => $this->getValue($item, 'autotext'),
            'UF_CRM_1556017644158' => $this->getFlag($item,  'BrokerOnDuty'),
            'UF_CRM_1540371455'    => $this->getFlag($item,  'is-new-construction') ? self::IS_NEW_CONSTRUCTION : FALSE,
@@ -99,10 +103,29 @@ class ObjectParser extends Parser {
 
          ];
 
+         if($arResult['CATEGORY_ID'] ==  self::CATEGORY_MAP['Арендный бизнес']) {
+
+
+            $arResult['UF_CRM_1541056258'] = $this->getValue($item, 'lease-date');
+
+          
+         }
       }
      }
     
      return array_splice($arResult, 0, LIMIT);
+
+  }
+
+  protected function fireEvent(array &$event) : bool {
+ 
+    /*$eventOnAfterCrmUpdate = new Event('crm', 'OnAfterCrmDealUpdate',[$event]);
+    $eventOnAfterCrmUpdate->send();
+  
+    $eventOnBeforeCrmUpdate = new Event('crm', 'OnBeforeCrmDealUpdate',[$event]);
+    $eventOnBeforeCrmUpdate->send();*/
+
+    return true;
 
   }
 
@@ -186,14 +209,6 @@ class ObjectParser extends Parser {
     }
 
     return self::METRO_TIME_DEFAULT;
-
-  }
-
-  private function getDateActualization(string $dateTime) : string {
-
-    $date = new \DateTime($dateTime);
-
-    return $date->format("d.m.Y");
 
   }
 
