@@ -119,10 +119,11 @@ class ObjectParser extends Parser {
 
   protected function fireEvent(array &$event) : bool {
  
-    /*$eventOnAfterCrmUpdate = new Event('crm', 'OnAfterCrmDealUpdate',[$event]);
+    /*
+    $eventOnAfterCrmUpdate = new Event('crm', 'OnAfterCrmDealUpdate', $event);
     $eventOnAfterCrmUpdate->send();
   
-    $eventOnBeforeCrmUpdate = new Event('crm', 'OnBeforeCrmDealUpdate',[$event]);
+    $eventOnBeforeCrmUpdate = new Event('crm', 'OnBeforeCrmDealUpdate', $event);
     $eventOnBeforeCrmUpdate->send();*/
 
     return true;

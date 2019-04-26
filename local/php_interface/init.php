@@ -192,7 +192,6 @@ function setAdvertisingStatus(&$arFields) : void {
 
   if($arFields['UF_CRM_1544521987'] == 0) {
 
-
     $UF = new CUserTypeManager;
 
     $fields = [
