@@ -71,12 +71,13 @@ div[data-cid="UF_CRM_1542089326915"] { /* кол-во конкурентов */
 /*
  поля только для чтения
 */
+.read-only :before,
 .crm-entity-card-widget-title :before,
 div[data-cid="UF_CRM_1545649289833"] :before, /*  Реальная цена */
 div[data-cid="UF_CRM_1542089326915"] :before, /* кол-во конкурентов */
 div[data-cid="UF_CRM_1540554743072"] :before, /* стоимость за 1 кв.м. в год */
 div[data-cid="UF_CRM_1544425067"] :before, /* Стоимость объекта в год */
-div[data-cid="UF_CRM_1544446024"] :before, /* Рейтинг */
+
 div[data-cid="OPPORTUNITY_WITH_CURRENCY"] :before, /* */
 div[data-cid="UF_CRM_1544431330"] :before, /* Окупаемость */
 div[data-cid="UF_CRM_1541067577722"] :before,  /* */
@@ -88,7 +89,7 @@ div[data-cid="UF_CRM_1544524903217"] :before, /* Дата актуализаци
 div[data-cid="UF_CRM_1544528494"] :before { /* Признак актуальности объекта */
   content: ' ';
   width: 100%;
-  height: 50px;
+  height: 55px;
   position: absolute;
   top: -10px;
   left: 0px;
@@ -98,19 +99,18 @@ div[data-cid="UF_CRM_1544528494"] :before { /* Признак актуально
 .crm-entity-card-widget-title :before {
    width: calc(100% - 70px)
 }
+.read-only .field-item input,
 div[data-cid="UF_CRM_1545649289833"] .field-item input,
 div[data-cid="UF_CRM_1542089326915"] .field-item input,
 div[data-cid="UF_CRM_1540554743072"] .field-item input,
 div[data-cid="UF_CRM_1541067577722"] .field-item input, 
 div[data-cid="UF_CRM_1541067645026"] .field-item input,
-div[data-cid="UF_CRM_1544446024"].field-item input,
 div[data-cid="UF_CRM_1544431330"] .field-item input,
 div[data-cid="UF_CRM_1544425067"] .field-item input,
 div[data-cid="UF_CRM_1541072151310"] .field-item input, 
 div[data-cid="UF_CRM_1541072168373"] .field-item input,
 div[data-cid="UF_CRM_1544521987"] .field-item input,
 div[data-cid="UF_CRM_1544524903217"] .field-item input,
-div[data-cid="UF_CRM_1544446024"] .field-item input,
 div[data-cid="UF_CRM_1544528494"] .field-item input,
 div[data-cid="OPPORTUNITY_WITH_CURRENCY"]  input,
 div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-select {

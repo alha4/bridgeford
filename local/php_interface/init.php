@@ -154,6 +154,14 @@ function setRealPrice(&$arFields) : void {
  */
 function setRaiting(&$arFields) : void {
 
+  global $USER;
+
+  if($USER->isAdmin()) {
+
+    return;
+
+  }
+
   $select = ['UF_CRM_1540456417','UF_CRM_1556185907','UF_CRM_1542089326915','UF_CRM_1541072013901','UF_CRM_1556186036149','UF_CRM_1556182166156','UF_CRM_1556182207180'];
 
   $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], $select);

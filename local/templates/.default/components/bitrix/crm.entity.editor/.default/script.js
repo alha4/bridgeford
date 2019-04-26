@@ -265,7 +265,19 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			return false;
 
 		},
-		
+
+		readOnly : function(exp) {
+
+			const node = this.node(exp) || this.nodeSelect(exp);
+	 
+			if(node && node.classList) {
+	 
+				 node.classList.add("read-only");
+	 
+			}
+	 
+		},
+	 
 		initializeGeoEvent : function() {
 
 			setTimeout( () => {
@@ -2452,6 +2464,14 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						
 						break;
 
+					}
+
+					if(!this.isAdmin()) {
+
+						 this.readOnly('UF_CRM_1544446024');
+						 
+						 console.log('Не админ');
+						 
 					}
 					
 				  setTimeout(() => {
