@@ -26,6 +26,8 @@ class ObjectParser extends Parser {
        
   ];
 
+  private $arFiles = [];
+
   protected function execute(\DOMElement $document) : array {
 
      $nodes = $document->childNodes;
@@ -64,8 +66,10 @@ class ObjectParser extends Parser {
            'UF_CRM_1540384963'    => $this->getValue($item, 'floor'),
            'UF_CRM_1540371585'    => $this->getValue($item, 'floors-total'),
            'UF_CRM_1540456608'    => $this->enumID($this->taxMorphology($this->getValue($item, 'taxation')), 'UF_CRM_1540456608'),
-           'UF_CRM_1540532330'    => $this->getPhoto($photos),
-           'UF_CRM_1540532459'    => $this->getPhoto($explition),
+      
+           'UF_CRM_1540532330'    => [1111],
+           'UF_CRM_1540532459'    => [2222],
+
            'UF_CRM_1540895373'    => $this->getPerson($this->getValue($item, 'ActualizationPerson')),
            'UF_CRM_1540886934'    => $this->getPerson($this->getValue($item, 'Broker')),
            'UF_CRM_1540456473'    => self::CURRENCY_TYPE,
@@ -105,11 +109,12 @@ class ObjectParser extends Parser {
 
          if($arResult['CATEGORY_ID'] ==  self::CATEGORY_MAP['Арендный бизнес']) {
 
-
             $arResult['UF_CRM_1541056258'] = $this->getValue($item, 'lease-date');
-
           
          }
+
+         $this->arFiles[] = ['UF_CRM_1540532330' => $this->getPhoto($photos), 'UF_CRM_1540532459' => $this->getPhoto($explition)];
+
       }
      }
     
@@ -124,7 +129,18 @@ class ObjectParser extends Parser {
     $eventOnAfterCrmUpdate->send();
   
     $eventOnBeforeCrmUpdate = new Event('crm', 'OnBeforeCrmDealUpdate', $event);
-    $eventOnBeforeCrmUpdate->send();*/
+    $eventOnBeforeCrmUpdate->send();
+
+    $afterEvents = GetModuleEvents('crm', 'OnAfterCrmDealUpdate');
+
+    while ($arEvent = $afterEvents->Fetch()) {
+              
+      ExecuteModuleEventEx($arEvent, array(&$event));
+
+    }*/
+
+    
+    $this->saveFiles($event['ID']);
 
     return true;
 
@@ -132,9 +148,9 @@ class ObjectParser extends Parser {
 
   private function getPhoto(\DOMNodeList $nodes)  {
 
-    $photos = [1];
+    $photos = [];
 
-   /* foreach($nodes as $photo) {
+    foreach($nodes as $photo) {
 
     if($photo->nodeValue) {
 
@@ -143,14 +159,33 @@ class ObjectParser extends Parser {
        $arFile['del'] = 'Y';
        $arFile['MODULE_ID'] = 'crm';
 
-       $photos[] = \CFile::SaveFile($arFile,'crm_deal_rent');
+       $photos[] = $arFile; 
 
      }
 
-    }*/
+    }
     
     return $photos;
 
+  }
+
+  private function saveFiles(int $id) : void {
+
+    foreach($this->arFiles as $files) {
+
+      foreach($files as $code => $value) {
+    
+         $ufManager = new \CUserTypeManager;
+         
+         $arFields = ["$code" => $value];
+
+         $ufManager->Update('CRM_DEAL', $id, $arFields);
+
+         #echo $id,' ', print_r($arFields, 1);
+
+      }
+    
+    }
   }
 
   private function getSemantic(?\DOMNodeList $semantics) : array {
