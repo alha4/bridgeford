@@ -41,7 +41,7 @@ abstract class Parser {
 
              $item['ID'] = $id;
 
-             echo 'запуск события <br>';
+             #echo "запуск события $id <br>";
 
              $this->fireEvent($item);
 
@@ -49,7 +49,7 @@ abstract class Parser {
       }
     }
 
-    return ['status' => 200, /*'data' => $data*/ 'errors' => $this->errors ];
+    return ['status' => 200, 'data' => $data, 'errors' => $this->errors ];
 
   }
 

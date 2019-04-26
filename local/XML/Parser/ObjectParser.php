@@ -26,15 +26,21 @@ class ObjectParser extends Parser {
        
   ];
 
-  private $arFiles = [];
+  private $arFiles;
 
   protected function execute(\DOMElement $document) : array {
 
      $nodes = $document->childNodes;
 
+     $this->arFiles = [];
+
      $arResult = [];
 
+     $iter = 1;
+
      foreach($nodes as $item) {
+
+      if($iter > LIMIT) break;
 
       if($item->nodeType == self::$NODE_ELEMENT && $item->nodeName == 'offer') {
 
@@ -60,6 +66,7 @@ class ObjectParser extends Parser {
            'UF_CRM_1540203144'    => $this->enumID($this->getValue($item, 'moscow-ring'), 'UF_CRM_1540203144'),
            'UF_CRM_1555933663301' => $this->getValue($item, 'price'),
            'UF_CRM_1545649289833' => $this->getValue($item, 'price_st'),
+           'UF_CRM_1540456417'    => $this->getValue($item, 'price'),
            'UF_CRM_1540384944'    => $this->getValue($item, 'space'),
            'UF_CRM_1540385060'    => $this->getValue($item, 'ceiling'),
            'UF_CRM_1540385112'    => $this->getValue($item, 'electricity'),
@@ -107,39 +114,43 @@ class ObjectParser extends Parser {
 
          ];
 
-         if($arResult['CATEGORY_ID'] ==  self::CATEGORY_MAP['Арендный бизнес']) {
+         if($arResult['CATEGORY_ID'] == self::CATEGORY_MAP['Арендный бизнес']) {
 
             $arResult['UF_CRM_1541056258'] = $this->getValue($item, 'lease-date');
           
          }
 
-         $this->arFiles[] = ['UF_CRM_1540532330' => $this->getPhoto($photos), 'UF_CRM_1540532459' => $this->getPhoto($explition)];
+         $this->arFiles[] = ['UF_CRM_1540532330' => $this->getPhoto($photos), 
+                             'UF_CRM_1540532459' => $this->getPhoto($explition)];
 
+          
+        $iter++;
       }
-     }
-    
-     return array_splice($arResult, 0, LIMIT);
+    }
+
+    return array_splice($arResult, 0, LIMIT);
 
   }
 
   protected function fireEvent(array &$event) : bool {
  
-    /*
-    $eventOnAfterCrmUpdate = new Event('crm', 'OnAfterCrmDealUpdate', $event);
-    $eventOnAfterCrmUpdate->send();
   
-    $eventOnBeforeCrmUpdate = new Event('crm', 'OnBeforeCrmDealUpdate', $event);
-    $eventOnBeforeCrmUpdate->send();
-
     $afterEvents = GetModuleEvents('crm', 'OnAfterCrmDealUpdate');
 
     while ($arEvent = $afterEvents->Fetch()) {
               
       ExecuteModuleEventEx($arEvent, array(&$event));
 
-    }*/
+    }
 
-    
+    $beforeEvents = GetModuleEvents('crm', 'OnBeforeCrmDealUpdate');
+
+    while($arEvent = $beforeEvents->Fetch()) {
+              
+      ExecuteModuleEventEx($arEvent, array(&$event));
+
+    }
+
     $this->saveFiles($event['ID']);
 
     return true;
@@ -152,10 +163,11 @@ class ObjectParser extends Parser {
 
     foreach($nodes as $photo) {
 
-    if($photo->nodeValue) {
+     if($photo->nodeValue) {
 
        $arFile = \CFile::MakeFileArray($photo->nodeValue);
 
+       $arFile['name'] = strtolower(str_replace(" ","", $arFile['name']));
        $arFile['del'] = 'Y';
        $arFile['MODULE_ID'] = 'crm';
 
@@ -171,7 +183,9 @@ class ObjectParser extends Parser {
 
   private function saveFiles(int $id) : void {
 
-    foreach($this->arFiles as $files) {
+    $files = array_shift($this->arFiles);
+
+    foreach($files as $file) {
 
       foreach($files as $code => $value) {
     
@@ -181,10 +195,7 @@ class ObjectParser extends Parser {
 
          $ufManager->Update('CRM_DEAL', $id, $arFields);
 
-         #echo $id,' ', print_r($arFields, 1);
-
       }
-    
     }
   }
 

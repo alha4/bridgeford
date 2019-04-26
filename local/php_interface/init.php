@@ -151,12 +151,13 @@ function setRealPrice(&$arFields) : void {
  * UF_CRM_1544446024    - Рейтинг
  * UF_CRM_1556182166156 - Тип вознаграждения
  * UF_CRM_1556182207180 - Фиксированная оплата
+ * UF_CRM_1556277658242 - Ручное заполнение рейтинга
  */
 function setRaiting(&$arFields) : void {
 
   global $USER;
 
-  if($USER->isAdmin()) {
+  if($USER->isAdmin() && $arFields['UF_CRM_1556277658242'] == 1) {
 
     return;
 
