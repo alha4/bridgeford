@@ -67,13 +67,13 @@ trait ParserHelper {
     while($enum = $enumResult->GetNext()) {
   
       if($enum['VALUE'] == $value) {
-    
+
            return $enum['ID'];
     
-        }
       }
+    }
   
-     return -1;
+    return -1;
 
    }
 

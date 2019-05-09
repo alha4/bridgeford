@@ -131,7 +131,9 @@ class ObjectParser extends Parser {
            'UF_CRM_1557383288525' => $this->getFlag($item,  'highlightOnCzian')
          ];
 
-         $arResult[ $internal_id ][ self::SEMANTIC_CODE[$type]  ] = $this->getSemantic($semantic);
+         $semantic_code = self::SEMANTIC_CODE[$type];
+
+         $arResult[ $internal_id ][  $semantic_code  ] = $this->getSemantic($semantic, $semantic_code);
 
          if($type == 'Арендный бизнес') {
 
@@ -227,13 +229,13 @@ class ObjectParser extends Parser {
    
   }
 
-  private function getSemantic(?\DOMNodeList $semantics) : array {
+  private function getSemantic(?\DOMNodeList &$semantics, string &$code) : array {
 
     $arResult = [];
 
     foreach($semantics as $item) {
 
-      if($enum_id = $this->enumID($item->nodeValue, 'UF_CRM_1540974006') != -1) {
+      if( ($enum_id = $this->enumID($item->nodeValue, $code)) != -1) {
 
          $arResult[] = $enum_id;
 

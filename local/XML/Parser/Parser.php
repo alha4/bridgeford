@@ -49,7 +49,7 @@ abstract class Parser {
       }
     }
 
-    return ['status' => 200, 'data' => $data, 'errors' => $this->errors ];
+    return ['status' => 200, /*'data' => $data, */ 'errors' => $this->errors ];
 
   }
 
