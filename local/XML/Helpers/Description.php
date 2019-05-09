@@ -258,6 +258,15 @@ trait Description {
 
                 if($index == 'UF_CRM_1540371585') {
 
+                /**
+                 * считаем этажи
+		 * if($arFields['UF_CRM_1540371585'] == 1 || $arFields['UF_CRM_1540371585'] == 21 || $arFields['UF_CRM_1540371585'] == 31) { $multi_text = добавляем к $arFields['UF_CRM_1540371585'] "-но" }
+		 * if($arFields['UF_CRM_1540371585'] > 1 && $arFields['UF_CRM_1540371585'] < 5) { $multi_text = добавляем к $arFields['UF_CRM_1540371585'] "-х" }
+		 * if($arFields['UF_CRM_1540371585'] >= 5 && $arFields['UF_CRM_1540371585'] < 21) { $multi_text = добавляем к $arFields['UF_CRM_1540371585'] "-и" }
+		 * if($arFields['UF_CRM_1540371585'] > 21 && $arFields['UF_CRM_1540371585'] < 25) { $multi_text = добавляем к $arFields['UF_CRM_1540371585'] "-х" }
+		 * if($arFields['UF_CRM_1540371585'] >= 25 && $arFields['UF_CRM_1540371585'] < 31) { $multi_text = добавляем к $arFields['UF_CRM_1540371585'] "-и" }
+                 */
+
                     $multi_text = $this->floorsName( enumValue((int)$arFields['UF_CRM_1555070914'], 'UF_CRM_1555070914'), $multi_text);
 
                 }

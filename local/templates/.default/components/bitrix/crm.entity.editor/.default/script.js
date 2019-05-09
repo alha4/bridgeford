@@ -308,7 +308,21 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		showGeoFields : function() {
 
-	    if(this.node("UF_CRM_1540202667")) {
+			if(this.nodeSelect("UF_CRM_1540202667")) {
+
+				const regionValue  = this.nodeSelectValue(this.nodeSelect("UF_CRM_1540202667"));
+						
+		    if(regionValue) {
+
+				   this.geoView(regionValue);
+	  
+	 	    } else {
+
+				  console.log('Не готов [Регион] география');
+				 
+			  }
+
+	   } else if(this.node("UF_CRM_1540202667")) {
 
 			const geoControl  = this.node("UF_CRM_1540202667"),
 
@@ -978,9 +992,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 								 cashing      = this.nodeInput('UF_CRM_1541067645026'), //доходность
 								 payback      = this.nodeInput('UF_CRM_1544431330'), //окупаемость
 
-								 paybackValue =(priceObj / priceMAP).toFixed(1);
+								 paybackValue =  (priceObj / priceMAP).toFixed(1);
 
-								 cashing.value = (priceMAP / priceObj) * 100 + "%";	
+								 cashing.value = ((priceMAP / priceObj).toFixed(2) * 100)  + "%";	
 
 								 payback.value = this.precentToDate(paybackValue);
 				}
@@ -2469,6 +2483,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					if(!this.isAdmin()) {
 
 						 this.readOnly('UF_CRM_1544446024');
+						 this.readOnly('UF_CRM_1556277658242');
 						 
 						 console.log('Не админ');
 						 

@@ -7,6 +7,7 @@ trait ParserHelper {
   protected static $NODE_ELEMENT = 1;
   protected static $NODE_ATTRIBUTE = 2;
   protected static $NODE_TEXT = 3;
+  protected static $METRO_DEFAULT = 159;
 
   protected function buildMorphology(string $value) : string {
 
@@ -104,7 +105,7 @@ trait ParserHelper {
 
      $metro = \CIBlockElement::GetList(['NAME' => 'DESC'], ['%NAME' => $value, 'IBLOCK_ID' => 29], false, false, ['ID'])->Fetch();
 
-     return $metro['ID'];
+     return $metro['ID'] ? : self::$METRO_DEFAULT;
 
    }
 

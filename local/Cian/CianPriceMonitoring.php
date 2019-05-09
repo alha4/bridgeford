@@ -320,11 +320,11 @@ final class CianPriceMonitoring {
 
    }
 
-   return false;
+   return null;
 
   }  
 
-  return false;
+  return null;
 
  }
  /**

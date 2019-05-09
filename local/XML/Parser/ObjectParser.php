@@ -18,12 +18,26 @@ class ObjectParser extends Parser {
 
   private const IS_NEW_CONSTRUCTION = 82;
 
+  private const LEASEHOLDER = 248;
+
+  private const DEFAULT_CITY = 'Москва';
+
+  private const NOT_ACTUAL = 'не актуально';
+
   private const CATEGORY_MAP = [
 
      'Помещение в аренду'   => 0,
      'Помещение на продажу' => 1,
      'Арендный бизнес'      => 2
        
+  ];
+
+  private const SEMANTIC_CODE = [
+
+    'Помещение в аренду'   => 'UF_CRM_1540974006',
+    'Помещение на продажу' => 'UF_CRM_1544172451',
+    'Арендный бизнес'      => 'UF_CRM_1544172560'
+
   ];
 
   private $arFiles;
@@ -54,9 +68,11 @@ class ObjectParser extends Parser {
 
          $purpose = $item->getElementsByTagName('object-purpose')[0]->childNodes;
 
-         $arResult[] =  [
+         $internal_id = $item->getAttribute('internal-id');
 
-           'ORIGIN_ID'   => $item->getAttribute('internal-id'),
+         $arResult[ $internal_id ] =  [
+
+           'ORIGIN_ID'   => $internal_id,
            'CATEGORY_ID' => self::CATEGORY_MAP[$type],
            'TITLE'       => $this->getTitle($type, $item),
            'UF_CRM_1540202889'    => $this->enumID($this->getValue($item,'street-type'), 'UF_CRM_1540202889'),
@@ -65,8 +81,9 @@ class ObjectParser extends Parser {
            'UF_CRM_1540202667'    => $this->enumID($this->getValue($item, 'region'), 'UF_CRM_1540202667'),
            'UF_CRM_1540203144'    => $this->enumID($this->getValue($item, 'moscow-ring'), 'UF_CRM_1540203144'),
            'UF_CRM_1555933663301' => $this->getValue($item, 'price'),
-           'UF_CRM_1545649289833' => $this->getValue($item, 'price_st'),
+           'UF_CRM_1545649289833' => (int)$this->getValue($item, 'price'),
            'UF_CRM_1540456417'    => $this->getValue($item, 'price'),
+           'UF_CRM_1541072013901' => $this->getValue($item, 'price'),
            'UF_CRM_1540384944'    => $this->getValue($item, 'space'),
            'UF_CRM_1540385060'    => $this->getValue($item, 'ceiling'),
            'UF_CRM_1540385112'    => $this->getValue($item, 'electricity'),
@@ -84,19 +101,19 @@ class ObjectParser extends Parser {
            'UF_CRM_1540202900'    => $this->getValue($item, 'street-name'),
            'UF_CRM_1540202908'    => $this->getValue($item, 'building-number'),
            'UF_CRM_1540203111'    => $this->enumID($this->getValue($item, 'Moscow-area'),'UF_CRM_1540203111'),
-           'UF_CRM_1540202817'    => $this->getValue($item, 'town'),
+           'UF_CRM_1540202817'    => $this->getValue($item, 'town') == 'не актуально' ? self::DEFAULT_CITY : $this->getValue($item, 'town'),
            'UF_CRM_1540385262'    => $this->enumID($this->repairMorphology(mb_ucfirst($this->getValue($item, 'renovation'))), 'UF_CRM_1540385262'),
            'UF_CRM_1541055237379' => $this->enumID($this->getValue($item, 'leaseholder-standart-name') ,'UF_CRM_1541055237379'),
            'UF_CRM_1540202766'    => $this->getValue($item, 'district'),
            'UF_CRM_1554303694'    => $this->getValue($item, 'Comission'),
-           'UF_CRM_1540202807'    => self::CITY_TYPE,
+           'UF_CRM_1540202807'    => $this->enumID($this->getValue($item, 'town-type'),'UF_CRM_1540202807') ? : self::CITY_TYPE,
            'UF_CRM_1540203015'    => $this->getMetroTime($item),
-           'UF_CRM_1540202747'    => self::REGION_TYPE,
+           'UF_CRM_1540202747'    => $this->enumID($this->getValue($item, 'district-type'),'UF_CRM_1540202747') ? : self::REGION_TYPE,
            'UF_CRM_1540385040'    => $this->enumID(mb_ucfirst($this->getValue($item, 'entrance')),'UF_CRM_1540385040'),
            'UF_CRM_1543406565'    => $this->getMetro($this->getValue($item, 'subway')),
-           'UF_CRM_1540974006'    => $this->getSemantic($semantic),
            'UF_CRM_1540392018'    => $this->getPurpose($purpose),
            'UF_CRM_1543834582'    => 1,
+           'UF_CRM_1545906357580' => 1,
            'UF_CRM_1543837331299' => $this->getFlag($item, 'publicOnCzian'),
            'UF_CRM_1543834597'    => $this->getFlag($item, 'publicOnYandex'),
            'UF_CRM_1540371938'    => $this->getFlag($item, 'is-mansion'),
@@ -110,14 +127,27 @@ class ObjectParser extends Parser {
            'UF_CRM_1556017644158' => $this->getFlag($item,  'BrokerOnDuty'),
            'UF_CRM_1540371455'    => $this->getFlag($item,  'is-new-construction') ? self::IS_NEW_CONSTRUCTION : FALSE,
            'UF_CRM_1552493240038' => $this->getValue($item, 'jk'),
-           'UF_CRM_1541004853118' => $this->getFlag($item,  'private-sale')
-
+           'UF_CRM_1541004853118' => $this->getFlag($item,  'private-sale'),
+           'UF_CRM_1557383288525' => $this->getFlag($item,  'highlightOnCzian')
          ];
 
-         if($arResult['CATEGORY_ID'] == self::CATEGORY_MAP['Арендный бизнес']) {
+         $arResult[ $internal_id ][ self::SEMANTIC_CODE[$type]  ] = $this->getSemantic($semantic);
 
-            $arResult['UF_CRM_1541056258'] = $this->getValue($item, 'lease-date');
-          
+         if($type == 'Арендный бизнес') {
+
+            $arResult[ $internal_id ]['UF_CRM_1541056258'] = $this->getValue($item, 'lease-date');
+
+            if($leaseholder = $this->getValue($item, 'leaseholder-name')) {
+
+              $arResult[$internal_id]['UF_CRM_1541055274251'] = $leaseholder;
+              $arResult[$internal_id]['UF_CRM_1541055237379'] = self::LEASEHOLDER;
+  
+           } else {
+
+              $arResult[$internal_id]['UF_CRM_1541055237379'] = $this->enumID($this->getValue($item, 'leaseholder-standart-name'), 'UF_CRM_1541055237379');
+
+           }
+        
          }
 
          $this->arFiles[] = ['UF_CRM_1540532330' => $this->getPhoto($photos), 
@@ -185,9 +215,7 @@ class ObjectParser extends Parser {
 
     $files = array_shift($this->arFiles);
 
-    foreach($files as $file) {
-
-      foreach($files as $code => $value) {
+    foreach($files as $code => $value) {
     
          $ufManager = new \CUserTypeManager;
          
@@ -195,8 +223,8 @@ class ObjectParser extends Parser {
 
          $ufManager->Update('CRM_DEAL', $id, $arFields);
 
-      }
     }
+   
   }
 
   private function getSemantic(?\DOMNodeList $semantics) : array {
@@ -239,11 +267,11 @@ class ObjectParser extends Parser {
     $valueFeet      = $this->getValue($node, 'subway-time-feet');
     $valueTransport = $this->getValue($node, 'subway-time-transport');
 
-    if($valueFeet) {
+    if($valueFeet != self::NOT_ACTUAL) {
 
         return $this->enumID( sprintf("%s %s пешком",$valueFeet, $valueFeet == 1 ? 'минута' : 'минут'), 'UF_CRM_1540203015');
 
-    } elseif($valueTransport) {
+    } elseif($valueTransport != self::NOT_ACTUAL) {
 
       if($valueTransport > self::METRO_MAX_TIME) {
 
@@ -251,7 +279,7 @@ class ObjectParser extends Parser {
 
       }
       
-      return $this->enumID( sprintf("%s минут на транспорте",$valueFeet), 'UF_CRM_1540203015');
+      return $this->enumID( sprintf("%s минут на транспорте", $valueTransport), 'UF_CRM_1540203015');
 
     }
 

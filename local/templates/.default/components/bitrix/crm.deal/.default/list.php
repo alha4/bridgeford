@@ -238,10 +238,13 @@ BX.PopupMenu.show('demo-popup-menu', BX('group_cmd'), [
 												 
 												 console.log(resp);
 
+												 location.reload();
+
 												 BX.closeWait(BX('group_cmd'));
 
 											 });
 
+                       
 											 this.popupWindow.close()
                     }
                 },
@@ -258,6 +261,8 @@ BX.PopupMenu.show('demo-popup-menu', BX('group_cmd'), [
 											 sendCommand('checkSite', function(resp) {
 												 
 												 console.log(resp);
+
+												 location.reload();
 
 												 BX.closeWait(BX('group_cmd'));
 

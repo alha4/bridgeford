@@ -19,7 +19,7 @@ class RentalRaiting extends BaseRaiting {
     if($this->object['UF_CRM_1556182166156'] == self::FIX_PRICE_TYPE) {
 
        $fixPrice = (float)$this->object['UF_CRM_1556182207180'];
-       $precent = (int) ($fixPrice / 100 / (float)$this->object['UF_CRM_1540456417']);
+       $precent = (int) ($fixPrice * 100 / (float)$this->object['UF_CRM_1540456417']);
 
 
     } else {
@@ -37,19 +37,19 @@ class RentalRaiting extends BaseRaiting {
 
       return 0;
 
-    } elseif($precent >= 100 && $precent <= 150) {
+    } elseif($precent >= 100 && $precent < 150) {
 
       return 3;
 
-    } elseif($precent == 150) {
+    } elseif($precent >= 150 && $precent < 200) {
 
       return 4;
 
-   } elseif($precent == 200) {
+   } elseif($precent >= 200) {
 
       return 5;
 
-   } elseif($precent == 50) {
+   } elseif($precent >= 50 && $precent < 100) {
 
       return 2;
 
@@ -57,7 +57,9 @@ class RentalRaiting extends BaseRaiting {
 
       return 1;
 
-   } 
+   }
+   
+   return 0;
 
   }
 
