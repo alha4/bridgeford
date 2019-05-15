@@ -45,6 +45,12 @@ trait ParserHelper {
 
   }
 
+  protected function regionMorphology(string $value) : string {
+
+    return str_replace('Московская область', 'Подмосковье', $value);
+
+  }
+
   protected function getValue(\DOMElement $node, string $code) : string {
 
     return $node->getElementsByTagName($code)[0]->nodeValue ? : 'не актуально';
@@ -68,7 +74,7 @@ trait ParserHelper {
   
       if($enum['VALUE'] == $value) {
 
-           return $enum['ID'];
+        return $enum['ID'];
     
       }
     }
@@ -93,8 +99,8 @@ trait ParserHelper {
 
    protected function getPerson(string $userName) : int {
 
-     $filter = array("NAME" => $userName, "CHECK_PERMISSIONS" => "N");
- 
+     $filter = array("NAME" => trim($userName), "CHECK_PERMISSIONS" => "N");
+
      $rsUsers = \CUser::GetList($sort = "NAME",$order = 'desc', $filter, ['SELECT' => ["ID"]]);
  
      return $rsUsers->Fetch()['ID'] ? : GENERAL_BROKER;

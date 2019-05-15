@@ -202,6 +202,19 @@ function sendCommand(cmd, callback = (agrs) => true) {
 
 BX.bind(BX('group_cmd'), 'click', function(e) {
 
+	BX.SidePanel.Instance.open("/crm/commands/", {
+                                      cacheable : false,
+                                      requestMethod : "post",
+                                      requestParams  : {
+																				sessid  : "<?=bitrix_sessid()?>",
+																				data  : getSelectedObject(),
+																				type : 'deal'
+                                      }
+                            });
+
+});
+
+/*
 BX.PopupMenu.show('demo-popup-menu', BX('group_cmd'), [
                 {
                     text: 'Реклама в циан', // Название пункта
@@ -291,7 +304,7 @@ BX.PopupMenu.show('demo-popup-menu', BX('group_cmd'), [
               }
 		});
 		
-});
+});*/
 
 BX.bind(BX('clean_favorite'), 'click', function(e) {
 

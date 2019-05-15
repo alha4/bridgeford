@@ -70,6 +70,19 @@ class ObjectParser extends Parser {
 
          $internal_id = $item->getAttribute('internal-id');
 
+         /**
+          * фильтр по объектам
+          */
+         if(\USE_FILTER == 'Y') {
+
+           if(!in_array($internal_id, \OBJECTS)) {
+
+               continue;
+
+           }
+
+         }
+
          $arResult[ $internal_id ] =  [
 
            'ORIGIN_ID'   => $internal_id,
@@ -78,7 +91,7 @@ class ObjectParser extends Parser {
            'UF_CRM_1540202889'    => $this->enumID($this->getValue($item,'street-type'), 'UF_CRM_1540202889'),
            'UF_CRM_1540371261836' => $this->enumID($this->buildMorphology($this->getValue($item, 'building-type')), 'UF_CRM_1540371261836'),
            'UF_CRM_1540384807664' => $this->enumID($this->roomMorphology($this->getValue($item, 'facility-type')), 'UF_CRM_1540384807664'),
-           'UF_CRM_1540202667'    => $this->enumID($this->getValue($item, 'region'), 'UF_CRM_1540202667'),
+           'UF_CRM_1540202667'    => $this->enumID($this->regionMorphology($this->getValue($item, 'region')), 'UF_CRM_1540202667'),
            'UF_CRM_1540203144'    => $this->enumID($this->getValue($item, 'moscow-ring'), 'UF_CRM_1540203144'),
            'UF_CRM_1555933663301' => $this->getValue($item, 'price'),
            'UF_CRM_1545649289833' => (int)$this->getValue($item, 'price'),
@@ -96,6 +109,7 @@ class ObjectParser extends Parser {
 
            'UF_CRM_1540895373'    => $this->getPerson($this->getValue($item, 'ActualizationPerson')),
            'UF_CRM_1540886934'    => $this->getPerson($this->getValue($item, 'Broker')),
+           'ASSIGNED_BY_ID'       => $this->getPerson($this->getValue($item, 'Broker')),
            'UF_CRM_1540456473'    => self::CURRENCY_TYPE,
            'UF_CRM_1540471409'    => $this->getValue($item, 'description'),
            'UF_CRM_1540202900'    => $this->getValue($item, 'street-name'),
@@ -103,7 +117,6 @@ class ObjectParser extends Parser {
            'UF_CRM_1540203111'    => $this->enumID($this->getValue($item, 'Moscow-area'),'UF_CRM_1540203111'),
            'UF_CRM_1540202817'    => $this->getValue($item, 'town') == 'не актуально' ? self::DEFAULT_CITY : $this->getValue($item, 'town'),
            'UF_CRM_1540385262'    => $this->enumID($this->repairMorphology(mb_ucfirst($this->getValue($item, 'renovation'))), 'UF_CRM_1540385262'),
-           'UF_CRM_1541055237379' => $this->enumID($this->getValue($item, 'leaseholder-standart-name') ,'UF_CRM_1541055237379'),
            'UF_CRM_1540202766'    => $this->getValue($item, 'district'),
            'UF_CRM_1554303694'    => $this->getValue($item, 'Comission'),
            'UF_CRM_1540202807'    => $this->enumID($this->getValue($item, 'town-type'),'UF_CRM_1540202807') ? : self::CITY_TYPE,
@@ -139,16 +152,21 @@ class ObjectParser extends Parser {
 
             $arResult[ $internal_id ]['UF_CRM_1541056258'] = $this->getValue($item, 'lease-date');
 
-            if($leaseholder = $this->getValue($item, 'leaseholder-name')) {
+            $leaseholder = $this->getValue($item, 'leaseholder-name');
+
+            if($leaseholder == '' || $leaseholder == self::NOT_ACTUAL) {
 
               $arResult[$internal_id]['UF_CRM_1541055274251'] = $leaseholder;
               $arResult[$internal_id]['UF_CRM_1541055237379'] = self::LEASEHOLDER;
   
-           } else {
+            } else {
 
               $arResult[$internal_id]['UF_CRM_1541055237379'] = $this->enumID($this->getValue($item, 'leaseholder-standart-name'), 'UF_CRM_1541055237379');
 
-           }
+            }
+
+            $arResult[ $internal_id ]['UF_CRM_1541055405'] = $this->enumID($this->getValue($item, 'leaseholder-type-1'), 'UF_CRM_1541055405');
+            $arResult[ $internal_id ]['UF_CRM_1541055672'] = $this->enumID($this->getValue($item, 'leaseholder-type-2'), 'UF_CRM_1541055672');
         
          }
 
