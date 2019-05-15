@@ -41,6 +41,12 @@ trait ParserHelper {
 
   protected function taxMorphology(string $value) : string {
 
+    if($value == '') {
+
+       return 'не известно';
+
+    }
+
     return str_replace('ОСН', 'Включая НДС', $value);
 
   }
@@ -53,7 +59,7 @@ trait ParserHelper {
 
   protected function getValue(\DOMElement $node, string $code) : string {
 
-    return $node->getElementsByTagName($code)[0]->nodeValue ? : 'не актуально';
+    return trim($node->getElementsByTagName($code)[0]->nodeValue) ? : 'не актуально';
 
   }
 

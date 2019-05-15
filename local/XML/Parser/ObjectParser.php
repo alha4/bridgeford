@@ -12,6 +12,14 @@ class ObjectParser extends Parser {
 
   private const CURRENCY_TYPE = 144;
 
+  private const OBJECT_STATUS_ACTIVE = 357;
+
+  private const OBJECT_IS_ACTUALITY = 329;
+
+  private const PRECENT_PRICE = 466;
+
+  private const FIX_PRICE = 467;
+
   private const METRO_TIME_DEFAULT = 290;
 
   private const METRO_MAX_TIME = 30;
@@ -37,6 +45,22 @@ class ObjectParser extends Parser {
     'Помещение в аренду'   => 'UF_CRM_1540974006',
     'Помещение на продажу' => 'UF_CRM_1544172451',
     'Арендный бизнес'      => 'UF_CRM_1544172560'
+
+  ];
+
+  private const CONTACT_TYPE_MAP = [
+ 
+     'Собственник' => 'CLIENT',
+     'Представитель собственника' => 'SUPPLIER',
+     'Агент' => 'PARTNER'
+
+  ];
+
+  private const COMPANY_TYPE_MAP = [
+ 
+    'Собственник' => 'CUSTOMER',
+    'Представитель собственника' => 'SUPPLIER',
+    'Агент' => 'COMPETITOR'
 
   ];
 
@@ -67,6 +91,10 @@ class ObjectParser extends Parser {
          $semantic = $item->getElementsByTagName('description-standardized')[0]->childNodes;
 
          $purpose = $item->getElementsByTagName('object-purpose')[0]->childNodes;
+
+         $commissionValue = $this->getValue($item, 'Comission');
+
+         $commissionType = $this->getTypeComission($commissionValue);
 
          $internal_id = $item->getAttribute('internal-id');
 
@@ -103,10 +131,14 @@ class ObjectParser extends Parser {
            'UF_CRM_1540384963'    => $this->getValue($item, 'floor'),
            'UF_CRM_1540371585'    => $this->getValue($item, 'floors-total'),
            'UF_CRM_1540456608'    => $this->enumID($this->taxMorphology($this->getValue($item, 'taxation')), 'UF_CRM_1540456608'),
-      
+           'UF_CRM_1541055727999' => $this->getValue($item, 'monthly-lease'),
+           'UF_CRM_1541056049'    => $this->getValue($item, 'annual-index'),
+           'UF_CRM_1557913229266' => $this->getValue($item, 'annotation'),
+           'UF_CRM_1556182166156' => $commissionType,
+           'UF_CRM_1540895685'    => $this->createOwner($item),
            'UF_CRM_1540532330'    => [1111],
            'UF_CRM_1540532459'    => [2222],
-
+ 
            'UF_CRM_1540895373'    => $this->getPerson($this->getValue($item, 'ActualizationPerson')),
            'UF_CRM_1540886934'    => $this->getPerson($this->getValue($item, 'Broker')),
            'ASSIGNED_BY_ID'       => $this->getPerson($this->getValue($item, 'Broker')),
@@ -118,7 +150,6 @@ class ObjectParser extends Parser {
            'UF_CRM_1540202817'    => $this->getValue($item, 'town') == 'не актуально' ? self::DEFAULT_CITY : $this->getValue($item, 'town'),
            'UF_CRM_1540385262'    => $this->enumID($this->repairMorphology(mb_ucfirst($this->getValue($item, 'renovation'))), 'UF_CRM_1540385262'),
            'UF_CRM_1540202766'    => $this->getValue($item, 'district'),
-           'UF_CRM_1554303694'    => $this->getValue($item, 'Comission'),
            'UF_CRM_1540202807'    => $this->enumID($this->getValue($item, 'town-type'),'UF_CRM_1540202807') ? : self::CITY_TYPE,
            'UF_CRM_1540203015'    => $this->getMetroTime($item),
            'UF_CRM_1540202747'    => $this->enumID($this->getValue($item, 'district-type'),'UF_CRM_1540202747') ? : self::REGION_TYPE,
@@ -127,6 +158,7 @@ class ObjectParser extends Parser {
            'UF_CRM_1540392018'    => $this->getPurpose($purpose),
            'UF_CRM_1543834582'    => 1,
            'UF_CRM_1545906357580' => 1,
+           'UF_CRM_1545199624'    => self::OBJECT_STATUS_ACTIVE,
            'UF_CRM_1543837331299' => $this->getFlag($item, 'publicOnCzian'),
            'UF_CRM_1543834597'    => $this->getFlag($item, 'publicOnYandex'),
            'UF_CRM_1540371938'    => $this->getFlag($item, 'is-mansion'),
@@ -144,13 +176,33 @@ class ObjectParser extends Parser {
            'UF_CRM_1557383288525' => $this->getFlag($item,  'highlightOnCzian')
          ];
 
+         if($commissionType == self::PRECENT_PRICE) {
+
+             $arResult[ $internal_id ]['UF_CRM_1556186036149'] = $commissionValue;
+
+          } elseif($commissionType == self::FIX_PRICE) {
+
+             $arResult[ $internal_id ]['UF_CRM_1556182207180'] = $commissionValue;
+
+         }
+
+         if($this->getValue($item, 'ActualizationDate') != self::NOT_ACTUAL) {
+
+             $arResult[ $internal_id ]['UF_CRM_1544528494'] = self::OBJECT_IS_ACTUALITY;
+ 
+         }
+
          $semantic_code = self::SEMANTIC_CODE[$type];
 
          $arResult[ $internal_id ][  $semantic_code  ] = $this->getSemantic($semantic, $semantic_code);
 
          if($type == 'Арендный бизнес') {
 
-            $arResult[ $internal_id ]['UF_CRM_1541056258'] = $this->getValue($item, 'lease-date');
+            if($this->getValue($item, 'lease-date') != '' && $this->getValue($item, 'lease-date') != self::NOT_ACTUAL) {
+
+                 $arResult[ $internal_id ]['UF_CRM_1541056258'] = $this->getValue($item, 'lease-date');
+
+            }
 
             $leaseholder = $this->getValue($item, 'leaseholder-name');
 
@@ -182,9 +234,32 @@ class ObjectParser extends Parser {
 
   }
 
+  private function getTypeComission(string $commission) : int {
+
+    if($commission == self::NOT_ACTUAL) {
+
+       return 0;
+        
+    }
+
+    return strpos($commission, '%') !== false ? self::PRECENT_PRICE : self::FIX_PRICE;
+
+  }
+
+  private function parseValue(string $value) : string {
+
+    if($value == self::NOT_ACTUAL) {
+
+       return '';
+
+    }
+
+    return $value;
+
+  }
+
   protected function fireEvent(array &$event) : bool {
  
-  
     $afterEvents = GetModuleEvents('crm', 'OnAfterCrmDealUpdate');
 
     while ($arEvent = $afterEvents->Fetch()) {
@@ -315,6 +390,84 @@ class ObjectParser extends Parser {
                    $this->getValue($item, 'building-number')
                   );
 
+  }
+
+  private function createOwner(\DOMElement $item) : int {
+
+    $legalEntity = $this->getValue($item, 'LegalEntity');
+
+
+    if($this->getValue($item,'FIO_sobstvennik') == self::NOT_ACTUAL) {
+
+       $name = $this->parseValue($this->getValue($item, 'Email_Sobstvennik'));
+       
+    } else {
+
+      [$name, $lastName] = explode(' ', $this->getValue($item,'FIO_sobstvennik'));
+
+    }
+
+    $contact = new \CCrmContact(false);
+
+    $arContact = [
+
+         'NAME' => $name,
+         'LAST_NAME'  => $lastName,
+         'TYPE_ID'    => self::CONTACT_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
+         'COMMENTS'   => $this->getValue($item,'OwnerComment'),
+         'WEB'        => $this->getValue($item,'www_link'),
+         'FM' => [
+
+            'EMAIL' => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item, 'Email_Sobstvennik'))]],
+            'PHONE' => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item, 'Tel_Sobstvennik'))]]  
+
+         ]
+    ];
+
+    if($legalEntity != self::NOT_ACTUAL) {
+
+       $company = new \CCrmCompany(false);
+
+       $arCompany = [
+         
+         'TITLE'        => $legalEntity, 
+         'COMPANY_TYPE' => self::COMPANY_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
+         'WEB'          => $this->getValue($item,'www_link')
+      
+      ];
+
+      $companyID = $company->Add($arCompany);
+      
+      $arContact['COMPANY_ID'] = $companyID;
+
+      $contact->Add($arContact);
+
+      if(!is_int($companyID)) {
+
+         $this->errors[] = $company->LAST_ERROR;
+
+         return 0;
+
+      } else {
+
+         return $companyID;
+
+      }
+    }
+
+    $id = $contact->Add($arContact);
+
+    if(!is_int($id)) {
+
+       $this->errors[] = $contact->LAST_ERROR;
+
+       return 0;
+
+    } else {
+
+       return $id;
+
+    }
   }
 
 }

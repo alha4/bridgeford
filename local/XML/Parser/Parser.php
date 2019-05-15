@@ -8,7 +8,7 @@ abstract class Parser {
 
   protected $path;
 
-  private $errors = [];
+  protected $errors = [];
 
   public function instance() : Parser {
 
@@ -61,7 +61,7 @@ abstract class Parser {
 
     }
 
-    throw new Error('error load xml document');
+    throw new \Error('error load xml \DOMDocument');
 
   }
 
