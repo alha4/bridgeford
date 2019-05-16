@@ -2012,7 +2012,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			}
 
-			return `${number} ${yearText}.`;
+			return `${number} лет.`;
 
 		},
 

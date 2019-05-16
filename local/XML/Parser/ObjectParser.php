@@ -111,6 +111,12 @@ class ObjectParser extends Parser {
 
          }
 
+         $price = (int)$this->getValue($item, 'price');
+
+         $square = (int)$this->getValue($item, 'space');
+
+         $MAP = $this->getValue($item, 'monthly-lease');
+
          $arResult[ $internal_id ] =  [
 
            'ORIGIN_ID'   => $internal_id,
@@ -122,16 +128,20 @@ class ObjectParser extends Parser {
            'UF_CRM_1540202667'    => $this->enumID($this->regionMorphology($this->getValue($item, 'region')), 'UF_CRM_1540202667'),
            'UF_CRM_1540203144'    => $this->enumID($this->getValue($item, 'moscow-ring'), 'UF_CRM_1540203144'),
            'UF_CRM_1555933663301' => $this->getValue($item, 'price'),
-           'UF_CRM_1545649289833' => (int)$this->getValue($item, 'price'),
-           'UF_CRM_1540456417'    => $this->getValue($item, 'price'),
-           'UF_CRM_1541072013901' => $this->getValue($item, 'price'),
-           'UF_CRM_1540384944'    => $this->getValue($item, 'space'),
+           'UF_CRM_1545649289833' => $price,
+           'UF_CRM_1540456417'    => $price,
+           'UF_CRM_1541072013901' => $price,
+           'UF_CRM_1544425067'    => \SaleFormatCurrency(round($price * 12, 2),'RUB'),
+           'UF_CRM_1541072151310' => \SaleFormatCurrency($price / $square,'RUB'),
+           'UF_CRM_1540384944'    => $square,
+           'UF_CRM_1541076330647' => $square,
+           'UF_CRM_1540554743072' => \SaleFormatCurrency(($price * 12) / $square, 'RUB'),
            'UF_CRM_1540385060'    => $this->getValue($item, 'ceiling'),
            'UF_CRM_1540385112'    => $this->getValue($item, 'electricity'),
            'UF_CRM_1540384963'    => $this->getValue($item, 'floor'),
            'UF_CRM_1540371585'    => $this->getValue($item, 'floors-total'),
            'UF_CRM_1540456608'    => $this->enumID($this->taxMorphology($this->getValue($item, 'taxation')), 'UF_CRM_1540456608'),
-           'UF_CRM_1541055727999' => $this->getValue($item, 'monthly-lease'),
+           'UF_CRM_1541055727999' => $MAP ,
            'UF_CRM_1541056049'    => $this->getValue($item, 'annual-index'),
            'UF_CRM_1557913229266' => $this->getValue($item, 'annotation'),
            'UF_CRM_1556182166156' => $commissionType,
@@ -219,6 +229,20 @@ class ObjectParser extends Parser {
 
             $arResult[ $internal_id ]['UF_CRM_1541055405'] = $this->enumID($this->getValue($item, 'leaseholder-type-1'), 'UF_CRM_1541055405');
             $arResult[ $internal_id ]['UF_CRM_1541055672'] = $this->enumID($this->getValue($item, 'leaseholder-type-2'), 'UF_CRM_1541055672');
+
+            /**
+             * доходность
+             */
+            $arResult[ $internal_id ]['UF_CRM_1541067645026'] = number_format( round( ceil($MAP / $price * 100), 2), 1, ".","." );
+
+           # echo $arResult[ $internal_id ]['UF_CRM_1541067645026'] ,'<br>';
+
+            /**
+             * окупаемость
+             */
+            $arResult[ $internal_id ]['UF_CRM_1544431330'] = $this->precentToDate( round($price / $MAP, 2), $arResult[ $internal_id ]['TITLE']);
+
+            #echo $arResult[ $internal_id ]['UF_CRM_1544431330'] ;
         
          }
 
@@ -468,6 +492,74 @@ class ObjectParser extends Parser {
        return $id;
 
     }
+  }
+
+  private function precentToDate(float $number, $name) : string {
+
+    $monthIndex = false;
+
+		if(($monthIndex = strpos($number, ".")) !== false) {
+
+		   $month = (float)("0.".substr($number, $monthIndex + 1));
+
+       $dateYear = (int)substr($number, 0, $monthIndex);
+        		
+       $yearText = '';
+        
+       $monthText = '';
+        
+       $monthValue = (int)(($month) * 365 / 30);
+
+		   if($dateYear == 1) {
+
+					$yearText = 'год';
+
+		   } elseif($dateYear > 1 && $dateYear <= 4 || ($dateYear >= 102 && $dateYear <= 104)) {
+
+				 	$yearText = 'года';
+
+			 } else {
+
+					$yearText = 'лет';
+
+			 }
+
+		   if($monthValue == 0) {
+
+					$monthValue = $monthText = '';
+				
+			 } else if($monthValue == 1) {
+
+					$monthText = 'месяц';
+
+			 } else if($monthValue > 1 && $monthValue <= 4) {
+
+				 	$monthText = 'месяца';
+
+			 } else {
+
+			  	$monthText = 'месяцев';
+
+       }
+
+			 if($monthValue > 0) {
+
+           $monthValue = ' и '.$monthValue;
+
+			 }
+				
+			 if($dateYear > 0) {
+
+				  return "$dateYear $yearText $monthValue {$monthText}.";
+
+			 }
+
+		   return "$monthValue {$monthText}.";
+
+			}
+
+			return "$number лет.";
+
   }
 
 }
