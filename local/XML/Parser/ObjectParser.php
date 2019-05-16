@@ -186,6 +186,11 @@ class ObjectParser extends Parser {
            'UF_CRM_1557383288525' => $this->getFlag($item,  'highlightOnCzian')
          ];
 
+         /**
+          * Агентское вознаграждение:
+          * UF_CRM_1556186036149 - процент
+          * UF_CRM_1556182207180 - фикс-я цена
+          */
          if($commissionType == self::PRECENT_PRICE) {
 
              $arResult[ $internal_id ]['UF_CRM_1556186036149'] = $commissionValue;
@@ -196,6 +201,9 @@ class ObjectParser extends Parser {
 
          }
 
+         /**
+          * Объект актуализирован: да
+          */
          if($this->getValue($item, 'ActualizationDate') != self::NOT_ACTUAL) {
 
              $arResult[ $internal_id ]['UF_CRM_1544528494'] = self::OBJECT_IS_ACTUALITY;
@@ -208,6 +216,9 @@ class ObjectParser extends Parser {
 
          if($type == 'Арендный бизнес') {
 
+            /**
+             * Дата подписания договора аренды
+             */
             if($this->getValue($item, 'lease-date') != '' && $this->getValue($item, 'lease-date') != self::NOT_ACTUAL) {
 
                  $arResult[ $internal_id ]['UF_CRM_1541056258'] = $this->getValue($item, 'lease-date');
@@ -216,31 +227,41 @@ class ObjectParser extends Parser {
 
             $leaseholder = $this->getValue($item, 'leaseholder-name');
 
+            /**
+             * Иное названия арендатора
+             */
             if($leaseholder == '' || $leaseholder == self::NOT_ACTUAL) {
 
-              $arResult[$internal_id]['UF_CRM_1541055274251'] = $leaseholder;
-              $arResult[$internal_id]['UF_CRM_1541055237379'] = self::LEASEHOLDER;
+               $arResult[$internal_id]['UF_CRM_1541055274251'] = $leaseholder;
+               $arResult[$internal_id]['UF_CRM_1541055237379'] = self::LEASEHOLDER;
   
             } else {
 
-              $arResult[$internal_id]['UF_CRM_1541055237379'] = $this->enumID($this->getValue($item, 'leaseholder-standart-name'), 'UF_CRM_1541055237379');
+             /**
+             * Название арендатора (стандартное)
+             */
+
+             $arResult[$internal_id]['UF_CRM_1541055237379'] = $this->enumID($this->getValue($item, 'leaseholder-standart-name'), 'UF_CRM_1541055237379');
 
             }
 
+        
             $arResult[ $internal_id ]['UF_CRM_1541055405'] = $this->enumID($this->getValue($item, 'leaseholder-type-1'), 'UF_CRM_1541055405');
             $arResult[ $internal_id ]['UF_CRM_1541055672'] = $this->enumID($this->getValue($item, 'leaseholder-type-2'), 'UF_CRM_1541055672');
 
             /**
              * доходность
-             */
+            */
+
             $arResult[ $internal_id ]['UF_CRM_1541067645026'] = number_format( round( ceil($MAP / $price * 100), 2), 1, ".","." );
 
-           # echo $arResult[ $internal_id ]['UF_CRM_1541067645026'] ,'<br>';
+            #echo $arResult[ $internal_id ]['UF_CRM_1541067645026'] ,'<br>';
 
             /**
              * окупаемость
-             */
-            $arResult[ $internal_id ]['UF_CRM_1544431330'] = $this->precentToDate( round($price / $MAP, 2), $arResult[ $internal_id ]['TITLE']);
+            */
+    
+            $arResult[ $internal_id ]['UF_CRM_1544431330'] = $this->precentToDate(round($price / $MAP, 2));
 
             #echo $arResult[ $internal_id ]['UF_CRM_1544431330'] ;
         
@@ -420,7 +441,6 @@ class ObjectParser extends Parser {
 
     $legalEntity = $this->getValue($item, 'LegalEntity');
 
-
     if($this->getValue($item,'FIO_sobstvennik') == self::NOT_ACTUAL) {
 
        $name = $this->parseValue($this->getValue($item, 'Email_Sobstvennik'));
@@ -483,7 +503,7 @@ class ObjectParser extends Parser {
 
     if(!is_int($id)) {
 
-       $this->errors[] = $contact->LAST_ERROR;
+       $this->errors[] = [ 'internal_id' => $item->getAttribute('internal-id') , 'error' => $contact->LAST_ERROR, 'data' => $arContact];
 
        return 0;
 
@@ -494,7 +514,7 @@ class ObjectParser extends Parser {
     }
   }
 
-  private function precentToDate(float $number, $name) : string {
+  private function precentToDate(float $number) : string {
 
     $monthIndex = false;
 

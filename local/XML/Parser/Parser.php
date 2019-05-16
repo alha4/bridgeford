@@ -71,7 +71,7 @@ abstract class Parser {
 
     if(!$ID = $deal->Add($entity)) {
 
-        $this->errors[] = $deal->LAST_ERROR;
+        $this->errors[] = ['internal_id' => $entity['ORIGIN_ID'] , 'error' =>  $deal->LAST_ERROR ];
 
         return false;
 
