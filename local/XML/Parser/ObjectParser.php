@@ -96,6 +96,8 @@ class ObjectParser extends Parser {
 
          $commissionType = $this->getTypeComission($commissionValue);
 
+         $legalEntity = $this->getValue($item, 'LegalEntity');
+
          $internal_id = $item->getAttribute('internal-id');
 
          /**
@@ -145,7 +147,6 @@ class ObjectParser extends Parser {
            'UF_CRM_1541056049'    => $this->getValue($item, 'annual-index'),
            'UF_CRM_1557913229266' => $this->getValue($item, 'annotation'),
            'UF_CRM_1556182166156' => $commissionType,
-           'UF_CRM_1540895685'    => $this->createOwner($item),
            'UF_CRM_1540532330'    => [1111],
            'UF_CRM_1540532459'    => [2222],
            'UF_CRM_1540895373'    => $this->getPerson($this->getValue($item, 'ActualizationPerson')),
@@ -184,6 +185,20 @@ class ObjectParser extends Parser {
            'UF_CRM_1541004853118' => $this->getFlag($item,  'private-sale'),
            'UF_CRM_1557383288525' => $this->getFlag($item,  'highlightOnCzian')
          ];
+
+         /**
+          * Собственник
+          */
+
+         if($legalEntity != self::NOT_ACTUAL) {
+
+             $arResult[ $internal_id ]['UF_CRM_1540895685'] = $this->createCompanyOwner($item, $legalEntity);
+
+         } else {
+
+             $arResult[ $internal_id ]['UF_CRM_1558086250'] = $this->createContactOwner($item);
+
+         }
 
          /**
           * Агентское вознаграждение:
@@ -400,21 +415,17 @@ class ObjectParser extends Parser {
 
   }
 
-  private function createOwner(\DOMElement $item) : int {
-
-    $legalEntity = $this->getValue($item, 'LegalEntity');
+  private function createContactOwner(\DOMElement $item, ?int $companyID = null) : int {
 
     if($this->getValue($item,'FIO_sobstvennik') == self::NOT_ACTUAL) {
 
-       $name = $this->parseValue($this->getValue($item, 'Email_Sobstvennik'));
-       
+      $name = $this->parseValue($this->getValue($item, 'Email_Sobstvennik'));
+      
     } else {
 
       [$name, $lastName] = explode(' ', $this->getValue($item,'FIO_sobstvennik'));
 
     }
-
-    $contact = new \CCrmContact(false);
 
     $arContact = [
 
@@ -422,45 +433,22 @@ class ObjectParser extends Parser {
          'LAST_NAME'  => $lastName,
          'TYPE_ID'    => self::CONTACT_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
          'COMMENTS'   => $this->parseValue($this->getValue($item,'OwnerComment')),
-         'WEB'        => $this->parseValue($this->getValue($item,'www_link')),
          'FM' => [
 
             'EMAIL' => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item, 'Email_Sobstvennik'))]],
-            'PHONE' => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item, 'Tel_Sobstvennik'))]]  
+            'PHONE' => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item, 'Tel_Sobstvennik'))]],
+            'WEB'   => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item,'www_link')), 'VALUE_TYPE' => 'WORK']]    
 
          ]
     ];
 
-    if($legalEntity != self::NOT_ACTUAL) {
-
-       $company = new \CCrmCompany(false);
-
-       $arCompany = [
-         
-         'TITLE'        => $legalEntity, 
-         'COMPANY_TYPE' => self::COMPANY_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
-         'WEB'          => $this->parseValue($this->getValue($item,'www_link'))
+    if($companyID) {
       
-      ];
+       $arContact['COMPANY_ID'] = $companyID;
 
-      $companyID = $company->Add($arCompany);
-      
-      $arContact['COMPANY_ID'] = $companyID;
-
-      $contact->Add($arContact);
-
-      if(!is_int($companyID)) {
-
-         $this->errors[] = $company->LAST_ERROR;
-
-         return 0;
-
-      } else {
-
-         return $companyID;
-
-      }
     }
+
+    $contact = new \CCrmContact(false);
 
     $id = $contact->Add($arContact);
 
@@ -473,6 +461,43 @@ class ObjectParser extends Parser {
     } else {
 
        return $id;
+
+    }
+
+  }
+
+  private function createCompanyOwner(\DOMElement $item, string $legalEntity) : int {
+
+    $company = new \CCrmCompany(false);
+
+    $arCompany = [
+         
+         'TITLE'        => $legalEntity, 
+         'COMPANY_TYPE' => self::COMPANY_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
+         'FM' => [ 
+           'WEB'   => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item,'www_link')),'VALUE_TYPE' => 'WORK']] 
+         ]   
+      
+    ];
+
+    $companyID = $company->Add($arCompany);
+
+    if($this->getValue($item,'FIO_sobstvennik')   != self::NOT_ACTUAL || 
+       $this->getValue($item,'Email_Sobstvennik') != self::NOT_ACTUAL) {
+
+       $this->createContactOwner($item, $companyID);
+
+     }
+
+     if(!is_int($companyID)) {
+
+       $this->errors[] = $company->LAST_ERROR;
+
+       return 0;
+
+     } else {
+
+       return $companyID;
 
     }
   }
