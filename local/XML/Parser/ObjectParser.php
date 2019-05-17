@@ -141,14 +141,13 @@ class ObjectParser extends Parser {
            'UF_CRM_1540384963'    => $this->getValue($item, 'floor'),
            'UF_CRM_1540371585'    => $this->getValue($item, 'floors-total'),
            'UF_CRM_1540456608'    => $this->enumID($this->taxMorphology($this->getValue($item, 'taxation')), 'UF_CRM_1540456608'),
-           'UF_CRM_1541055727999' => $MAP ,
+           'UF_CRM_1541055727999' => $MAP,
            'UF_CRM_1541056049'    => $this->getValue($item, 'annual-index'),
            'UF_CRM_1557913229266' => $this->getValue($item, 'annotation'),
            'UF_CRM_1556182166156' => $commissionType,
            'UF_CRM_1540895685'    => $this->createOwner($item),
            'UF_CRM_1540532330'    => [1111],
            'UF_CRM_1540532459'    => [2222],
- 
            'UF_CRM_1540895373'    => $this->getPerson($this->getValue($item, 'ActualizationPerson')),
            'UF_CRM_1540886934'    => $this->getPerson($this->getValue($item, 'Broker')),
            'ASSIGNED_BY_ID'       => $this->getPerson($this->getValue($item, 'Broker')),
@@ -219,7 +218,7 @@ class ObjectParser extends Parser {
             /**
              * Дата подписания договора аренды
              */
-            if($this->getValue($item, 'lease-date') != '' && $this->getValue($item, 'lease-date') != self::NOT_ACTUAL) {
+            if($this->getValue($item, 'lease-date') != self::NOT_ACTUAL) {
 
                  $arResult[ $internal_id ]['UF_CRM_1541056258'] = $this->getValue($item, 'lease-date');
 
@@ -288,42 +287,6 @@ class ObjectParser extends Parser {
     }
 
     return strpos($commission, '%') !== false ? self::PRECENT_PRICE : self::FIX_PRICE;
-
-  }
-
-  private function parseValue(string $value) : string {
-
-    if($value == self::NOT_ACTUAL) {
-
-       return '';
-
-    }
-
-    return $value;
-
-  }
-
-  protected function fireEvent(array &$event) : bool {
- 
-    $afterEvents = GetModuleEvents('crm', 'OnAfterCrmDealUpdate');
-
-    while ($arEvent = $afterEvents->Fetch()) {
-              
-      ExecuteModuleEventEx($arEvent, array(&$event));
-
-    }
-
-    $beforeEvents = GetModuleEvents('crm', 'OnBeforeCrmDealUpdate');
-
-    while($arEvent = $beforeEvents->Fetch()) {
-              
-      ExecuteModuleEventEx($arEvent, array(&$event));
-
-    }
-
-    $this->saveFiles($event['ID']);
-
-    return true;
 
   }
 
@@ -458,8 +421,8 @@ class ObjectParser extends Parser {
          'NAME' => $name,
          'LAST_NAME'  => $lastName,
          'TYPE_ID'    => self::CONTACT_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
-         'COMMENTS'   => $this->getValue($item,'OwnerComment'),
-         'WEB'        => $this->getValue($item,'www_link'),
+         'COMMENTS'   => $this->parseValue($this->getValue($item,'OwnerComment')),
+         'WEB'        => $this->parseValue($this->getValue($item,'www_link')),
          'FM' => [
 
             'EMAIL' => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item, 'Email_Sobstvennik'))]],
@@ -476,7 +439,7 @@ class ObjectParser extends Parser {
          
          'TITLE'        => $legalEntity, 
          'COMPANY_TYPE' => self::COMPANY_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
-         'WEB'          => $this->getValue($item,'www_link')
+         'WEB'          => $this->parseValue($this->getValue($item,'www_link'))
       
       ];
 
@@ -514,72 +477,27 @@ class ObjectParser extends Parser {
     }
   }
 
-  private function precentToDate(float $number) : string {
+  protected function fireEvent(array &$event) : bool {
+ 
+    $afterEvents = GetModuleEvents('crm', 'OnAfterCrmDealUpdate');
 
-    $monthIndex = false;
+    while ($arEvent = $afterEvents->Fetch()) {
+              
+      ExecuteModuleEventEx($arEvent, array(&$event));
 
-		if(($monthIndex = strpos($number, ".")) !== false) {
+    }
 
-		   $month = (float)("0.".substr($number, $monthIndex + 1));
+    $beforeEvents = GetModuleEvents('crm', 'OnBeforeCrmDealUpdate');
 
-       $dateYear = (int)substr($number, 0, $monthIndex);
-        		
-       $yearText = '';
-        
-       $monthText = '';
-        
-       $monthValue = (int)(($month) * 365 / 30);
+    while($arEvent = $beforeEvents->Fetch()) {
+              
+      ExecuteModuleEventEx($arEvent, array(&$event));
 
-		   if($dateYear == 1) {
+    }
 
-					$yearText = 'год';
+    $this->saveFiles($event['ID']);
 
-		   } elseif($dateYear > 1 && $dateYear <= 4 || ($dateYear >= 102 && $dateYear <= 104)) {
-
-				 	$yearText = 'года';
-
-			 } else {
-
-					$yearText = 'лет';
-
-			 }
-
-		   if($monthValue == 0) {
-
-					$monthValue = $monthText = '';
-				
-			 } else if($monthValue == 1) {
-
-					$monthText = 'месяц';
-
-			 } else if($monthValue > 1 && $monthValue <= 4) {
-
-				 	$monthText = 'месяца';
-
-			 } else {
-
-			  	$monthText = 'месяцев';
-
-       }
-
-			 if($monthValue > 0) {
-
-           $monthValue = ' и '.$monthValue;
-
-			 }
-				
-			 if($dateYear > 0) {
-
-				  return "$dateYear $yearText $monthValue {$monthText}.";
-
-			 }
-
-		   return "$monthValue {$monthText}.";
-
-			}
-
-			return "$number лет.";
+    return true;
 
   }
-
 }

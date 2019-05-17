@@ -4,10 +4,11 @@ namespace XML\Parser;
 
 trait ParserHelper {
 
-  protected static $NODE_ELEMENT = 1;
-  protected static $NODE_ATTRIBUTE = 2;
-  protected static $NODE_TEXT = 3;
-  protected static $METRO_DEFAULT = 159;
+  protected static $NODE_ELEMENT    = 1;
+  protected static $NODE_ATTRIBUTE  = 2;
+  protected static $NODE_TEXT       = 3;
+  protected static $METRO_DEFAULT   = 159;
+  protected static $METRO_IBLOCK_ID = 29;
 
   protected function buildMorphology(string $value) : string {
 
@@ -86,7 +87,19 @@ trait ParserHelper {
      return 0;
 
   }
-   
+
+  protected function parseValue(string $value) : string {
+
+    if($value == 'не актуально') {
+
+       return '';
+
+    }
+
+    return $value;
+
+  }
+
   protected function enumID(string $value, string $code, ?string $entity = 'CRM_DEAL') : int {
 
     $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => $entity, "FIELD_NAME" => $code));
@@ -133,10 +146,78 @@ trait ParserHelper {
 
    protected function getMetro(string $value) {
 
-     $metro = \CIBlockElement::GetList(['NAME' => 'DESC'], ['%NAME' => $value, 'IBLOCK_ID' => 29], false, false, ['ID'])->Fetch();
+     $metro = \CIBlockElement::GetList(['NAME' => 'DESC'], ['%NAME' => $value, 'IBLOCK_ID' => self::$METRO_IBLOCK_ID], false, false, ['ID'])->Fetch();
 
      return $metro['ID'] ? : self::$METRO_DEFAULT;
 
    }
+
+   protected function precentToDate(float $number) : string {
+
+    $monthIndex = false;
+
+		if(($monthIndex = strpos($number, ".")) !== false) {
+
+		   $month = (float)("0.".substr($number, $monthIndex + 1));
+
+       $dateYear = (int)substr($number, 0, $monthIndex);
+        		
+       $yearText = '';
+        
+       $monthText = '';
+        
+       $monthValue = (int)(($month) * 365 / 30);
+
+		   if($dateYear == 1) {
+
+					$yearText = 'год';
+
+		   } elseif($dateYear > 1 && $dateYear <= 4 || ($dateYear >= 102 && $dateYear <= 104)) {
+
+				 	$yearText = 'года';
+
+			 } else {
+
+					$yearText = 'лет';
+
+			 }
+
+		   if($monthValue == 0) {
+
+					$monthValue = $monthText = '';
+				
+			 } else if($monthValue == 1) {
+
+					$monthText = 'месяц';
+
+			 } else if($monthValue > 1 && $monthValue <= 4) {
+
+				 	$monthText = 'месяца';
+
+			 } else {
+
+			  	$monthText = 'месяцев';
+
+       }
+
+			 if($monthValue > 0) {
+
+           $monthValue = ' и '.$monthValue;
+
+			 }
+				
+			 if($dateYear > 0) {
+
+				  return "$dateYear $yearText $monthValue {$monthText}.";
+
+			 }
+
+		   return "$monthValue {$monthText}.";
+
+			}
+
+			return "$number лет.";
+
+  }
 
 }
