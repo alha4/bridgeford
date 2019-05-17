@@ -21,9 +21,9 @@ trait ParserHelper {
 
   protected function roomMorphology(string $value) : string {
 
-    $in = ['торговое','под бытовые услуги (салон красоты и т.д.)','производственное помещение','склад'];
+    $in = ['общепит','офисное', 'торговое','под бытовые услуги (салон красоты и т.д.)','производственное помещение','склад'];
     
-    $out = ['Торговое помещение','Под бытовые услуги','Производственное','Складское'];
+    $out = ['Общепит','Офисное','Торговое помещение','Под бытовые услуги','Производственное','Складское'];
 
     return str_replace($in, $out, $value);
 
@@ -39,9 +39,19 @@ trait ParserHelper {
 
   }
 
+  protected function ringMorphology(string $value) : string {
+
+    $in = ['Бульварное','Садовое'];
+    
+    $out = ['Бульварное кольцо','Садовое кольцо'];
+
+    return str_replace($in, $out, $value);
+
+  }
+
   protected function taxMorphology(string $value) : string {
 
-    if($value == '') {
+    if($value == 'не актуально') {
 
        return 'не известно';
 
@@ -65,7 +75,15 @@ trait ParserHelper {
 
   protected function getFlag(\DOMElement $node, string $code) : string {
 
-     return strtolower($node->getElementsByTagName($code)[0]->nodeValue) == 'да' ? 1 : 0;
+     $nodeValue = strtolower($node->getElementsByTagName($code)[0]->nodeValue);
+
+     if($nodeValue == 'да' || $nodeValue == 'yes') {
+
+        return 1;
+
+     }
+
+     return 0;
 
   }
    

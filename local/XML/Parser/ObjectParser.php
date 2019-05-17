@@ -111,11 +111,11 @@ class ObjectParser extends Parser {
 
          }
 
-         $price = (int)$this->getValue($item, 'price');
+         $price   = (int)$this->getValue($item, 'price');
 
-         $square = (int)$this->getValue($item, 'space');
+         $square  = (int)$this->getValue($item, 'space');
 
-         $MAP = $this->getValue($item, 'monthly-lease');
+         $MAP     = (int)$this->getValue($item, 'monthly-lease');
 
          $arResult[ $internal_id ] =  [
 
@@ -126,7 +126,7 @@ class ObjectParser extends Parser {
            'UF_CRM_1540371261836' => $this->enumID($this->buildMorphology($this->getValue($item, 'building-type')), 'UF_CRM_1540371261836'),
            'UF_CRM_1540384807664' => $this->enumID($this->roomMorphology($this->getValue($item, 'facility-type')), 'UF_CRM_1540384807664'),
            'UF_CRM_1540202667'    => $this->enumID($this->regionMorphology($this->getValue($item, 'region')), 'UF_CRM_1540202667'),
-           'UF_CRM_1540203144'    => $this->enumID($this->getValue($item, 'moscow-ring'), 'UF_CRM_1540203144'),
+           'UF_CRM_1540203144'    => $this->enumID($this->ringMorphology($this->getValue($item, 'moscow-ring')), 'UF_CRM_1540203144'),
            'UF_CRM_1555933663301' => $this->getValue($item, 'price'),
            'UF_CRM_1545649289833' => $price,
            'UF_CRM_1540456417'    => $price,
@@ -224,15 +224,15 @@ class ObjectParser extends Parser {
                  $arResult[ $internal_id ]['UF_CRM_1541056258'] = $this->getValue($item, 'lease-date');
 
             }
-
-            $leaseholder = $this->getValue($item, 'leaseholder-name');
+         
+            $leaseholder = $this->getValue($item, 'leaseholder-standart-name');
 
             /**
              * Иное названия арендатора
              */
             if($leaseholder == '' || $leaseholder == self::NOT_ACTUAL) {
 
-               $arResult[$internal_id]['UF_CRM_1541055274251'] = $leaseholder;
+               $arResult[$internal_id]['UF_CRM_1541055274251'] = $this->getValue($item, 'leaseholder-name');
                $arResult[$internal_id]['UF_CRM_1541055237379'] = self::LEASEHOLDER;
   
             } else {
@@ -261,7 +261,7 @@ class ObjectParser extends Parser {
              * окупаемость
             */
     
-            $arResult[ $internal_id ]['UF_CRM_1544431330'] = $this->precentToDate(round($price / $MAP, 2));
+            $arResult[ $internal_id ]['UF_CRM_1544431330'] = $this->precentToDate(round($price / $MAP / 12, 2));
 
             #echo $arResult[ $internal_id ]['UF_CRM_1544431330'] ;
         

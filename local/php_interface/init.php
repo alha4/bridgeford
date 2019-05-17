@@ -378,6 +378,25 @@ function enumID(string $value, string $code, ?string $entity = 'CRM_DEAL') : int
 
  }
 
+
+ function getEnumList(string $fieldName, string $entity = 'CRM_DEAL') {
+
+  $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => $entity, "FIELD_NAME" => $fieldName));
+  $entity = $entityResult->Fetch();
+
+  return \CUserTypeEnum::GetList($entity);
+
+ }
+
+ function getEnumEntity(string $fieldName, string $entity = 'CRM_DEAL') {
+
+  $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => $entity, "FIELD_NAME" => $fieldName));
+  $entity = $entityResult->Fetch();
+
+  return \CUserTypeEntity::GetByID($entity['ID']);
+
+ }
+
  if (!function_exists("array_key_last")) {
 
   function array_key_last($array) {

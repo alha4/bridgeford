@@ -174,7 +174,7 @@ else
  <button id="clean_favorite" class="ui-btn-main">Очистить избранное</button>
 </div>
 <div class="ui-btn-double ui-btn-primary ui-btn-group">
- <button id="group_cmd" class="ui-btn-main">Выполнить &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ui-btn-menu"></span></button>
+ <button id="group_cmd" class="ui-btn-main">Управление рекламой</button>
 </div>
 
 <script>
