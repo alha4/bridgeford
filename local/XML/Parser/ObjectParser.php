@@ -64,6 +64,10 @@ class ObjectParser extends Parser {
 
   ];
 
+  private const PURPOSE_UF_CODE = ['UF_CRM_1540392018','UF_CRM_1540397421',
+                                   'UF_CRM_1540392118','UF_CRM_1540393032',
+                                   'UF_CRM_1540397194'];
+
   private $arFiles;
 
   protected function execute(\DOMElement $document) : array {
@@ -165,7 +169,6 @@ class ObjectParser extends Parser {
            'UF_CRM_1540202747'    => $this->enumID($this->getValue($item, 'district-type'),'UF_CRM_1540202747') ? : self::REGION_TYPE,
            'UF_CRM_1540385040'    => $this->enumID(mb_ucfirst($this->getValue($item, 'entrance')),'UF_CRM_1540385040'),
            'UF_CRM_1543406565'    => $this->getMetro($this->getValue($item, 'subway')),
-           'UF_CRM_1540392018'    => $this->getPurpose($purpose),
            'UF_CRM_1543834582'    => 1,
            'UF_CRM_1545906357580' => 1,
            'UF_CRM_1545199624'    => self::OBJECT_STATUS_ACTIVE,
@@ -185,6 +188,22 @@ class ObjectParser extends Parser {
            'UF_CRM_1541004853118' => $this->getFlag($item,  'private-sale'),
            'UF_CRM_1557383288525' => $this->getFlag($item,  'highlightOnCzian')
          ];
+
+         /**
+          * Назначение помещения
+         */
+
+         foreach(self::PURPOSE_UF_CODE as $code) {
+
+           $purposeValue = $this->getPurpose($purpose, $code);
+
+           if($purposeValue) {
+
+              $arResult[ $internal_id ][ $code ] = $purposeValue;
+
+           }
+
+         }
 
          /**
           * Собственник
@@ -315,7 +334,12 @@ class ObjectParser extends Parser {
 
        $arFile = \CFile::MakeFileArray($photo->nodeValue);
 
-       $arFile['name'] = strtolower(str_replace(" ","", $arFile['name']));
+      /* $arParams = array("replace_space"=>"_","safe_chars" => ".");
+
+       $name = \Cutil::translit( $arFile['name'],"ru",$arParams);*/
+
+       #echo  $photo->nodeValue,'#^^',print_r($arFile,1),'^^<br>';
+
        $arFile['del'] = 'Y';
        $arFile['MODULE_ID'] = 'crm';
 
@@ -362,13 +386,15 @@ class ObjectParser extends Parser {
 
   }
 
-  private function getPurpose(?\DOMNodeList $semantics) : array {
+  private function getPurpose(?\DOMNodeList $semantics, string $code) {
 
     $arResult = [];
 
     foreach($semantics as $item) {
 
-      if($enum_id = $this->enumID($item->nodeValue, 'UF_CRM_1540392018') != -1) {
+      if(($enum_id = $this->enumID($item->nodeValue, $code)) != -1) {
+
+        #echo $code, $item->nodeValue, '<br>';
 
          $arResult[] = $enum_id;
 
@@ -376,7 +402,7 @@ class ObjectParser extends Parser {
 
     }
 
-    return $arResult;
+    return count($arResult) > 0 ? $arResult : false;
 
   }
 
