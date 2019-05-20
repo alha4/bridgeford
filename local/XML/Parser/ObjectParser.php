@@ -193,13 +193,13 @@ class ObjectParser extends Parser {
           * Назначение помещения
          */
 
-         foreach(self::PURPOSE_UF_CODE as $code) {
+         foreach(self::PURPOSE_UF_CODE as $purposeCode) {
 
-           $purposeValue = $this->getPurpose($purpose, $code);
+           $purposeValue = $this->getPurpose($purpose, $purposeCode);
 
            if($purposeValue) {
 
-              $arResult[ $internal_id ][ $code ] = $purposeValue;
+              $arResult[ $internal_id ][ $purposeCode ] = $purposeValue;
 
            }
 

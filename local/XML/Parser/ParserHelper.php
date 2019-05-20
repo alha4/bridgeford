@@ -136,6 +136,8 @@ trait ParserHelper {
 
    protected function getPerson(string $userName) : int {
 
+     $userName = str_replace('Настя Фирсова','Анастасия Фирсова',$userName);
+
      $filter = array("NAME" => trim($userName), "CHECK_PERMISSIONS" => "N");
 
      $rsUsers = \CUser::GetList($sort = "NAME",$order = 'desc', $filter, ['SELECT' => ["ID"]]);
