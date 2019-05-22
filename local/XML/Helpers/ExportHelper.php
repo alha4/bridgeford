@@ -4,7 +4,7 @@ namespace XML\Helpers;
 
 \CModule::IncludeModule("iblock");
 
-trait CrmHelper {
+trait ExportHelper {
 
 protected function enumValue(int $value_id, string $code) : string {
 
@@ -83,6 +83,12 @@ protected function enumValue(int $value_id, string $code) : string {
    $arField = \CCrmFieldMulti::GetList(array(), array("ENTITY_ID"=>"CONTACT","TYPE_ID" => $type,"ELEMENT_ID" => $id)); 
 
    return $arField->Fetch()['VALUE'] ? : 'нет';
+
+ }
+
+ protected function escapeEntities(string $value) : string {
+
+  return htmlspecialchars($value, ENT_QUOTES | ENT_XML1, "UTF-8");
 
  }
 }

@@ -85,7 +85,8 @@ final class AvitoXml extends ExportBase {
 
       $xml_string.= sprintf('<Address>%s</Address>', $this->getAddress($row));
 
-      $xml_string.= sprintf('<Description>%s</Description>', (bool)$row['UF_CRM_1552294499136'] ? $this->getDescription($category_id, $semantic, $row) : $row['UF_CRM_1540471409']);
+      $xml_string.= sprintf('<Description>%s</Description>', (bool)$row['UF_CRM_1552294499136'] ? 
+      $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
      
       $xml_string.= '<Category>Коммерческая недвижимость</Category>';
 

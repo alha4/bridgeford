@@ -1,5 +1,11 @@
 <?
 
+if(!$_SERVER["DOCUMENT_ROOT"]) {
+
+  $_SERVER["DOCUMENT_ROOT"] = '/home/bitrix/ext_www/crm.bridgeford.ru';
+
+}
+
 use \Bitrix\Main\EventManager,
     \Raiting\RaitingFactory,
     \Bitrix\Main\Web\HttpClient;
@@ -23,8 +29,11 @@ Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
      '\Search\SimilarObject'     => SEARCH_ROOT_CLASS_PATH."/SimilarObject.php",
      '\Search\SimilarTicket'     => SEARCH_ROOT_CLASS_PATH."/SimilarTicket.php",
      '\XML\Helpers\Description'  => XML_CLASS_PATH.'/Helpers/Description.php',
-     '\Semantic\SemanticFactory' => SEMANTIC_CLASS_PATH.'/SemanticFactory.php'
-));   
+     '\Semantic\SemanticFactory' => SEMANTIC_CLASS_PATH.'/SemanticFactory.php',
+     '\XML\ExportBase'           => XML_CLASS_PATH.'/ExportBase.php',
+     '\XML\Helpers\ExportHelper'    => XML_CLASS_PATH.'/Helpers/ExportHelper.php',
+));  
+
     
 $event = EventManager::getInstance();
 

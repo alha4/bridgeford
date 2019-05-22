@@ -131,7 +131,7 @@ final class BridgefordXml extends ExportBase {
       $xml_string.= sprintf('<price>%s</price>',(int)$row['OPPORTUNITY']);
       $xml_string.= sprintf('<is-basement>%s</is-basement>', $row['UF_CRM_1540384916112'] ? 'YES' : 'NO');
       $xml_string.= sprintf('<is-mansion>%s</is-mansion>',   $row['UF_CRM_1540371938'] ? 'YES' : 'NO');
-      $xml_string.= sprintf('<description>%s</description>', $row['UF_CRM_1540471409']);
+      $xml_string.= sprintf('<description>%s</description>', $this->escapeEntities($row['UF_CRM_1540471409']));
       $xml_string.= sprintf('<photo>%s</photo>', $this->getPhotos((array)$row['UF_CRM_1540532330']));
       $xml_string.= sprintf('<ceiling>%s</ceiling>', $row['UF_CRM_1540385060']);
       $xml_string.= sprintf('<electricity>%s</electricity>', $row['UF_CRM_1540385112']);

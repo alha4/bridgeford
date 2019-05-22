@@ -191,7 +191,8 @@ final class YandexXml extends ExportBase {
       $xml_string.= sprintf('<ceiling-height>%s</ceiling-height>', $row['UF_CRM_1540385060']);
       $xml_string.= sprintf('<entrance-type>%s</entrance-type>', self::INPUTTYPE[$row["UF_CRM_1540385040"]]);
       $xml_string.= sprintf('<electric-capacity>%s</electric-capacity>', $row['UF_CRM_1540385112']);
-      $xml_string.= sprintf('<description>%s</description>', (bool)$row['UF_CRM_1552294499136'] ? $this->getDescription($category_id, $semantic, $row) : $row['UF_CRM_1540471409']);
+      $xml_string.= sprintf('<description>%s</description>', (bool)$row['UF_CRM_1552294499136'] ? 
+      $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
 
       if($row['UF_CRM_1540301873849']) {
       
@@ -245,7 +246,7 @@ final class YandexXml extends ExportBase {
 
   }
 
-  private function getVatType(string $type = ' ') : string {
+  private function getVatType(?string $type = ' ') : ?string {
 
     return self::VATTYPE[$type];
 

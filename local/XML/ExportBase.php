@@ -5,7 +5,7 @@ const DEBUG_AUTOTEXT = 'Y';
 
 abstract class ExportBase {
 
-   use \XML\Helpers\CrmHelper;
+   use \XML\Helpers\ExportHelper;
    use \XML\Helpers\Description;
 
    protected $fileName;
@@ -36,7 +36,7 @@ abstract class ExportBase {
 
    ];
 
-   protected const HOST = 'https://crm.bridgeford.ru';
+   protected const HOST = 'https://bf.angravity.ru/';
  
    abstract protected function buildXml() : string;
 
