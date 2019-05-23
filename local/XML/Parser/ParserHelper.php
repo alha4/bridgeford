@@ -100,6 +100,37 @@ trait ParserHelper {
 
   }
 
+  protected function toArray(string $value) : array {
+
+    if(strpos($value, ",") !== false) {
+
+       return explode(",", $value);
+
+    }
+
+    return explode(" ", $value);
+
+  }
+
+  protected function multiFileds(array &$data) : array {
+
+    $arResult = [];
+
+    foreach($data as $i=>$value) {
+
+      if($value) {
+
+        $arResult["n".$i] = ['VALUE' => $value,
+                             'VALUE_TYPE' => 'WORK'
+                          ];
+
+      }
+    }
+
+    return $arResult;
+
+  }
+
   protected function enumID(string $value, string $code, ?string $entity = 'CRM_DEAL') : int {
 
     $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => $entity, "FIELD_NAME" => $code));

@@ -34,6 +34,8 @@ class ObjectParser extends Parser {
 
   private const NOT_ACTUAL = 'не актуально';
 
+  private const NULL_FILE_VALUE = 111222;
+
   private const CATEGORY_MAP = [
 
      'Помещение в аренду'   => 0,
@@ -153,8 +155,8 @@ class ObjectParser extends Parser {
            'UF_CRM_1541056049'    => $this->getValue($item, 'annual-index'),
            'UF_CRM_1557913229266' => $this->getValue($item, 'annotation'),
            'UF_CRM_1556182166156' => $commissionType,
-           'UF_CRM_1540532330'    => [1111],
-           'UF_CRM_1540532459'    => [2222],
+           'UF_CRM_1540532330'    => [self::NULL_FILE_VALUE],
+           'UF_CRM_1540532459'    => [self::NULL_FILE_VALUE],
            'UF_CRM_1540895373'    => $this->getPerson($this->getValue($item, 'ActualizationPerson')),
            'UF_CRM_1540886934'    => $this->getPerson($this->getValue($item, 'Broker')),
            'ASSIGNED_BY_ID'       => $this->getPerson($this->getValue($item, 'Broker')),
@@ -462,24 +464,30 @@ class ObjectParser extends Parser {
 
     if($this->getValue($item,'FIO_sobstvennik') == self::NOT_ACTUAL) {
 
-      $name = $this->parseValue($this->getValue($item, 'Email_Sobstvennik'));
+      $name = array_pop($this->toArray($this->parseValue($this->getValue($item, 'Email_Sobstvennik'))));
       
     } else {
 
-      [$name, $lastName] = explode(' ', $this->getValue($item,'FIO_sobstvennik'));
+      [$name, $lastName, $secondName] = explode(' ', $this->getValue($item,'FIO_sobstvennik'));
 
     }
 
+    $emails = $this->multiFileds($this->toArray($this->parseValue($this->getValue($item, 'Email_Sobstvennik'))));
+
+    $phones = $this->multiFileds($this->toArray($this->parseValue($this->getValue($item, 'Tel_Sobstvennik'))));
+
     $arContact = [
 
-         'NAME' => $name,
-         'LAST_NAME'  => $lastName,
-         'TYPE_ID'    => self::CONTACT_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
-         'COMMENTS'   => $this->parseValue($this->getValue($item,'OwnerComment')),
+         'NAME'        => $name,
+         'LAST_NAME'   => $lastName,
+         'SECOND_NAME' => $secondName,
+         'ASSIGNED_BY_ID' => $this->getPerson($this->getValue($item, 'Broker')),
+         'TYPE_ID'     => self::CONTACT_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
+         'COMMENTS'    => $this->parseValue($this->getValue($item,'OwnerComment')),
          'FM' => [
 
-            'EMAIL' => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item, 'Email_Sobstvennik'))]],
-            'PHONE' => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item, 'Tel_Sobstvennik'))]],
+            'EMAIL' => $emails,
+            'PHONE' => $phones,
             'WEB'   => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item,'www_link')), 'VALUE_TYPE' => 'WORK']]    
 
          ]
@@ -515,8 +523,9 @@ class ObjectParser extends Parser {
 
     $arCompany = [
          
-         'TITLE'        => $legalEntity, 
-         'COMPANY_TYPE' => self::COMPANY_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
+         'TITLE'          => $legalEntity, 
+         'COMPANY_TYPE'   => self::COMPANY_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
+         'ASSIGNED_BY_ID' => $this->getPerson($this->getValue($item, 'Broker')),
          'FM' => [ 
            'WEB'   => ['n0' => ['VALUE' => $this->parseValue($this->getValue($item,'www_link')),'VALUE_TYPE' => 'WORK']] 
          ]   
