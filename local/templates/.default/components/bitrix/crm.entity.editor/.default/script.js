@@ -982,19 +982,19 @@ if(typeof BX.Crm.EntityEditor === "undefined")
  
 			 const priceOn1SQM  = this.nodeInput('UF_CRM_1541072151310'),
 
-					   priceObj     = parseFloat( this.nodeInput('UF_CRM_1541072013901').value ),
+					   priceObj     = parseInt( this.nodeInput('UF_CRM_1541072013901').value ),
 
 						 squareValue  = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
 						 
 				if(this.getDealCategory() == this._CATEGORY.TO_BUSSINES) {
 
-					 const priceMAP     = parseInt(this.getTextValue(this.node('UF_CRM_1541055727999')).replace(/\s+/ig,"") ) * 12;//МАП 
+					 const priceMAP     = parseInt(this.getTextValue(this.node('UF_CRM_1541055727999')).replace(/\s+/ig,"") ) * 12;// это уже ГАП , т.е. годовой
 								 cashing      = this.nodeInput('UF_CRM_1541067645026'), //доходность
 								 payback      = this.nodeInput('UF_CRM_1544431330'), //окупаемость
 
 								 paybackValue =  (priceObj / priceMAP).toFixed(1);
 
-								 cashing.value = ((priceMAP / priceObj).toFixed(2) * 100)  + "%";	
+								 cashing.value = ((priceMAP / priceObj) * 100).toFixed(0); // + "%"	
 
 								 payback.value = this.precentToDate(paybackValue);
 				}

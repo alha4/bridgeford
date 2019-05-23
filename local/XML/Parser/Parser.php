@@ -30,10 +30,12 @@ abstract class Parser {
   public function load() : array {
 
     $data = $this->execute($this->loadXML());
-    
-    foreach($data as $item) {
 
-      if(!$this->exists($item['ORIGIN_ID'])) {
+    if(\SAVE_MODE == 'Y') {
+    
+      foreach($data as $item) {
+
+        if(!$this->exists($item['ORIGIN_ID'])) {
 
           $id = $this->save($item);
 
@@ -45,8 +47,9 @@ abstract class Parser {
 
              $this->fireEvent($item);
 
+           }
          }
-      }
+       }
     }
 
     return ['status' => 200, /*'data' => $data, */ 'errors' => $this->errors ];

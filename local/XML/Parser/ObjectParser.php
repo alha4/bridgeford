@@ -20,6 +20,8 @@ class ObjectParser extends Parser {
 
   private const FIX_PRICE = 467;
 
+  private const PRECENT_MAP = 472;
+
   private const METRO_TIME_DEFAULT = 290;
 
   private const METRO_MAX_TIME = 30;
@@ -98,7 +100,7 @@ class ObjectParser extends Parser {
 
          $commissionValue = $this->getValue($item, 'Comission');
 
-         $commissionType = $this->getTypeComission($commissionValue);
+         $commissionType = $this->getTypeComission($commissionValue, $type);
 
          $legalEntity = $this->getValue($item, 'LegalEntity');
 
@@ -209,14 +211,17 @@ class ObjectParser extends Parser {
           * Собственник
           */
 
-         if($legalEntity != self::NOT_ACTUAL) {
+        if(\SAVE_MODE == 'Y') {
+    
+           if($legalEntity != self::NOT_ACTUAL) {
 
              $arResult[ $internal_id ]['UF_CRM_1540895685'] = $this->createCompanyOwner($item, $legalEntity);
 
-         } else {
+           } else {
 
              $arResult[ $internal_id ]['UF_CRM_1558086250'] = $this->createContactOwner($item);
 
+           }
          }
 
          /**
@@ -224,13 +229,19 @@ class ObjectParser extends Parser {
           * UF_CRM_1556186036149 - процент
           * UF_CRM_1556182207180 - фикс-я цена
           */
+         
          if($commissionType == self::PRECENT_PRICE) {
 
-             $arResult[ $internal_id ]['UF_CRM_1556186036149'] = $commissionValue;
+            $arResult[ $internal_id ]['UF_CRM_1556186036149'] = $commissionValue;
 
-          } elseif($commissionType == self::FIX_PRICE) {
+         } elseif($commissionType == self::PRECENT_MAP) {
 
-             $arResult[ $internal_id ]['UF_CRM_1556182207180'] = $commissionValue;
+            $arResult[ $internal_id ]['UF_CRM_1556185907'] = $commissionValue;
+            
+            
+         } elseif($commissionType == self::FIX_PRICE) {
+
+            $arResult[ $internal_id ]['UF_CRM_1556182207180'] = $commissionValue;
 
          }
 
@@ -286,7 +297,7 @@ class ObjectParser extends Parser {
              * доходность
             */
 
-            $arResult[ $internal_id ]['UF_CRM_1541067645026'] = number_format( round( ceil($MAP / $price * 100), 2), 1, ".","." );
+            $arResult[ $internal_id ]['UF_CRM_1541067645026'] = number_format( round( ceil(12 * $MAP / $price * 100), 2), 1, ".","." );
 
             #echo $arResult[ $internal_id ]['UF_CRM_1541067645026'] ,'<br>';
 
@@ -312,7 +323,7 @@ class ObjectParser extends Parser {
 
   }
 
-  private function getTypeComission(string $commission) : int {
+  private function getTypeComission(string $commission, string $category) : int {
 
     if($commission == self::NOT_ACTUAL) {
 
@@ -320,7 +331,13 @@ class ObjectParser extends Parser {
         
     }
 
-    return strpos($commission, '%') !== false ? self::PRECENT_PRICE : self::FIX_PRICE;
+    if(strpos($commission, '%') !== false) {
+
+       return $category == 'Помещение в аренду' ?  self::PRECENT_MAP : self::PRECENT_PRICE;
+
+    }
+    
+    return self::FIX_PRICE;
 
   }
 
@@ -333,12 +350,6 @@ class ObjectParser extends Parser {
      if($photo->nodeValue) {
 
        $arFile = \CFile::MakeFileArray($photo->nodeValue);
-
-      /* $arParams = array("replace_space"=>"_","safe_chars" => ".");
-
-       $name = \Cutil::translit( $arFile['name'],"ru",$arParams);*/
-
-       #echo  $photo->nodeValue,'#^^',print_r($arFile,1),'^^<br>';
 
        $arFile['del'] = 'Y';
        $arFile['MODULE_ID'] = 'crm';
@@ -413,7 +424,7 @@ class ObjectParser extends Parser {
 
     if($valueFeet != self::NOT_ACTUAL) {
 
-        return $this->enumID( sprintf("%s %s пешком",$valueFeet, $valueFeet == 1 ? 'минута' : 'минут'), 'UF_CRM_1540203015');
+        return $this->enumID( sprintf("%s %s пешком", $valueFeet, $this->metroMinute($valueFeet)), 'UF_CRM_1540203015');
 
     } elseif($valueTransport != self::NOT_ACTUAL) {
 
@@ -423,11 +434,17 @@ class ObjectParser extends Parser {
 
       }
       
-      return $this->enumID( sprintf("%s минут на транспорте", $valueTransport), 'UF_CRM_1540203015');
+      return $this->enumID( sprintf("%s %s на транспорте", $valueTransport, $this->metroMinute($valueTransport)), 'UF_CRM_1540203015');
 
     }
 
     return self::METRO_TIME_DEFAULT;
+
+  }
+
+  private function metroMinute(int $value) : string {
+
+     return $value == 1 ? 'минута' : 'минут';
 
   }
 
