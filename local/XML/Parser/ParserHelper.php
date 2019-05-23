@@ -96,7 +96,7 @@ trait ParserHelper {
 
     }
 
-    return $value;
+    return ltrim($value);
 
   }
 
@@ -112,7 +112,7 @@ trait ParserHelper {
 
   }
 
-  protected function multiFileds(array &$data) : array {
+  protected function multiFields(array &$data) : array {
 
     $arResult = [];
 

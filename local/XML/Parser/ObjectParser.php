@@ -106,6 +106,12 @@ class ObjectParser extends Parser {
 
          $legalEntity = $this->getValue($item, 'LegalEntity');
 
+         $price   = (int)$this->getValue($item, 'price');
+
+         $square  = (int)$this->getValue($item, 'space');
+
+         $MAP     = (int)$this->getValue($item, 'monthly-lease');
+
          $internal_id = $item->getAttribute('internal-id');
 
          /**
@@ -120,12 +126,6 @@ class ObjectParser extends Parser {
            }
 
          }
-
-         $price   = (int)$this->getValue($item, 'price');
-
-         $square  = (int)$this->getValue($item, 'space');
-
-         $MAP     = (int)$this->getValue($item, 'monthly-lease');
 
          $arResult[ $internal_id ] =  [
 
@@ -213,19 +213,17 @@ class ObjectParser extends Parser {
           * Собственник
           */
 
-        if(\SAVE_MODE == 'Y') {
-    
-           if($legalEntity != self::NOT_ACTUAL) {
+         if($legalEntity != self::NOT_ACTUAL) {
 
-             $arResult[ $internal_id ]['UF_CRM_1540895685'] = $this->createCompanyOwner($item, $legalEntity);
+            $arResult[ $internal_id ]['UF_CRM_1540895685'] = $this->createCompanyOwner($item, $legalEntity);
 
-           } else {
+         } else {
 
-             $arResult[ $internal_id ]['UF_CRM_1558086250'] = $this->createContactOwner($item);
+           $arResult[ $internal_id ]['UF_CRM_1558086250'] = $this->createContactOwner($item);
 
-           }
          }
 
+        
          /**
           * Агентское вознаграждение:
           * UF_CRM_1556186036149 - процент
@@ -239,7 +237,6 @@ class ObjectParser extends Parser {
          } elseif($commissionType == self::PRECENT_MAP) {
 
             $arResult[ $internal_id ]['UF_CRM_1556185907'] = $commissionValue;
-            
             
          } elseif($commissionType == self::FIX_PRICE) {
 
@@ -472,9 +469,9 @@ class ObjectParser extends Parser {
 
     }
 
-    $emails = $this->multiFileds($this->toArray($this->parseValue($this->getValue($item, 'Email_Sobstvennik'))));
+    $emails = $this->multiFields($this->toArray($this->parseValue($this->getValue($item, 'Email_Sobstvennik'))));
 
-    $phones = $this->multiFileds($this->toArray($this->parseValue($this->getValue($item, 'Tel_Sobstvennik'))));
+    $phones = $this->multiFields($this->toArray($this->parseValue($this->getValue($item, 'Tel_Sobstvennik'))));
 
     $arContact = [
 
@@ -482,8 +479,9 @@ class ObjectParser extends Parser {
          'LAST_NAME'   => $lastName,
          'SECOND_NAME' => $secondName,
          'ASSIGNED_BY_ID' => $this->getPerson($this->getValue($item, 'Broker')),
-         'TYPE_ID'     => self::CONTACT_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
-         'COMMENTS'    => $this->parseValue($this->getValue($item,'OwnerComment')),
+         'TYPE_ID'        => self::CONTACT_TYPE_MAP[ $this->getValue($item, 'Tip_Sobstvennik') ],
+         'COMMENTS'       => $this->parseValue($this->getValue($item,'OwnerComment')),
+         'UF_CRM_1558614620966' => $this->parseValue($this->getValue($item,'FIO_sobstvennik')),
          'FM' => [
 
             'EMAIL' => $emails,
