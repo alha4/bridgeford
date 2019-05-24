@@ -68,7 +68,7 @@ trait ParserHelper {
 
   }
 
-  protected function getValue(\DOMElement $node, string $code) : string {
+  protected function getValue(\DOMElement &$node, string $code) : string {
 
     return trim($node->getElementsByTagName($code)[0]->nodeValue) ? : 'не актуально';
 
@@ -165,7 +165,7 @@ trait ParserHelper {
 
    }
 
-   protected function getPerson(string $userName) : int {
+   protected function getPerson(string &$userName) : int {
 
      $userName = str_replace('Настя Фирсова','Анастасия Фирсова',$userName);
 

@@ -10,9 +10,11 @@ use \Bitrix\Main\EventManager,
     \Raiting\RaitingFactory,
     \Bitrix\Main\Web\HttpClient;
 
+const PSR_CLASS_PATH = '/local/Psr/Log';
 const CIAN_ROOT_CLASS_PATH = '/local/Cian';
 const STAT_ROOT_CLASS_PATH = '/local/Stat';
 const SEARCH_ROOT_CLASS_PATH = '/local/Search';
+const XML_PARSER_PATH = '/local/XML/Parser';
 const XML_CLASS_PATH = '/local/XML';
 const SEMANTIC_CLASS_PATH = '/local/XML/Semantic';
 const LOG_PATH = '/local/Cian/log.txt';
@@ -31,7 +33,14 @@ Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
      '\XML\Helpers\Description'  => XML_CLASS_PATH.'/Helpers/Description.php',
      '\Semantic\SemanticFactory' => SEMANTIC_CLASS_PATH.'/SemanticFactory.php',
      '\XML\ExportBase'           => XML_CLASS_PATH.'/ExportBase.php',
-     '\XML\Helpers\ExportHelper'    => XML_CLASS_PATH.'/Helpers/ExportHelper.php',
+     '\XML\Helpers\ExportHelper' => XML_CLASS_PATH.'/Helpers/ExportHelper.php',
+     '\XML\Parser\ParserFactory' => XML_PARSER_PATH."/ParserFactory.php",
+     '\XML\Parser\Parser'        => XML_PARSER_PATH."/Parser.php",
+     '\XML\Parser\ObjectParser'  => XML_PARSER_PATH.'/ObjectParser.php',
+     '\XML\Parser\ParserHelper'  => XML_PARSER_PATH.'/ParserHelper.php',
+     '\Psr\Log\LoggerInterface'  => PSR_CLASS_PATH .'/LoggerInterface.php',
+     '\Psr\Log\LogLevel'         => PSR_CLASS_PATH .'/LogLevel.php',
+     '\Log\Logger'               => '/local/Log/Logger.php'
 ));  
 
     

@@ -27,7 +27,15 @@ abstract class Parser {
 
   }
 
+  private function getPath() : string {
+
+    return basename($this->path);
+
+  }
+
   public function load() : array {
+
+    $runStart = new \DateTime();
 
     $data = $this->execute($this->loadXML());
 
@@ -43,8 +51,6 @@ abstract class Parser {
 
              $item['ID'] = $id;
 
-             #echo "запуск события $id <br>";
-
              $this->fireEvent($item);
 
            }
@@ -52,7 +58,11 @@ abstract class Parser {
        }
     }
 
-    return ['status' => 200, /*'data' => $data, */ 'errors' => $this->errors ];
+    $runEnd = new \DateTime();
+
+    $runTime = $runStart->diff($runEnd, true);
+
+    return ['status' => 200, 'offers' => count($data), 'file' => $this->getPath(), 'errors' => $this->errors, 'time' => sprintf("%s:%s sec.", $runTime->i, $runTime->s),'memory' => round( memory_get_usage() / 1024 / 1024, 2)." МБ." ];
 
   }
 

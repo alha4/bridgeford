@@ -340,7 +340,7 @@ class ObjectParser extends Parser {
 
   }
 
-  private function getPhoto(\DOMNodeList $nodes)  {
+  private function getPhoto(\DOMNodeList &$nodes)  {
 
     $photos = [];
 
@@ -396,15 +396,13 @@ class ObjectParser extends Parser {
 
   }
 
-  private function getPurpose(?\DOMNodeList $semantics, string $code) {
+  private function getPurpose(?\DOMNodeList &$semantics, string $code) {
 
     $arResult = [];
 
     foreach($semantics as $item) {
 
       if(($enum_id = $this->enumID($item->nodeValue, $code)) != -1) {
-
-        #echo $code, $item->nodeValue, '<br>';
 
          $arResult[] = $enum_id;
 
@@ -416,7 +414,7 @@ class ObjectParser extends Parser {
 
   }
 
-  private function getMetroTime(\DOMElement $node) : int {
+  private function getMetroTime(\DOMElement &$node) : int {
 
     $valueFeet      = $this->getValue($node, 'subway-time-feet');
     $valueTransport = $this->getValue($node, 'subway-time-transport');
@@ -447,7 +445,7 @@ class ObjectParser extends Parser {
 
   }
 
-  private function getTitle(string $type, \DOMElement $item) : string {
+  private function getTitle(string $type, \DOMElement &$item) : string {
 
     return sprintf("%s - %s %s %s", $type, 
                    $this->getValue($item, 'street-name'),  
@@ -457,7 +455,7 @@ class ObjectParser extends Parser {
 
   }
 
-  private function createContactOwner(\DOMElement $item, ?int $companyID = null) : int {
+  private function createContactOwner(\DOMElement &$item, ?int $companyID = null) : int {
 
     if($this->getValue($item,'FIO_sobstvennik') == self::NOT_ACTUAL) {
 
@@ -515,7 +513,7 @@ class ObjectParser extends Parser {
 
   }
 
-  private function createCompanyOwner(\DOMElement $item, string $legalEntity) : int {
+  private function createCompanyOwner(\DOMElement &$item, string $legalEntity) : int {
 
     $company = new \CCrmCompany(false);
 
