@@ -457,6 +457,12 @@ class ObjectParser extends Parser {
 
   private function createContactOwner(\DOMElement &$item, ?int $companyID = null) : int {
 
+    if(\SAVE_MODE != 'Y') {
+
+      return -1;
+
+    }
+
     if($this->getValue($item,'FIO_sobstvennik') == self::NOT_ACTUAL) {
 
       $name = array_pop($this->toArray($this->parseValue($this->getValue($item, 'Email_Sobstvennik'))));
@@ -514,6 +520,12 @@ class ObjectParser extends Parser {
   }
 
   private function createCompanyOwner(\DOMElement &$item, string $legalEntity) : int {
+
+    if(\SAVE_MODE != 'Y') {
+
+        return -1;
+
+    }
 
     $company = new \CCrmCompany(false);
 

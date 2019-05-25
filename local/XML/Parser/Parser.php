@@ -10,9 +10,24 @@ abstract class Parser {
 
   protected $errors = [];
 
-  public function instance() : Parser {
+  private $xpath = '/offers/offer[%d]/following-sibling::offer';
 
-     return new static();
+  private $isXpathMode = false;
+
+  private function __construct(?int $offset) {
+
+    if(is_int($offset)) {
+
+      $this->isXpathMode = true;
+      $this->xpath = sprintf($this->xpath, $offset);
+
+    }
+
+  }
+
+  public function instance(?string $xpath = '') : Parser {
+
+     return new static($xpath);
 
   }
 
@@ -62,7 +77,7 @@ abstract class Parser {
 
     $runTime = $runStart->diff($runEnd, true);
 
-    return ['status' => 200, 'offers' => count($data), 'file' => $this->getPath(), 'errors' => $this->errors, 'time' => sprintf("%s:%s sec.", $runTime->i, $runTime->s),'memory' => round( memory_get_usage() / 1024 / 1024, 2)." МБ." ];
+    return ['status' => 200, 'offers' => count($data), 'file' => $this->getPath(), 'xpath' => $this->xpath, 'errors' => $this->errors, 'time' => sprintf("%s min. : %s sec.", $runTime->i, $runTime->s),'memory' => round( memory_get_usage() / 1024 / 1024, 2)." МБ." ];
 
   }
 
@@ -70,7 +85,29 @@ abstract class Parser {
 
     if($dom = \DOMDocument::load($this->path)) {
 
-       return $dom->documentElement;
+      if($this->isXpathMode) {
+
+         $xdom = new \DOMXpath($dom);
+
+         $childs = $xdom->query($this->xpath); 
+
+         $virtualDom = new \DomDocument("1.0","utf-8");
+
+         $offers = $virtualDom->createElement('offers');
+
+         foreach($childs as $k=>$node) {
+          
+            $offers->appendChild($virtualDom->importNode($node, true));
+
+         }
+
+         $root = $virtualDom->appendChild($offers);
+
+         return $virtualDom->documentElement;
+
+      }
+
+      return $dom->documentElement;
 
     }
 

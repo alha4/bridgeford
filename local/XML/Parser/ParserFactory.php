@@ -6,7 +6,7 @@ use \Bitrix\Main\Application;
 
 class ParserFactory {
 
-  public function create() : Parser {
+  public function create(?int $offset) : Parser {
 
     $param = Application::getInstance()->getContext()->getRequest()->get('parser');
 
@@ -16,7 +16,7 @@ class ParserFactory {
 
     }
 
-    $objectParser = ObjectParser::instance(); 
+    $objectParser = ObjectParser::instance($offset); 
     $objectParser->setPath(XML_PATH_MAP[$param]);
 
     return $objectParser;
