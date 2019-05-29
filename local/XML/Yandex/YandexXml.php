@@ -7,35 +7,37 @@ final class YandexXml extends ExportBase {
 
   protected $fileName = '/yandex_commerc.xml';
 
+  private const AGENT_PHONE = '+7 (495) 127-31-29';
+
   private const TYPE = [
 
                    '0' => 'аренда',
                    '1' => 'продажа',
-                   '2' => 'аренда'
+                   '2' => 'продажа'
 
                 ];
 
   private const BUILDING_TYPE = [
 
-                  '74' => 'hotel',
-                  '75' => 'free purpose',
-                  '76' => 'free purpose',
-                  '77' => 'business',
-                  '78' => 'retail',
-                  '79' => 'office',
-                  '80' => 'manufacturing',
-                  '81' => 'warehouse',
-                   '0' => 'free purpose'
+                  '74' => 'residential building',
+                  '75' => 'detached building',
+                  '76' => 'detached building',
+                  '77' => 'business center',
+                  '78' => 'shopping center',
+                  '79' => 'shopping center',
+                  '80' => 'warehouse',
+                  '81' => 'warehouse'
+
                 ];
                
   private const BUILDING_TYPE_COMERCIAL = [
                    
-                 '88' => 'shopping center',
-                 '89' => 'detached building',
-                 '90' => 'detached building',
-                 '91' => 'detached building',
-                 '92' => 'residential building',
-                 '93' => 'residential building',
+                 '88' => 'retail',
+                 '89' => 'free purpose',
+                 '90' => 'office',
+                 '91' => 'public catering',
+                 '92' => 'retail',
+                 '93' => 'manufacturing',
                  '94' => 'warehouse'
               
                 ];
@@ -60,9 +62,10 @@ final class YandexXml extends ExportBase {
   private const VATTYPE = [
 
                  "150" => 'УСН',
-                 "151" => 'НДС',
-                 " "   => 'БЕЗ НДС'
+                 "151" => 'НДС'
              ];
+
+  private const EMPTY_VAT = 468;
 
   private const INPUTTYPE = [
 
@@ -102,7 +105,7 @@ final class YandexXml extends ExportBase {
               "UF_CRM_1540202817","UF_CRM_1540456737395","UF_CRM_1540384944","UF_CRM_1540392018",
               "UF_CRM_1540456417","UF_CRM_1540554743072","UF_CRM_1540371585","UF_CRM_1541072013901",
               "UF_CRM_1541072151310","UF_CRM_1540371455","UF_CRM_1541055237379","UF_CRM_1544431330",
-              "UF_CRM_1541056313","UF_CRM_1540371802"];
+              "UF_CRM_1541056313","UF_CRM_1540371802","UF_CRM_1545649289833"];
 
     $date_create = gmdate('c');
 
@@ -123,12 +126,28 @@ final class YandexXml extends ExportBase {
       $xml_string.= sprintf('<offer internal-id="%s">', $row['ID']);
       $xml_string.= sprintf('<type>%s</type>', self::TYPE[  $category_id ]);
       $xml_string.='<category>commercial</category>';
-      $xml_string.= sprintf('<commercial-type>%s</commercial-type>', self::BUILDING_TYPE[$row['UF_CRM_1540371261836']] );
-      $xml_string.= sprintf('<commercial-building-type>%s</commercial-building-type>', self::BUILDING_TYPE_COMERCIAL[$row['UF_CRM_1540384807664']] );
+      $xml_string.='<quality>отличное</quality>';
+
+      if(in_array($row['UF_CRM_1540371261836'], self::BUILDING_TYPE)) {
+
+         $xml_string.= sprintf('<commercial-type>%s</commercial-type>', self::BUILDING_TYPE[$row['UF_CRM_1540371261836']] );
+
+      }
+
+      if(in_array($row['UF_CRM_1540384807664'],self::BUILDING_TYPE_COMERCIAL)) {
+
+         $xml_string.= sprintf('<commercial-building-type>%s</commercial-building-type>', self::BUILDING_TYPE_COMERCIAL[$row['UF_CRM_1540384807664']] );
+
+      }
+
       $xml_string.= sprintf('<creation-date>%s</creation-date>', $date_create);
       $xml_string.= sprintf('<last-update-date>%s</last-update-date>', $date_create);
  
-      $xml_string.= sprintf('<vas>%s</vas>', $this->getVasType($row['UF_CRM_1540977409431']));
+      if($row['UF_CRM_1540977409431']) {
+
+         $xml_string.= sprintf('<vas>%s</vas>', $this->getVasType($row['UF_CRM_1540977409431']));
+
+      }
 
       $xml_string.= '<location><country>Россия</country>';
 
@@ -168,29 +187,63 @@ final class YandexXml extends ExportBase {
       $xml_string.= '</location>';
 
       $xml_string.= '<sales-agent>';
-      $xml_string.= sprintf('<phone>+7%s</phone>', $this->getPhone((int)$row['UF_CRM_1540886934']));
-      $xml_string. '<category>agency</category>';
-      $xml_string. '<organization>bridgeford</organization>';
+      $xml_string.= sprintf('<phone>%s</phone>', self::AGENT_PHONE);
+      $xml_string.= '<category>agency</category>';
+      $xml_string.='<organization>Bridgeford Capital</organization>';
+      $xml_string.= '<url>bridgeford.ru</url>';
+      $xml_string.= '<email>info@bridgeford.ru</email>';
+      $xml_string.= '<photo>http://bridgeford.ru/logo.jpg</photo>';
       $xml_string.= '</sales-agent>';
 
       $xml_string.= '<price>';
-      $xml_string.= sprintf('<value>%s</value>', (int)$row['OPPORTUNITY']);
+      $xml_string.= sprintf('<value>%s</value>', (int)$row['UF_CRM_1545649289833']);
       $xml_string.= sprintf('<currency>%s</currency>', self::CURRENCY[$row['UF_CRM_1540456473']]);
-      $xml_string.= sprintf('<taxation-form>%s</taxation-form>',  $this->getVatType($row["UF_CRM_1540456608"]));
+
+      if($row["UF_CRM_1540456608"] != '' && $row["UF_CRM_1540456608"] != self::EMPTY_VAT) {
+
+         $xml_string.= sprintf('<taxation-form>%s</taxation-form>',  $this->getVatType($row["UF_CRM_1540456608"]));
+
+      }
+
       $xml_string.= '</price>';
 
       $xml_string.= '<area>';
       $xml_string.= sprintf('<value>%s</value>', $row['UF_CRM_1541076330647']);
-      $xml_string. '<unit>кв. м</unit>';
+      $xml_string.='<unit>кв. м</unit>';
       $xml_string.= '</area>';
 
-      $xml_string.= $this->getPhotos((array)$row['UF_CRM_1540532330']);
+      $xml_string.= $this->getPhotos($row['UF_CRM_1540532330']);
 
-      $xml_string.= sprintf('<floors-total>%s</floors-total>', $row['UF_CRM_1540384963']);
-      $xml_string.= sprintf('<floor>%s</floor>', $row['UF_CRM_1540384963']);
+      if($row['UF_CRM_1540371585'] > 0 ) {
+
+         $xml_string.= sprintf('<floors-total>%s</floors-total>', $row['UF_CRM_1540371585']);
+
+      }
+
+      if($row['UF_CRM_1540384963'] > 0) {
+
+         $xml_string.= sprintf('<floor>%s</floor>', $row['UF_CRM_1540384963']);
+
+      }
+
       $xml_string.= sprintf('<ceiling-height>%s</ceiling-height>', $row['UF_CRM_1540385060']);
-      $xml_string.= sprintf('<entrance-type>%s</entrance-type>', self::INPUTTYPE[$row["UF_CRM_1540385040"]]);
-      $xml_string.= sprintf('<electric-capacity>%s</electric-capacity>', $row['UF_CRM_1540385112']);
+
+      if(in_array($row["UF_CRM_1540385040"], array_keys(self::INPUTTYPE))) {
+
+         $xml_string.= sprintf('<entrance-type>%s</entrance-type>', self::INPUTTYPE[$row["UF_CRM_1540385040"]]);
+        
+      } else {
+
+        $xml_string.= sprintf('<entrance-type>%s</entrance-type>', self::INPUTTYPE["95"]);
+
+      }
+
+      if($row['UF_CRM_1540385112'] > 0 ) {
+
+         $xml_string.= sprintf('<electric-capacity>%s</electric-capacity>', $row['UF_CRM_1540385112']);
+
+      }
+
       $xml_string.= sprintf('<description>%s</description>', (bool)$row['UF_CRM_1552294499136'] ? 
       $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
 
@@ -228,13 +281,13 @@ final class YandexXml extends ExportBase {
 
   }
 
-  private function getVasType(?string $varian = '0') : string {
+  private function getVasType(?string $variant = '0') : string {
 
-     return self::SERVICE_TYPE[$varian] ? : self::SERVICE_TYPE['212'];
+     return self::SERVICE_TYPE[$variant] ? : '';
 
   }
 
-  private function getAddress(array $row) : string {
+  private function getAddress(array &$row) : string {
 
     if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
 
@@ -242,7 +295,10 @@ final class YandexXml extends ExportBase {
 
     }
 
-    return sprintf("%s-й %s %s", $row['UF_CRM_1540202908'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202900']);
+    return sprintf("%s, %s %s %s",$row['UF_CRM_1540202817'],  $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
+
+
+    #return sprintf("%s-й %s %s", $row['UF_CRM_1540202908'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202900']);
 
   }
 
@@ -252,7 +308,7 @@ final class YandexXml extends ExportBase {
 
   }
 
-  private function getPhotos(array $data = []) : string {
+  private function getPhotos(array &$data = []) : string {
 
     $xml_photo = '';
  

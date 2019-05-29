@@ -89,6 +89,8 @@ abstract class Parser {
 
          $xdom = new \DOMXpath($dom);
 
+         unset($dom);
+
          $childs = $xdom->query($this->xpath); 
 
          $virtualDom = new \DomDocument("1.0","utf-8");
