@@ -91,4 +91,10 @@ protected function enumValue(int $value_id, string $code) : string {
   return htmlspecialchars($value, ENT_QUOTES | ENT_XML1, "UTF-8");
 
  }
+
+ protected function isTransportMetro(string $value) : bool {
+
+   return strpos($value, "транспорт") !== false ? true : false;
+
+ }
 }

@@ -7,7 +7,7 @@ final class YandexXml extends ExportBase {
 
   protected $fileName = '/yandex_commerc.xml';
 
-  private const AGENT_PHONE = '+7 (495) 127-31-29';
+  private const AGENT_PHONE = '+7(495)127-31-29';
 
   private const TYPE = [
 
@@ -109,6 +109,11 @@ final class YandexXml extends ExportBase {
 
     $date_create = gmdate('c');
 
+    $date_update = new \DateTime();
+    $date_update->sub(new \DateInterval("P1D"));
+    $date_update = $date_update->format("c");
+
+
     $xml_string = '<realty-feed xmlns="http://webmaster.yandex.ru/schemas/feed/realty/2010-06">';
 
     $xml_string.= sprintf("<generation-date>%s</generation-date>", $date_create);
@@ -141,7 +146,7 @@ final class YandexXml extends ExportBase {
       }
 
       $xml_string.= sprintf('<creation-date>%s</creation-date>', $date_create);
-      $xml_string.= sprintf('<last-update-date>%s</last-update-date>', $date_create);
+      $xml_string.= sprintf('<last-update-date>%s</last-update-date>', $date_update);
  
       if($row['UF_CRM_1540977409431']) {
 
@@ -176,7 +181,17 @@ final class YandexXml extends ExportBase {
 
         if($row['UF_CRM_1540203015'] > 0) {
 
-           $xml_string.= sprintf('<time-on-foot>%s</time-on-foot>', (int)$this->enumValue((int)$row['UF_CRM_1540203015'],'UF_CRM_1540203015'));
+           $metroTime = $this->enumValue((int)$row['UF_CRM_1540203015'],'UF_CRM_1540203015');
+
+           if($this->isTransportMetro($metroTime)) {
+
+              $xml_string.= sprintf('<time-on-transport>%s</time-on-transport>', (int)$metroTime);
+
+           } else {
+
+              $xml_string.= sprintf('<time-on-foot>%s</time-on-foot>', (int)$metroTime);
+
+           }
 
         }
 
@@ -189,7 +204,7 @@ final class YandexXml extends ExportBase {
       $xml_string.= '<sales-agent>';
       $xml_string.= sprintf('<phone>%s</phone>', self::AGENT_PHONE);
       $xml_string.= '<category>agency</category>';
-      $xml_string.='<organization>Bridgeford Capital</organization>';
+      $xml_string.= '<organization>Bridgeford Capital</organization>';
       $xml_string.= '<url>bridgeford.ru</url>';
       $xml_string.= '<email>info@bridgeford.ru</email>';
       $xml_string.= '<photo>http://bridgeford.ru/logo.jpg</photo>';
@@ -253,9 +268,9 @@ final class YandexXml extends ExportBase {
 
       }
 
-      if($category_id == self::TYPE_DEAL['RENT'] || $category_id ==  self::TYPE_DEAL['SALE']) {
+      if($category_id == self::TYPE_DEAL['RENT']) {
 
-        $xml_string.= '<deal-status>subrent</deal-status>';
+        $xml_string.= '<deal-status>direct rent</deal-status>';
 
         if($row['UF_CRM_1541056221'] > 0) {
 

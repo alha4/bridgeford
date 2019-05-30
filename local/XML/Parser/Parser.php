@@ -16,7 +16,7 @@ abstract class Parser {
 
   private function __construct(?int $offset) {
 
-    if(is_int($offset)) {
+    if(!is_null($offset) && is_int($offset)) {
 
       $this->isXpathMode = true;
       $this->xpath = sprintf($this->xpath, $offset);
@@ -69,6 +69,10 @@ abstract class Parser {
              $this->fireEvent($item);
 
            }
+         } else {
+
+             $this->errors[] = sprintf("offer internal-id=%d, has exists.",$item['ORIGIN_ID']);
+
          }
        }
     }
