@@ -5,6 +5,8 @@ use XML\ExportBase;
 
 final class YandexXml extends ExportBase {
 
+  use \XML\Heplers\WhaterMark;
+
   protected $fileName = '/yandex_commerc.xml';
 
   private const AGENT_PHONE = '+7(495)127-31-29';
@@ -120,7 +122,13 @@ final class YandexXml extends ExportBase {
 
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
+    $iter = 0;
+
     while($row = $object->Fetch()) {
+
+      if($iter == 3) break;
+
+      $iter++;
 
       $category_id = \CCrmDeal::GetCategoryID($row['ID']);
 
@@ -328,10 +336,10 @@ final class YandexXml extends ExportBase {
     $xml_photo = '';
  
     foreach($data as $file_id) {
+       
+       #\CFile::GetFileArray($file_id);
  
-       $file = \CFile::GetFileArray($file_id);
- 
-       $xml_photo.= sprintf("<image>%s%s</image>", self::HOST, $file['SRC']);
+       $xml_photo.= sprintf("<image>%s%s</image>", self::HOST, $this->createWhaterMark($file_id));
  
  
     }

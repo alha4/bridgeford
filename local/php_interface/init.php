@@ -32,6 +32,7 @@ Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
      '\Search\SimilarTicket'     => SEARCH_ROOT_CLASS_PATH."/SimilarTicket.php",
      '\XML\Helpers\Description'  => XML_CLASS_PATH.'/Helpers/Description.php',
      '\Semantic\SemanticFactory' => SEMANTIC_CLASS_PATH.'/SemanticFactory.php',
+     '\XML\Heplers\WhaterMark'   => XML_CLASS_PATH.'/Helpers/WhaterMark.php',
      '\XML\ExportBase'           => XML_CLASS_PATH.'/ExportBase.php',
      '\XML\Helpers\ExportHelper' => XML_CLASS_PATH.'/Helpers/ExportHelper.php',
      '\XML\Parser\ParserFactory' => XML_PARSER_PATH."/ParserFactory.php",
