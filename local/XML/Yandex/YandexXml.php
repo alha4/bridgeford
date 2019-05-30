@@ -3,13 +3,15 @@ namespace XML\Yandex;
 
 use XML\ExportBase;
 
-final class YandexXml extends ExportBase {
+class YandexXml extends ExportBase {
 
   use \XML\Heplers\WhaterMark;
 
   protected $fileName = '/yandex_commerc.xml';
 
-  private const AGENT_PHONE = '+7(495)127-31-29';
+  protected static $AGENT_PHONE = '+7(495)127-31-29';
+
+  protected static $AGENT_SITE = 'bridgeford.ru';
 
   private const TYPE = [
 
@@ -115,7 +117,6 @@ final class YandexXml extends ExportBase {
     $date_update->sub(new \DateInterval("P1D"));
     $date_update = $date_update->format("c");
 
-
     $xml_string = '<realty-feed xmlns="http://webmaster.yandex.ru/schemas/feed/realty/2010-06">';
 
     $xml_string.= sprintf("<generation-date>%s</generation-date>", $date_create);
@@ -126,7 +127,11 @@ final class YandexXml extends ExportBase {
 
     while($row = $object->Fetch()) {
 
-      if($iter == 3) break;
+      if(\USE_LIMIT == 'Y' && $iter == \LIMIT) {
+
+          break;
+
+      }
 
       $iter++;
 
@@ -137,17 +142,17 @@ final class YandexXml extends ExportBase {
       $semantic = (array)$row[$semantic_code];
 
       $xml_string.= sprintf('<offer internal-id="%s">', $row['ID']);
-      $xml_string.= sprintf('<type>%s</type>', self::TYPE[  $category_id ]);
+      $xml_string.= sprintf('<type>%s</type>', self::TYPE[ $category_id ]);
       $xml_string.='<category>commercial</category>';
       $xml_string.='<quality>отличное</quality>';
 
-      if(in_array($row['UF_CRM_1540371261836'], self::BUILDING_TYPE)) {
+      if(array_key_exists($row['UF_CRM_1540371261836'], self::BUILDING_TYPE) ) {
 
          $xml_string.= sprintf('<commercial-type>%s</commercial-type>', self::BUILDING_TYPE[$row['UF_CRM_1540371261836']] );
 
       }
 
-      if(in_array($row['UF_CRM_1540384807664'],self::BUILDING_TYPE_COMERCIAL)) {
+      if(array_key_exists($row['UF_CRM_1540384807664'], self::BUILDING_TYPE_COMERCIAL)) {
 
          $xml_string.= sprintf('<commercial-building-type>%s</commercial-building-type>', self::BUILDING_TYPE_COMERCIAL[$row['UF_CRM_1540384807664']] );
 
@@ -210,10 +215,10 @@ final class YandexXml extends ExportBase {
       $xml_string.= '</location>';
 
       $xml_string.= '<sales-agent>';
-      $xml_string.= sprintf('<phone>%s</phone>', self::AGENT_PHONE);
+      $xml_string.= sprintf('<phone>%s</phone>', static::$AGENT_PHONE);
       $xml_string.= '<category>agency</category>';
       $xml_string.= '<organization>Bridgeford Capital</organization>';
-      $xml_string.= '<url>bridgeford.ru</url>';
+      $xml_string.=  sprintf('<url>%s</url>' , static::$AGENT_SITE);
       $xml_string.= '<email>info@bridgeford.ru</email>';
       $xml_string.= '<photo>http://bridgeford.ru/logo.jpg</photo>';
       $xml_string.= '</sales-agent>';
@@ -337,9 +342,18 @@ final class YandexXml extends ExportBase {
  
     foreach($data as $file_id) {
        
-       #\CFile::GetFileArray($file_id);
- 
-       $xml_photo.= sprintf("<image>%s%s</image>", self::HOST, $this->createWhaterMark($file_id));
+       if(\USE_WATERMARK == 'Y') {
+
+          $fileSrc = $this->createWhaterMark($file_id);
+
+
+       } else {
+
+         $fileSrc = \CFile::GetFileArray($file_id)['SRC'];
+
+       }
+
+       $xml_photo.= sprintf("<image>%s%s</image>", self::HOST,  $fileSrc);
  
  
     }
