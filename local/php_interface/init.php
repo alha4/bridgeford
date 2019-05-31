@@ -87,7 +87,6 @@ function setMapLocation(&$arFields) : array {
 
   $result = json_decode($http->get(sprintf("https://geocode-maps.yandex.ru/1.x/?apikey=%s&geocode=%s&format=json&lang=ru_RU&rspn=0", YANDEX_API_KEY, $adress )) ,1);
 
-
   $ll = str_replace(' ',',', $result['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']);
 
   $mapUrl = "https://static-maps.yandex.ru/1.x/?ll=$ll&size=500,420&z=16&l=map&pt=$ll,pm2bll";

@@ -34,7 +34,7 @@ class YandexXml extends ExportBase {
 
                 ];
                
-  private const BUILDING_TYPE_COMERCIAL = [
+	private const BUILDING_TYPE_COMERCIAL = [  //значения из тип здания
                    
                  '88' => 'retail',
                  '89' => 'free purpose',
@@ -109,7 +109,7 @@ class YandexXml extends ExportBase {
               "UF_CRM_1540202817","UF_CRM_1540456737395","UF_CRM_1540384944","UF_CRM_1540392018",
               "UF_CRM_1540456417","UF_CRM_1540554743072","UF_CRM_1540371585","UF_CRM_1541072013901",
               "UF_CRM_1541072151310","UF_CRM_1540371455","UF_CRM_1541055237379","UF_CRM_1544431330",
-              "UF_CRM_1541056313","UF_CRM_1540371802","UF_CRM_1545649289833"];
+              "UF_CRM_1541056313","UF_CRM_1540371802","UF_CRM_1545649289833","DATE_CREATE","UF_CRM_1545906357580"];
 
     $date_create = gmdate('c');
 
@@ -146,19 +146,21 @@ class YandexXml extends ExportBase {
       $xml_string.='<category>commercial</category>';
       $xml_string.='<quality>отличное</quality>';
 
-      if(array_key_exists($row['UF_CRM_1540371261836'], self::BUILDING_TYPE) ) {
-
-         $xml_string.= sprintf('<commercial-type>%s</commercial-type>', self::BUILDING_TYPE[$row['UF_CRM_1540371261836']] );
-
-      }
-
       if(array_key_exists($row['UF_CRM_1540384807664'], self::BUILDING_TYPE_COMERCIAL)) {
 
-         $xml_string.= sprintf('<commercial-building-type>%s</commercial-building-type>', self::BUILDING_TYPE_COMERCIAL[$row['UF_CRM_1540384807664']] );
+         $xml_string.= sprintf('<commercial-type>%s</commercial-type>', self::BUILDING_TYPE_COMERCIAL[$row['UF_CRM_1540384807664']] );
 
       }
 
-      $xml_string.= sprintf('<creation-date>%s</creation-date>', $date_create);
+      if(array_key_exists($row['UF_CRM_1540371261836'], self::BUILDING_TYPE)) {
+
+		  $xml_string.= sprintf('<commercial-building-type>%s</commercial-building-type>', self::BUILDING_TYPE[$row['UF_CRM_1540371261836']] );  // из тип здания
+
+      }
+
+      $date_create = new \DateTime($row['DATE_CREATE']);
+
+      $xml_string.= sprintf('<creation-date>%s</creation-date>', $date_create->format("c"));
       $xml_string.= sprintf('<last-update-date>%s</last-update-date>', $date_update);
  
       if($row['UF_CRM_1540977409431']) {
@@ -272,8 +274,29 @@ class YandexXml extends ExportBase {
 
       }
 
-      $xml_string.= sprintf('<description>%s</description>', (bool)$row['UF_CRM_1552294499136'] ? 
-      $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
+
+      if($category_id == self::TYPE_DEAL['RENT_BUSSINES']) {
+
+         if((bool)$row['UF_CRM_1545906357580']) {
+
+            $xml_string.= sprintf('<description>Окупаемость %s %s</description>', 
+            $row['UF_CRM_1544431330'],
+            (bool)$row['UF_CRM_1552294499136'] ?  $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
+
+         } else {
+
+            $xml_string.= sprintf('<description>%s</description>', (bool)$row['UF_CRM_1552294499136'] ? 
+            $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
+
+         }
+
+
+      } else {
+
+        $xml_string.= sprintf('<description>%s</description>', (bool)$row['UF_CRM_1552294499136'] ? 
+        $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
+
+      }
 
       if($row['UF_CRM_1540301873849']) {
       
