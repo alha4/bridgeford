@@ -2,7 +2,7 @@
 
 if(!$_SERVER["DOCUMENT_ROOT"]) {
 
-  $_SERVER["DOCUMENT_ROOT"] = '/home/bitrix/ext_www/crm.bridgeford.ru';
+  $_SERVER["DOCUMENT_ROOT"] = '/home/bitrix/ext_www/bf.angravity.ru';
 
 }
 
@@ -22,6 +22,7 @@ const REQUEST_LOG = 'Y';
 const GENERAL_BROKER = 15;
 const FILTER_PRECENT = 33;
 const YANDEX_API_KEY = '5e926399-e46a-4846-a809-c3d370aa399e';
+const DEBUG_AUTOTEXT = 'Y';
 
 Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
      '\Cian\CianPriceMonitoring' => CIAN_ROOT_CLASS_PATH.'/CianPriceMonitoring.php',
@@ -55,6 +56,7 @@ $event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'setTiketSquareClone');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRaiting');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRealPrice');
+$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setWatermark');
 
 $event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setMapLocation');
 
@@ -62,7 +64,47 @@ require_once $_SERVER['DOCUMENT_ROOT']."/local/Cian/CianPriceMonitoring.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/local/Cian/CrmObject.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/local/Raiting/RaitingFactory.php";
 
+function setWatermark(&$arFields) {
 
+ if(array_key_exists('UF_CRM_1540532330',$arFields)) {
+
+  $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], ["ID","UF_CRM_1540532330"])->Fetch();
+
+  $watermark = new \XML\Heplers\WhaterMark();
+  $watermark->setPath('/upload/qmnew.png');
+
+  $logger = \Log\Logger::instance();
+  $logger->setPath('/local/logs/watermark_log.txt');
+
+  $watermark->setLogger($logger);
+
+  $files = $crm_object['UF_CRM_1540532330'];
+
+  $arWatermark = [];
+
+  foreach($files as $fileID) {
+
+    $arWatermark[] = \CFile::MakeFileArray($watermark->createWhaterMark($fileID));
+
+  }
+
+  $fields = ['UF_CRM_1559649507' => $arWatermark];
+
+  $userField = new \CUserTypeManager();
+
+  if(!$userField->Update("CRM_DEAL", $crm_object['ID'], $fields)) {
+
+     $logger->error([$row['ID'], $userField]);
+
+  } else {
+
+     $logger->info(['ID' => $crm_object['ID'], 'message' => 'водяной знак наложен']);
+
+  }
+
+ }
+
+}
 
 /**
  * UF_CRM_1540202889 - Тип улицы 

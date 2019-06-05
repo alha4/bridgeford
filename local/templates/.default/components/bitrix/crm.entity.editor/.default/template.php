@@ -48,6 +48,13 @@ if($arResult['ENTITY_TYPE_ID'] == CCrmOwnerType::Lead) {
 
 }
 
+if(!$USER->isAdmin()) {
+
+	Main\Page\Asset::getInstance()->addCss($templateFolder.'/user_interface.css');
+
+}
+
+
 
 $guid = $arResult['GUID'];
 $prefix = strtolower($guid);

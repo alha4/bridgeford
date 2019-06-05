@@ -37,9 +37,9 @@ trait Description {
    */
   protected function getDescription(int $category, array &$semantics, array &$arFields) : string {
 
-    if(\XML\DEBUG_AUTOTEXT == 'Y') {
+    if(\DEBUG_AUTOTEXT == 'Y') {
 
-
+        return $arFields['UF_CRM_1556017573094'] ? : '';
 
     }
 

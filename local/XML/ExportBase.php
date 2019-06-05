@@ -36,7 +36,7 @@ abstract class ExportBase {
 
    ];
 
-   protected const HOST = 'https://bf.angravity.ru/';
+   protected const HOST = 'https://bf.angravity.ru';
  
    abstract protected function buildXml() : string;
 

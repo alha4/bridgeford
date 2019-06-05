@@ -5,8 +5,6 @@ use XML\ExportBase;
 
 class YandexXml extends ExportBase {
 
-  use \XML\Heplers\WhaterMark;
-
   protected $fileName = '/yandex_commerc.xml';
 
   protected static $AGENT_PHONE = '+7(495)127-31-29';
@@ -109,7 +107,8 @@ class YandexXml extends ExportBase {
               "UF_CRM_1540202817","UF_CRM_1540456737395","UF_CRM_1540384944","UF_CRM_1540392018",
               "UF_CRM_1540456417","UF_CRM_1540554743072","UF_CRM_1540371585","UF_CRM_1541072013901",
               "UF_CRM_1541072151310","UF_CRM_1540371455","UF_CRM_1541055237379","UF_CRM_1544431330",
-              "UF_CRM_1541056313","UF_CRM_1540371802","UF_CRM_1545649289833","DATE_CREATE","UF_CRM_1545906357580"];
+              "UF_CRM_1541056313","UF_CRM_1540371802","UF_CRM_1545649289833","DATE_CREATE","UF_CRM_1545906357580",
+              "UF_CRM_1556017573094","UF_CRM_1559649507"];
 
     $date_create = gmdate('c');
 
@@ -222,7 +221,7 @@ class YandexXml extends ExportBase {
       $xml_string.= '<organization>Bridgeford Capital</organization>';
       $xml_string.=  sprintf('<url>%s</url>' , static::$AGENT_SITE);
       $xml_string.= '<email>info@bridgeford.ru</email>';
-      $xml_string.= '<photo>http://bridgeford.ru/logo.jpg</photo>';
+      $xml_string.= '<photo>https://bridgeford.ru/logo.jpg</photo>';
       $xml_string.= '</sales-agent>';
 
       $xml_string.= '<price>';
@@ -242,7 +241,7 @@ class YandexXml extends ExportBase {
       $xml_string.='<unit>кв. м</unit>';
       $xml_string.= '</area>';
 
-      $xml_string.= $this->getPhotos($row['UF_CRM_1540532330']);
+      $xml_string.= $this->getPhotos($row['UF_CRM_1559649507']);
 
       if($row['UF_CRM_1540371585'] > 0 ) {
 
@@ -277,15 +276,20 @@ class YandexXml extends ExportBase {
 
       if($category_id == self::TYPE_DEAL['RENT_BUSSINES']) {
 
+         /**
+          * bool UF_CRM_1545906357580 - значение окупаемость в описание 
+          * bool UF_CRM_1552294499136 - автотекст в xml
+          */
          if((bool)$row['UF_CRM_1545906357580']) {
 
-            $xml_string.= sprintf('<description>Окупаемость %s %s</description>', 
-            $row['UF_CRM_1544431330'],
+            $xml_string.= sprintf('<description>АРЕНДНЫЙ БИЗНЕС, ОКУПАЕМОСТЬ %s ПРЯМОЙ КОНТАКТ С СОБСТВЕННИКОМ. %s</description>', 
+            strtoupper($row['UF_CRM_1544431330']),
             (bool)$row['UF_CRM_1552294499136'] ?  $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
 
          } else {
 
-            $xml_string.= sprintf('<description>%s</description>', (bool)$row['UF_CRM_1552294499136'] ? 
+            $xml_string.= sprintf('<description>%s</description>', 
+            (bool)$row['UF_CRM_1552294499136'] ? 
             $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
 
          }
@@ -348,9 +352,6 @@ class YandexXml extends ExportBase {
 
     return sprintf("%s, %s %s %s",$row['UF_CRM_1540202817'],  $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
 
-
-    #return sprintf("%s-й %s %s", $row['UF_CRM_1540202908'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202900']);
-
   }
 
   private function getVatType(?string $type = ' ') : ?string {
@@ -364,17 +365,9 @@ class YandexXml extends ExportBase {
     $xml_photo = '';
  
     foreach($data as $file_id) {
-       
-       if(\USE_WATERMARK == 'Y') {
+      
 
-          $fileSrc = $this->createWhaterMark($file_id);
-
-
-       } else {
-
-         $fileSrc = \CFile::GetFileArray($file_id)['SRC'];
-
-       }
+       $fileSrc = \CFile::GetFileArray($file_id)['SRC'];
 
        $xml_photo.= sprintf("<image>%s%s</image>", self::HOST,  $fileSrc);
  

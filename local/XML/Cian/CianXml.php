@@ -157,7 +157,8 @@ final class CianXml extends ExportBase {
 
       if($category_id == self::RENT_BUSSINES) {
 
-          $xml_string.= sprintf("<Description>%s %s</Description>", $title, $this->escapeEntities($row['UF_CRM_1540471409']));
+          $xml_string.= sprintf("<Description>%s %s</Description>", $title, (bool)$row['UF_CRM_1552294499136'] ? 
+          $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
 
       } else {
      
