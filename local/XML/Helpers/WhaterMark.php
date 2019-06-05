@@ -48,23 +48,17 @@ class WhaterMark {
 
   if($arFile['WIDTH'] < self::MIN_WIDTH) {
 
-    $originWidth = $arFile['HEIGHT'];
- 
-    $arFile['WIDTH'] = self::MIN_WIDTH;
+    $this->logger->info([ 'file' => $arFile['ORIGINAL_NAME'], 'msg' => 'картинка меньше минимальной ширины', 'WIDTH' =>  $arFile['WIDTH']]);
 
-    $this->logger->info([ 'file' => $arFile['ORIGINAL_NAME'], 'msg' => 'картинка меньше минимальной ширины', 'WIDTH' => $originWidth]);
+    $arFile['WIDTH'] = self::MIN_WIDTH;
 
   }
 
   if($arFile['HEIGHT'] < self::MIN_HEIGHT) {
  
-    $originHeight = $arFile['HEIGHT'];
+    $this->logger->info([ 'file' => $arFile['ORIGINAL_NAME'], 'msg' => 'картинка меньше минимальной высоты', 'HEIGHT' => $arFile['HEIGHT'] ]);
 
     $arFile['HEIGHT'] = self::MIN_HEIGHT;
-
-    $this->logger->info([ 'file' => $arFile['ORIGINAL_NAME'], 'msg' => 'картинка меньше минимальной высоты', 'HEIGHT' => $originHeight ]);
-
-    unset($originHeight);
 
   }
 
