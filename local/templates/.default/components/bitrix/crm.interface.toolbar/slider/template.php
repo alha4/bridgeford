@@ -142,7 +142,16 @@ document.querySelector('#actuality_map').addEventListener('click', function(e) {
 
   BX.ajax.post("/local/ajax/map.php", `id=<?=$arParams['ENTITY_ID']?>` , function(resp) {
 		
-		
+		if(JSON.parse(resp).status == 200) {
+
+
+			  BX.SidePanel.Instance.getTopSlider().getFrameWindow().location.reload();
+
+		} else {
+
+        alert('ошибка обновления карты');
+
+		}
 		
 	});
 
