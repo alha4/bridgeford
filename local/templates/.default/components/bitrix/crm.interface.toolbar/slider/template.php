@@ -445,7 +445,7 @@ if($communicationPanel)
 		}
 	);
 </script><?
-
+$documentButton = null;
 if($documentButton)
 {
 	$documentButtonId = $toolbarID.'_document';
@@ -539,7 +539,8 @@ foreach($items as $item)
 			Bitrix\Main\Page\Asset::getInstance()->addJs('/bitrix/js/crm/crm.js');
 		}
 
-		?><div class="ui-btn-double ui-btn-primary">
+		?>
+		<div class="ui-btn-double ui-btn-primary" style="display:none">
 			<button id="<?=htmlspecialcharsbx($labelID);?>" class="ui-btn-main"><?=htmlspecialcharsbx($schemeDescr)?></button>
 			<button id="<?=htmlspecialcharsbx($buttonID);?>" class="ui-btn-extra"></button>
 		</div>

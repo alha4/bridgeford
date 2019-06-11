@@ -173,6 +173,9 @@ else
 <div class="ui-btn-double ui-btn-primary">
  <button id="clean_favorite" class="ui-btn-main">Очистить избранное</button>
 </div>
+
+<?if($USER->IsAdmin()):?>
+
 <div class="ui-btn-double ui-btn-primary ui-btn-group">
  <button id="group_cmd" class="ui-btn-main">Управление рекламой</button>
 </div>
@@ -202,7 +205,7 @@ function sendCommand(cmd, callback = (agrs) => true) {
 
 BX.bind(BX('group_cmd'), 'click', function(e) {
 
-	BX.SidePanel.Instance.open("/crm/commands/", {
+	BX.SidePanel.Instance.open("/crm/advertising/", {
                                       cacheable : false,
                                       requestMethod : "post",
                                       requestParams  : {
@@ -214,97 +217,11 @@ BX.bind(BX('group_cmd'), 'click', function(e) {
 
 });
 
-/*
-BX.PopupMenu.show('demo-popup-menu', BX('group_cmd'), [
-                {
-                    text: 'Реклама в циан', // Название пункта
-                    href: '#', // Ссылка
-                    className: 'menu-popup-item menu-popup-no-icon', // Дополнительные классы
-                    onclick: function(e, item){
+</script>
 
-											 BX.PreventDefault(e);
+<?endif?>
 
-											 BX.SidePanel.Instance.open("/crm/commands/", {
-                                      cacheable : false,
-                                      requestMethod : "post",
-                                      requestParams  : {
-																				sessid  : "<?=bitrix_sessid()?>",
-																				data  : getSelectedObject(),
-																				type : 'deal'
-                                      }
-                                    });
-
-											 this.popupWindow.close()
-                    }
-								},
-								{
-                    text: 'Реклама в авито', // Название пункта
-                    href: '#', // Ссылка
-                    className: 'menu-popup-item menu-popup-no-icon', // Дополнительные классы
-                    onclick: function(e, item){
-
-											 BX.PreventDefault(e);
-											 
-											 BX.showWait(BX('group_cmd'));
-
-											 sendCommand('checkAvito', function(resp) {
-												 
-												 console.log(resp);
-
-												 location.reload();
-
-												 BX.closeWait(BX('group_cmd'));
-
-											 });
-
-                       
-											 this.popupWindow.close()
-                    }
-                },
-								{
-                    text: 'Выгрузить на сайт', // Название пункта
-                    href: '#', // Ссылка
-                    className: 'menu-popup-item menu-popup-no-icon', // Дополнительные классы
-                    onclick: function(e, item){
-
-											 BX.PreventDefault(e);
-											 
-											 BX.showWait(BX('group_cmd'));
-
-											 sendCommand('checkSite', function(resp) {
-												 
-												 console.log(resp);
-
-												 location.reload();
-
-												 BX.closeWait(BX('group_cmd'));
-
-
-											 });
-											 this.popupWindow.close()
-                    }
-                },
-                
-            ], {
-              autoHide : true, // Закрытие меню при клике вне меню
-              offsetTop: 0, // смещение от элемента по Y
-              zIndex: 10000, // z-index
-              offsetLeft: 50,  // смещение от элемента по X
-              angle: null, // Описание уголка, при null – уголка не будет
-              events: {
-                 onPopupShow: function() {
-                    // Событие при показе меню          
-                 },
-                 onPopupClose : function(){
-                    // Событие при закрытии меню
-                 },
-                 onPopupClose : function(){
-                    // Событие при уничтожении объекта меню
-                 }
-              }
-		});
-		
-});*/
+<script>
 
 BX.bind(BX('clean_favorite'), 'click', function(e) {
 

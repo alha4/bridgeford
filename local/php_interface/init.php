@@ -54,7 +54,7 @@ $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setPaybackAutotext');
 
 $event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'setTiketSquareClone');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRaiting');
-$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
+//$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRealPrice');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setWatermark');
 
@@ -71,7 +71,7 @@ function setWatermark(&$arFields) {
   $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], ["ID","UF_CRM_1540532330"])->Fetch();
 
   $watermark = new \XML\Heplers\WhaterMark();
-  $watermark->setPath('/upload/qmnew.png');
+  $watermark->setPath('/upload/newwater.png');
 
   $logger = \Log\Logger::instance();
   $logger->setPath('/local/logs/watermark_log.txt');
@@ -115,11 +115,13 @@ function setWatermark(&$arFields) {
  * 
  */
   
-function setMapLocation(&$arFields) : array {
+function setMapLocation(&$arFields)  {
+ 
+  $select = ['UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667'];
 
-  $required_fields = ['UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667'];
-
-  $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], $required_fields);
+  if(array_intersect(array_keys($arFields),$select)) {
+  
+  $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], $select);
 
   $data = $crm_object->Fetch();
 
@@ -145,10 +147,16 @@ function setMapLocation(&$arFields) : array {
 
   $arFields['UF_CRM_1548410231729'] = $arFile ;
 
-  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($mapUrl  ,1).date("d/m/Y H:i:s")."\r\n");
+  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($mapUrl  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
 
   return $arFields;
 
+  } else {
+
+
+    file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($arFields  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
+
+  }
 
 }
 
