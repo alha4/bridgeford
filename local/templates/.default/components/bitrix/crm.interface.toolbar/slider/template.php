@@ -116,7 +116,9 @@ BX.bind( BX('search_object'), 'click', function(e) {
 <div class="ui-btn-double ui-btn-primary">
  <button id="actuality_object" class="ui-btn-main">Актуализировать</button>
 </div>
-
+<div class="ui-btn-double ui-btn-primary">
+ <button id="actuality_map" class="ui-btn-main">Обновить карту</button>
+</div>
 <div class="ui-btn-double ui-btn-primary">
 <button id="toolbar_pdf_<?=$arParams['ENTITY_ID']?>" class="ui-btn ui-btn-md ui-btn-light-border ui-btn-dropdown ui-btn-themes crm-btn-dropdown-document">PDF экcпорт</button>
 </div> 
@@ -136,10 +138,20 @@ BX.bind( BX('search_object'), 'click', function(e) {
  </div> 
 <script>
 
+document.querySelector('#actuality_map').addEventListener('click', function(e) {
+
+  BX.ajax.post("/local/ajax/map.php", `id=<?=$arParams['ENTITY_ID']?>` , function(resp) {
+		
+		
+		
+	});
+
+
+}, false);
+
 var PDF = {};
 
 PDF.generate = function(typePDF) {
-
 
 	BX.SidePanel.Instance.open("/local/mpdf/pdf_export.php", {
                                       cacheable : false,

@@ -106,22 +106,11 @@ function setWatermark(&$arFields) {
 
 }
 
-/**
- * UF_CRM_1540202889 - Тип улицы 
- * UF_CRM_1540202900 - Название улицы 
- * UF_CRM_1540202908 - Номер дома
- * UF_CRM_1540202817 - Город 
- * UF_CRM_1540202667 - Регион
- * 
- */
-  
-function setMapLocation(&$arFields)  {
- 
+function mapPicureUpdate(int $id) {
+
   $select = ['UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667'];
 
-  if(array_intersect(array_keys($arFields),$select)) {
-  
-  $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], $select);
+  $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' =>  $id ], $select);
 
   $data = $crm_object->Fetch();
 
@@ -142,19 +131,40 @@ function setMapLocation(&$arFields)  {
   $arFile['name'] ="{$arFile['name']}.{$type}";
   $arFile['del'] = 'Y';
   $arFile['MODULE_ID'] = 'crm';
+  $arFile['SUBDIR'] = 'crm_deal_map';
 
-  $fileID = CFile::SaveFile($arFile, 'crm_deal_map');
+  $arFields['UF_CRM_1548410231729'] = $arFile;
 
-  $arFields['UF_CRM_1548410231729'] = $arFile ;
+  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r( $arFile  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
 
-  //file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($mapUrl  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
+  return $arFile;
+
+}
+
+/**
+ * UF_CRM_1540202889 - Тип улицы 
+ * UF_CRM_1540202900 - Название улицы 
+ * UF_CRM_1540202908 - Номер дома
+ * UF_CRM_1540202817 - Город 
+ * UF_CRM_1540202667 - Регион
+ * 
+ */
+  
+function setMapLocation(&$arFields)  {
+ 
+  $select = ['UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667'];
+
+  if(array_intersect(array_keys($arFields),$select)) {
+
+  $arFields['UF_CRM_1548410231729'] = mapPicureUpdate($arFields['ID']);
+
+  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r( $arFile  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
 
   return $arFields;
 
   } else {
 
-
-    //file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($arFields  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
+  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($arFields  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
 
   }
 
