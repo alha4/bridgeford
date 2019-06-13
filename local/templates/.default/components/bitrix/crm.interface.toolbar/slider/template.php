@@ -144,7 +144,6 @@ document.querySelector('#actuality_map').addEventListener('click', function(e) {
 		
 		if(JSON.parse(resp).status == 200) {
 
-
 			  BX.SidePanel.Instance.getTopSlider().getFrameWindow().location.reload();
 
 		} else {

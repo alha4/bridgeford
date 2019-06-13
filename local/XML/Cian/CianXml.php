@@ -7,6 +7,8 @@ use XML\ExportBase;
 final class CianXml extends ExportBase {
 
   protected $fileName = '/cian_commerc.xml';
+
+  private const PHONE_NUMBER = '4951545346';
   
   private const CATEGORY = [
 
@@ -133,7 +135,7 @@ final class CianXml extends ExportBase {
                "UF_CRM_1544172451","UF_CRM_1540976407661","UF_CRM_1540977227270","UF_CRM_1540977306391","UF_CRM_1544431330",
                "UF_CRM_1540974006","UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136","UF_CRM_1540203015","UF_CRM_1541072013901",
                "UF_CRM_1541072151310","UF_CRM_1540371455","UF_CRM_1541055237379","UF_CRM_1544431330","UF_CRM_1541056313","UF_CRM_1540392018",
-              "UF_CRM_1540371802","UF_CRM_1555070914"];
+              "UF_CRM_1540371802","UF_CRM_1555070914","UF_CRM_1545649289833"];
 
     $xml_string = '<feed><feed_version>2</feed_version>';
 
@@ -169,7 +171,7 @@ final class CianXml extends ExportBase {
 
       $xml_string.= sprintf("<Address>%s</Address>", $this->getAddress($row));
       $xml_string.= sprintf("<Phones><PhoneSchema><CountryCode>+7</CountryCode><Number>%s</Number></PhoneSchema></Phones>",
-                    $this->getPhone((int)$row['UF_CRM_1540886934']));
+                    self::PHONE_NUMBER);
       $xml_string.= sprintf("<FloorNumber>%s</FloorNumber>",$row['UF_CRM_1540384963']);
       $xml_string.= sprintf("<TotalArea>%s</TotalArea>", $row['UF_CRM_1541076330647']);
       $xml_string.= sprintf("<IsInHiddenBase>%s</IsInHiddenBase>", $row['UF_CRM_1541004853118']);
@@ -183,23 +185,27 @@ final class CianXml extends ExportBase {
       $xml_string.= $this->getPhotos((array)$row['UF_CRM_1540532330']);
       $xml_string.= "</Photos>";
 
-      $xml_string.= "<Videos>";
-      $xml_string.= $this->getVideos((array)$row['UF_CRM_1540532419']);
-      $xml_string.= "</Videos>";
-
       $xml_string.= '<Building>';
+      $xml_string.= sprintf("<Type>%s</Type>", self::BUILDING_TYPE[$row['UF_CRM_1540371261836']]);
       $xml_string.= sprintf("<FloorsCount>%s</FloorsCount>", $row['UF_CRM_1540371585']);
       $xml_string.= sprintf("<CeilingHeight>%s</CeilingHeight>", $row['UF_CRM_1540385060']);
       $xml_string.= sprintf("<Parking><PlacesCount>%s</PlacesCount></Parking>", $row['UF_CRM_1540301873849']);
-      $xml_string.= sprintf("<VatType>%s</VatType>", self::VATTYPE[$row["UF_CRM_1540456608"]]);
       $xml_string.= sprintf("<Land><Type>%s</Type></Land>", self::AREATYPE[$row['UF_CRM_1540381458431']]);
       $xml_string.= '</Building>';
+   
+      $xml_string.= sprintf("<BargainTerms><VatType>%s</VatType>", self::VATTYPE[$row["UF_CRM_1540456608"]]);
 
-      $xml_string.= sprintf("<BargainTerms><Price>%s</Price>", (int)$row['OPPORTUNITY']);
+      $xml_string.= sprintf("<Price>%s</Price>", (int)$row['UF_CRM_1545649289833']);
+
+      $xml_string.= sprintf("<PriceType>%s</PriceType>", (int)$row['UF_CRM_1541072151310']);
+
+      $xml_string.= "<PaymentPeriod>monthly</PaymentPeriod>";
+
+      $xml_string.= sprintf("<HasGracePeriod>%s</HasGracePeriod>", $row['UF_CRM_1540456737395'] == 1 ? 'true' : 'false');
+
+      $xml_string.= "</BargainTerms>";
+
       $xml_string.= sprintf("<Currency>%s</Currency>", self::CURRENCY[$row['UF_CRM_1540456473']]);
-      $xml_string.= sprintf("<Type>%s</Type>", self::BUILDING_TYPE[$row['UF_CRM_1540371261836']]);
-      $xml_string.= sprintf("<AgentBonus><Value>%s</Value><PaymentType>percent</PaymentType></AgentBonus></BargainTerms>",  
-                    $row['UF_CRM_1540532735882']);
 
       $xml_string.= '</object>';
 
@@ -278,18 +284,19 @@ final class CianXml extends ExportBase {
 
    $xml_photo = '';
 
-   foreach($data as $file_id) {
+   foreach($data as $k=>$file_id) {
 
          $file = \CFile::GetFileArray($file_id);
 
-         $xml_photo.= sprintf("<PhotoSchema><FullUrl>%s%s</FullUrl><IsDefault>true</IsDefault></PhotoSchema>", self::HOST, $file['SRC']);
+         $xml_photo.= sprintf("<PhotoSchema><FullUrl>%s%s</FullUrl>%s</PhotoSchema>", 
+         self::HOST, $file['SRC'], $k == 0 ? '<IsDefault>true</IsDefault>' : '');
 
 
-     }
+    }
 
-     return $xml_photo;
+    return $xml_photo;
 
-  }
+ }
 
  private function getVideos(array $data = []) : string {
 
@@ -308,16 +315,17 @@ final class CianXml extends ExportBase {
 
  }
 
- private function getAddress(array $row) : string {
+ private function getAddress(array &$row) : string {
 
-    if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
+  if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
 
-        return sprintf("%s,%s %s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
-
-    }
-
-    return sprintf("%s, %s-й %s %s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202908'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202900']);
+    return sprintf("%s %s", $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202908'],'UF_CRM_1540202908'));
 
   }
+
+
+  return sprintf("%s, %s %s %s",$row['UF_CRM_1540202817'],  $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
+
+ }
 
 }

@@ -158,13 +158,13 @@ function setMapLocation(&$arFields)  {
 
   $arFields['UF_CRM_1548410231729'] = mapPicureUpdate($arFields['ID']);
 
-  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r( $arFile  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
+  //file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r( $arFile  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
 
   return $arFields;
 
   } else {
 
-  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($arFields  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
+  //file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r($arFields  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
 
   }
 

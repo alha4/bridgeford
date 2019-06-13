@@ -346,7 +346,7 @@ class YandexXml extends ExportBase {
 
     if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
 
-      return sprintf("%s %s", $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
+      return sprintf("%s %s", $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202908'],'UF_CRM_1540202908'));
 
     }
 
