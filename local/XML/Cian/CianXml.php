@@ -74,12 +74,12 @@ final class CianXml extends ExportBase {
 
   private const BUILDING_TYPE = [
 
-                  '74' => 'officeAndResidentialComplex',
+                  '74' => 'residentialHouse',
                   '75' => 'administrativeBuilding',
-                  '76' => 'mansion',
+                  '76' => 'standaloneBuilding',
                   '77' => 'businessCenter',
-                  '78' => 'multifunctionalComplex',
-                  '79' => 'officeBuilding',
+                  '78' => 'shoppingCenter',
+                  '79' => 'shoppingAndBusinessComplex',
                   '80' => 'industrialComplex',
                   '81' => 'warehouseComplex'
 
@@ -135,7 +135,7 @@ final class CianXml extends ExportBase {
                "UF_CRM_1544172451","UF_CRM_1540976407661","UF_CRM_1540977227270","UF_CRM_1540977306391","UF_CRM_1544431330",
                "UF_CRM_1540974006","UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136","UF_CRM_1540203015","UF_CRM_1541072013901",
                "UF_CRM_1541072151310","UF_CRM_1540371455","UF_CRM_1541055237379","UF_CRM_1544431330","UF_CRM_1541056313","UF_CRM_1540392018",
-              "UF_CRM_1540371802","UF_CRM_1555070914","UF_CRM_1545649289833"];
+              "UF_CRM_1540371802","UF_CRM_1555070914","UF_CRM_1545649289833","UF_CRM_1556020811397"];
 
     $xml_string = '<feed><feed_version>2</feed_version>';
 
@@ -155,7 +155,8 @@ final class CianXml extends ExportBase {
       $xml_string.= sprintf("<ExternalId>%s</ExternalId>", $row['ID']);
       $xml_string.= sprintf("<Title>%s</Title>", $title);
 
-      $xml_string.= sprintf("<Category>%s</Category>", $this->getCategory($row['UF_CRM_1540384807664'], $category_id));
+      
+      $xml_string.= sprintf("<Category>%s</Category>", $this->getCategory($row['UF_CRM_1540384807664'], $category_id, $row['UF_CRM_1556020811397']));
 
       if($category_id == self::RENT_BUSSINES) {
 
@@ -169,6 +170,8 @@ final class CianXml extends ExportBase {
 
       }
 
+      $xml_string.= '<PlacementType>streetRetail</PlacementType>';
+
       $xml_string.= sprintf("<Address>%s</Address>", $this->getAddress($row));
       $xml_string.= sprintf("<Phones><PhoneSchema><CountryCode>+7</CountryCode><Number>%s</Number></PhoneSchema></Phones>",
                     self::PHONE_NUMBER);
@@ -177,16 +180,14 @@ final class CianXml extends ExportBase {
       $xml_string.= sprintf("<IsInHiddenBase>%s</IsInHiddenBase>", $row['UF_CRM_1541004853118']);
       $xml_string.= sprintf("<InputType>%s</InputType>", self::INPUTTYPE[$row["UF_CRM_1540385040"]]);
       $xml_string.= sprintf("<Electricity>%s</Electricity>", $row['UF_CRM_1540385112']);
-
-      $xml_string.= sprintf("<PublishTerms><Terms><PublishTermSchema><Services>%s</Services></PublishTermSchema></Terms></PublishTerms>", 
-                    $this->getAdsServices($row));
+      $xml_string.= "<PublishTerms><Terms><PublishTermSchema><Services>paid</Services></PublishTermSchema></Terms></PublishTerms>";
 
       $xml_string.= "<Photos>";
       $xml_string.= $this->getPhotos((array)$row['UF_CRM_1540532330']);
       $xml_string.= "</Photos>";
 
       $xml_string.= '<Building>';
-      $xml_string.= sprintf("<Type>%s</Type>", self::BUILDING_TYPE[$row['UF_CRM_1540371261836']]);
+      $xml_string.= sprintf("<Type>%s</Type>", $this->getBuildingType($row['UF_CRM_1540371261836'], $row['UF_CRM_1540371938']));
       $xml_string.= sprintf("<FloorsCount>%s</FloorsCount>", $row['UF_CRM_1540371585']);
       $xml_string.= sprintf("<CeilingHeight>%s</CeilingHeight>", $row['UF_CRM_1540385060']);
       $xml_string.= sprintf("<Parking><PlacesCount>%s</PlacesCount></Parking>", $row['UF_CRM_1540301873849']);
@@ -274,7 +275,25 @@ final class CianXml extends ExportBase {
 
   }
 
-  private function getCategory(string $type, int $category_id) : string {
+  private function getBuildingType(int $type, $is_mansion) : string {
+
+    if((bool)$is_mansion) {
+
+       return 'mansion';
+
+    }
+
+    return self::BUILDING_TYPE[$type];
+
+  }
+
+  private function getCategory(string $type, int $category_id, int $full_building) : string {
+
+    if((bool)$full_building) {
+
+      return 'building'.self::CATEGORY[$category_id];
+
+    }
 
     return self::CATEGORY_ADS[$type].self::CATEGORY[$category_id];
 
@@ -319,7 +338,7 @@ final class CianXml extends ExportBase {
 
   if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
 
-    return sprintf("%s %s", $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202908'],'UF_CRM_1540202908'));
+    return sprintf("%s %s", $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
 
   }
 

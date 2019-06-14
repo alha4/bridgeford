@@ -150,15 +150,11 @@ final class AvitoXml extends ExportBase {
 
     if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
 
-        return sprintf("Россия, %s, %s %s %s",
-        $row['UF_CRM_1540202817'], 
-        $row['UF_CRM_1540202900'], 
-        $this->enumValue((int)$row['UF_CRM_1540202908'],'UF_CRM_1540202908'), 
-        $row['UF_CRM_1540202908']);
+       return sprintf("Россия, %s, %s %s", $row['UF_CRM_1540202817'], $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
 
     }
 
-    return sprintf("Россия, %s, %s-й %s %s",$row['UF_CRM_1540202817'], $row['UF_CRM_1540202908'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202900']);
+    return sprintf("%s, %s %s %s",$row['UF_CRM_1540202817'],  $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
 
   }
 }
