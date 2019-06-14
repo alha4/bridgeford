@@ -99,7 +99,6 @@ BX.bind( BX('search_object'), 'click', function(e) {
 
 </script>
 
-
 <?endif?>
 <?if($arParams['ENTITY_TYPE_ID'] == CCrmOwnerType::Deal) : ?>
 
@@ -109,9 +108,6 @@ BX.bind( BX('search_object'), 'click', function(e) {
  $brokerID = $uf->GetUserFieldValue('CRM_DEAL','UF_CRM_1540886934', $arParams['ENTITY_ID']);
 
 ?>
-
-<?if($USER->IsAdmin() || $USER->GetID() == $brokerID || $brokerID == GENERAL_BROKER):?>
-
 
 <div class="ui-btn-double ui-btn-primary">
  <button id="actuality_object" class="ui-btn-main">Актуализировать</button>
@@ -123,7 +119,6 @@ BX.bind( BX('search_object'), 'click', function(e) {
 <button id="toolbar_pdf_<?=$arParams['ENTITY_ID']?>" class="ui-btn ui-btn-md ui-btn-light-border ui-btn-dropdown ui-btn-themes crm-btn-dropdown-document">PDF экcпорт</button>
 </div> 
 
-<?endif;?> 
  <div class="ui-btn-double ui-btn-primary">
  <button id="update_price" class="ui-btn-main">Обновить стратегии</button>
  </div> 

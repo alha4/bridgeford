@@ -342,17 +342,29 @@ class YandexXml extends ExportBase {
 
   }
 
-  private function getAddress(array &$row) : string {
 
-    if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
 
-      return sprintf("%s %s", $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
+ private function getAddress(array &$row) : string {
 
-    }
+  $city = $this->enumValue((int)$this->$row['UF_CRM_1540202667'], 'UF_CRM_1540202667');
 
-    return sprintf("%s, %s %s %s",$row['UF_CRM_1540202817'],  $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
+  if($city != self::MOSKOW) {
+
+     $city = $row['UF_CRM_1540202817'];
 
   }
+
+  if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
+
+    return sprintf("%s, %s %s %s",$city, $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
+
+  }
+
+  return sprintf("%s, %s %s %s", $city, $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
+
+ }
+
+
 
   private function getVatType(?string $type = ' ') : ?string {
 

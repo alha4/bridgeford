@@ -20,6 +20,8 @@ abstract class ExportBase {
 
    protected const STREET_TYPE = 37;
 
+   protected const MOSKOW = 'Москва';
+
    protected const TYPE_DEAL = [
 
       'RENT' => 0,

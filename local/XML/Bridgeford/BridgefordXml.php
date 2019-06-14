@@ -7,6 +7,8 @@ final class BridgefordXml extends ExportBase {
 
   protected $fileName = '/bridgeford_commerc.xml';
 
+  private const NEW_BUILDING = 82;
+
   private const TYPE = [
 
     '0' => 'Помещение в аренду',
@@ -70,7 +72,9 @@ final class BridgefordXml extends ExportBase {
                "UF_CRM_1540385060","UF_CRM_1540385112","UF_CRM_1540384963","UF_CRM_1540371585",
                "UF_CRM_1540385040","UF_CRM_1540385262","UF_CRM_1540202908","UF_CRM_1540895685",
                "UF_CRM_1544524903217","UF_CRM_1540895373","ASSIGNED_BY_ID","UF_CRM_1540392018",
-               "UF_CRM_1540974006","UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136","UF_CRM_1555070914"];
+               "UF_CRM_1540974006","UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136",
+               "UF_CRM_1555070914","UF_CRM_1552493240038","UF_CRM_1540371802","UF_CRM_1560505660340",
+               "UF_CRM_1540371455","UF_CRM_1545649289833","UF_CRM_1556017573094","UF_CRM_1540532459","UF_CRM_1540202807"];
     
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -96,17 +100,28 @@ final class BridgefordXml extends ExportBase {
       $xml_string.= sprintf('<building-type>%s</building-type>', self::BUILDING_TYPE[$row['UF_CRM_1540371261836']]);
       $xml_string.= sprintf('<facility-type>%s</facility-type>', self::FACILITY_TYPE[$row['UF_CRM_1540384807664']]);
 
+      if($row['UF_CRM_1540371455'] == self::NEW_BUILDING) {
+
+        $xml_string.= '<is-new-construction>Yes</is-new-construction>';
+        $xml_string.= sprintf('<jk>%s</jk>', $row['UF_CRM_1552493240038']);
+        $xml_string.= sprintf('<construction-date>%s</construction-date>', $row['UF_CRM_1540371802']);
+
+
+      }
+
       $region = $this->enumValue((int)$row['UF_CRM_1540202667'],'UF_CRM_1540202667');
       $xml_string.= sprintf('<region>%s</region>', $region );
 
       if($region != self::DEFAULT_REGION) {
 
          $xml_string.= sprintf('<district>%s</district>', $row['UF_CRM_1540202766'] );
-         $xml_string.= sprintf('<town-type>%s</town-type>', $this->enumValue((int)$row['UF_CRM_1540202747'],'UF_CRM_1540202747'));
+         $xml_string.= sprintf('<town-type>%s</town-type>', $this->enumValue((int)$row['UF_CRM_1540202807'],'UF_CRM_1540202807'));
          $xml_string.= sprintf('<town>%s</town>', $row['UF_CRM_1540202817']);
 
 
       }
+
+      $xml_string.= sprintf('<best-offer>%s</best-offer>', $row['UF_CRM_1560505660340'] == 1 ? 'Yes' : 'No');
 
       if($region == self::DEFAULT_REGION) {
 
@@ -127,12 +142,25 @@ final class BridgefordXml extends ExportBase {
       $xml_string.= sprintf('<street-name>%s</street-name>', $row['UF_CRM_1540202900']);
       $xml_string.= sprintf('<building-number>%s</building-number>', $row['UF_CRM_1540202908']);
       $xml_string.= sprintf('<subway>%s</subway>', $this->IblockEnumValue($row['UF_CRM_1543406565']));
-      $xml_string.= sprintf('<subway-time-feet>%s</subway-time-feet>', $this->enumValue((int)$row['UF_CRM_1540203015'],'UF_CRM_1540203015'));
-      $xml_string.= sprintf('<price>%s</price>',(int)$row['OPPORTUNITY']);
+     
+      $metroTime = $this->enumValue((int)$row['UF_CRM_1540203015'],'UF_CRM_1540203015');
+
+      if($this->isTransportMetro($metroTime)) {
+
+         $xml_string.= sprintf('<subway-time-transport>%s</subway-time-transport>',  $metroTime);
+
+      } else {
+     
+         $xml_string.= sprintf('<subway-time-feet>%s</subway-time-feet>',  $metroTime);
+
+      }
+     
+      $xml_string.= sprintf('<price>%s</price>',(int)$row['UF_CRM_1545649289833']);
       $xml_string.= sprintf('<is-basement>%s</is-basement>', $row['UF_CRM_1540384916112'] ? 'YES' : 'NO');
       $xml_string.= sprintf('<is-mansion>%s</is-mansion>',   $row['UF_CRM_1540371938'] ? 'YES' : 'NO');
-      $xml_string.= sprintf('<description>%s</description>', $this->escapeEntities($row['UF_CRM_1540471409']));
+		  $xml_string.= sprintf('<description>%s</description>', $this->escapeEntities($row['UF_CRM_1540471409']));   // Описание объекта в UF_CRM_1540471409  было UF_CRM_1556017573094
       $xml_string.= sprintf('<photo>%s</photo>', $this->getPhotos((array)$row['UF_CRM_1540532330']));
+      $xml_string.= sprintf('<photo-scheme>%s</photo-scheme>',  $this->getPhotos((array)$row['UF_CRM_1540532459']));
       $xml_string.= sprintf('<ceiling>%s</ceiling>', $row['UF_CRM_1540385060']);
       $xml_string.= sprintf('<electricity>%s</electricity>', $row['UF_CRM_1540385112']);
       $xml_string.= sprintf('<floor>%s</floor>', $row['UF_CRM_1540384963']);
@@ -155,7 +183,7 @@ final class BridgefordXml extends ExportBase {
         $xml_string.= sprintf('<lease-date>%s</lease-date>', $row['UF_CRM_1541056258']);
         $xml_string.= sprintf('<lease-duration>%s</lease-duration>', $row['UF_CRM_1541056313']);
         $xml_string.= sprintf('<taxation>%s</taxation>',  $this->enumValue((int)$row['UF_CRM_1540456608'],'UF_CRM_1540456608'));
-        $xml_string.= sprintf('<space>%s</space>', $row['UF_CRM_1540381545640']);
+        $xml_string.= sprintf('<space>%s</space>', $row['UF_CRM_1540384944']);
 
       } else {
  
@@ -163,6 +191,8 @@ final class BridgefordXml extends ExportBase {
         $xml_string.= sprintf('<object-purpose>%s</object-purpose>', $this->getDestination((array)$row['UF_CRM_1540392018']));
 
       }
+
+      $xml_string.= sprintf('<description-standardized>%s</description-standardized>', $this->getSemantic($semantic, $semantic_code));
 
       $xml_string.= '</offer>';
     }
@@ -242,6 +272,20 @@ final class BridgefordXml extends ExportBase {
     $user = $rsUsers->Fetch();
 
     return $user['NAME'].' '.$user['LAST_NAME'];
+
+  }
+
+  private function getSemantic(array $values, string $code) : string {
+
+    $strSemantic = '';
+
+    foreach($values as $value_id) {
+
+      $strSemantic.= sprintf("<description-parameter>%s</description-parameter>",  $this->enumValue($value_id, $code) );
+
+    }
+
+    return $strSemantic;
 
   }
 

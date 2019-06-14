@@ -180,7 +180,7 @@ final class CianXml extends ExportBase {
       $xml_string.= sprintf("<IsInHiddenBase>%s</IsInHiddenBase>", $row['UF_CRM_1541004853118']);
       $xml_string.= sprintf("<InputType>%s</InputType>", self::INPUTTYPE[$row["UF_CRM_1540385040"]]);
       $xml_string.= sprintf("<Electricity>%s</Electricity>", $row['UF_CRM_1540385112']);
-      $xml_string.= "<PublishTerms><Terms><PublishTermSchema><Services>paid</Services></PublishTermSchema></Terms></PublishTerms>";
+      $xml_string.= "<PublishTerms><Terms><PublishTermSchema><Services><ServicesEnum>paid</ServicesEnum></Services></PublishTermSchema></Terms></PublishTerms>";
 
       $xml_string.= "<Photos>";
       $xml_string.= $this->getPhotos((array)$row['UF_CRM_1540532330']);
@@ -198,7 +198,7 @@ final class CianXml extends ExportBase {
 
       $xml_string.= sprintf("<Price>%s</Price>", (int)$row['UF_CRM_1545649289833']);
 
-      $xml_string.= sprintf("<PriceType>%s</PriceType>", (int)$row['UF_CRM_1541072151310']);
+      $xml_string.= "<PriceType>all</PriceType>";
 
       $xml_string.= "<PaymentPeriod>monthly</PaymentPeriod>";
 
@@ -336,14 +336,21 @@ final class CianXml extends ExportBase {
 
  private function getAddress(array &$row) : string {
 
-  if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
+  $city = $this->enumValue((int)$this->$row['UF_CRM_1540202667'], 'UF_CRM_1540202667');
 
-    return sprintf("%s %s", $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
+  if($city != self::MOSKOW) {
+
+     $city = $row['UF_CRM_1540202817'];
 
   }
 
+  if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
 
-  return sprintf("%s, %s %s %s",$row['UF_CRM_1540202817'],  $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
+    return sprintf("%s, %s %s %s",$city, $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
+
+  }
+
+  return sprintf("%s, %s %s %s", $city, $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
 
  }
 
