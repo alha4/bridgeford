@@ -97,4 +97,44 @@ protected function enumValue(int $value_id, string $code) : string {
    return strpos($value, "транспорт") !== false ? true : false;
 
  }
+
+ protected function getMetre(int $num) : string {
+
+   if($num == 1) {
+
+      return "$num метр";
+
+   }
+
+   if(($num >= 10 && $num < 20) || $num == 111) {
+
+     return "$num метров"; 
+
+   }
+
+   switch($num % 10) {
+
+    case 0 :
+
+    return "$num метров"; break;
+
+    case 1 :
+
+    return "$num метр"; break;
+
+    case 2 :
+    case 3 : 
+    case 4 :
+
+    return "$num метра"; break;
+
+    default : 
+    
+    return "$num метров";
+
+
+   }
+
+ }
+
 }

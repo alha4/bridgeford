@@ -29,7 +29,6 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
      
     }
 
-
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');

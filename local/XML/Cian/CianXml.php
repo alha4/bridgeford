@@ -135,7 +135,7 @@ final class CianXml extends ExportBase {
                "UF_CRM_1544172451","UF_CRM_1540976407661","UF_CRM_1540977227270","UF_CRM_1540977306391","UF_CRM_1544431330",
                "UF_CRM_1540974006","UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136","UF_CRM_1540203015","UF_CRM_1541072013901",
                "UF_CRM_1541072151310","UF_CRM_1540371455","UF_CRM_1541055237379","UF_CRM_1544431330","UF_CRM_1541056313","UF_CRM_1540392018",
-              "UF_CRM_1540371802","UF_CRM_1555070914","UF_CRM_1545649289833","UF_CRM_1556020811397"];
+              "UF_CRM_1540371802","UF_CRM_1555070914","UF_CRM_1545649289833","UF_CRM_1556020811397", "UF_CRM_1559649507", "UF_CRM_1556017573094"];
 
     $xml_string = '<feed><feed_version>2</feed_version>';
 
@@ -158,15 +158,20 @@ final class CianXml extends ExportBase {
       
       $xml_string.= sprintf("<Category>%s</Category>", $this->getCategory($row['UF_CRM_1540384807664'], $category_id, $row['UF_CRM_1556020811397']));
 
+
+	  	//bool UF_CRM_1552294499136 - автотекст в xml
+	    //string UF_CRM_1556017573094 - автотекст с сайта
+		  // UF_CRM_1540471409 - описание объекта
+
       if($category_id == self::RENT_BUSSINES) {
 
-          $xml_string.= sprintf("<Description>%s %s</Description>", $title, (bool)$row['UF_CRM_1552294499136'] ? 
-          $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
+      $xml_string.= sprintf("<Description>%s %s</Description>", $title, (bool)$row['UF_CRM_1552294499136'] ? 
+                        $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
 
       } else {
-     
-          $xml_string.= sprintf("<Description>%s</Description>", (bool)$row['UF_CRM_1552294499136'] ? 
-          $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
+
+      $xml_string.= sprintf("<Description>%s</Description>", (bool)$row['UF_CRM_1552294499136'] ? 
+                    $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
 
       }
 
@@ -183,7 +188,7 @@ final class CianXml extends ExportBase {
       $xml_string.= "<PublishTerms><Terms><PublishTermSchema><Services><ServicesEnum>paid</ServicesEnum></Services></PublishTermSchema></Terms></PublishTerms>";
 
       $xml_string.= "<Photos>";
-      $xml_string.= $this->getPhotos((array)$row['UF_CRM_1540532330']);
+		$xml_string.= $this->getPhotos((array)$row['UF_CRM_1559649507']); //без вотермарков  UF_CRM_1540532330   с вотермарками UF_CRM_1559649507
       $xml_string.= "</Photos>";
 
       $xml_string.= '<Building>';
@@ -202,7 +207,12 @@ final class CianXml extends ExportBase {
 
       $xml_string.= "<PaymentPeriod>monthly</PaymentPeriod>";
 
+
+      if($category_id == self::RENT) {
+
       $xml_string.= sprintf("<HasGracePeriod>%s</HasGracePeriod>", $row['UF_CRM_1540456737395'] == 1 ? 'true' : 'false');
+
+      }
 
       $xml_string.= "</BargainTerms>";
 
@@ -220,7 +230,7 @@ final class CianXml extends ExportBase {
 
   private function getTitle(array $row, int $category_id) : string {
 
-    $square = ($category_id == self::RENT_BUSSINES) ? $row['UF_CRM_1541076330647'] : $row['UF_CRM_1540384944'];
+    $square = ($category_id == self::RENT_BUSSINES) ? (int)$row['UF_CRM_1541076330647'] : (int)$row['UF_CRM_1540384944'];
 
     $region = $this->enumValue((int)$row['UF_CRM_1540203111'],'UF_CRM_1540203111');
     $region.= ', ';
@@ -229,13 +239,13 @@ final class CianXml extends ExportBase {
 
       case self::RENT :
 
-      return strtoupper(sprintf("%s, %s %s метров",  self::TITLE_ALIAS_SYNONYM[$category_id],$region, $square));
+      return strtoupper(sprintf("%s, %s %s",  self::TITLE_ALIAS_SYNONYM[$category_id],$region, $this->getMetre($square)));
 
       break;
 
       case self::SALE :
 
-      return strtoupper(sprintf("%s, %s %s метров",  self::TITLE_ALIAS_SYNONYM[$category_id], $region, $square));
+      return strtoupper(sprintf("%s, %s %s",  self::TITLE_ALIAS_SYNONYM[$category_id], $region, $this->getMetre($square)));
 
       break;
 

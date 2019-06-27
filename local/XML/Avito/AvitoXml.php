@@ -7,6 +7,10 @@ final class AvitoXml extends ExportBase {
 
   protected $fileName = '/avito_commerc.xml';
 
+private const PHONE_NUMBER = '4951545354';
+
+private const COUNTRY = 'Россия';
+
   private const ADS_TYPE = [
 
                 '0' => 'Сдам',
@@ -14,6 +18,22 @@ final class AvitoXml extends ExportBase {
                 '2' => 'Сдам'
 
                ];
+
+  private const TITLE_ALIAS = [
+
+                  '0' => 'Аренда помещения',
+                  '1' => 'Помещение на продажу',
+                  '2' => 'Арендный бизнес'
+            
+                ];
+            
+
+  private const TITLE_ALIAS_SYNONYM = [
+            
+                  '0' => 'Помещение в аренду',
+                  '1' => 'Продажа помещения'
+            
+                ];
 
   private const OBJECT_TYPE = [
                    
@@ -53,7 +73,7 @@ final class AvitoXml extends ExportBase {
                "UF_CRM_1540554743072","UF_CRM_1540371261836","UF_CRM_1540384916112","UF_CRM_1540456737395","UF_CRM_1543406565",
                "UF_CRM_1540203015","UF_CRM_1540202667","UF_CRM_1540203111","UF_CRM_1540371938","UF_CRM_1541072013901",
                "UF_CRM_1541072151310","UF_CRM_1540371455","UF_CRM_1552493240038","UF_CRM_1540456608","UF_CRM_1541055237379",
-               "UF_CRM_1544431330","UF_CRM_1541056313","UF_CRM_1540371802","UF_CRM_1555070914"];
+               "UF_CRM_1544431330","UF_CRM_1541056313","UF_CRM_1540371802","UF_CRM_1555070914", "UF_CRM_1559649507", "UF_CRM_1545649289833", "UF_CRM_1545906357580", "UF_CRM_1556017573094"];
     
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -71,28 +91,48 @@ final class AvitoXml extends ExportBase {
 
       $xml_string.= sprintf('<Id>%s</Id>', $row['ID']);
 
-      $xml_string.= '<ListingFee>PackageSingle</ListingFee>';
+      $xml_string.= '<ListingFee>Package</ListingFee>';
 
-      $xml_string.= sprintf('<AdStatus>%s</AdStatus>','Free');
+		// $xml_string.= sprintf('<AdStatus>%s</AdStatus>','Free');
 
       $xml_string.= '<AllowEmail>Да</AllowEmail>';
 
-      $xml_string.= sprintf('<ManagerName>%s</ManagerName>', $this->getUserFullName($row['ASSIGNED_BY_ID']));
+		// $xml_string.= sprintf('<ManagerName>%s</ManagerName>', $this->getUserFullName($row['ASSIGNED_BY_ID']));
 
-      $xml_string.= '<PropertyRights>Посредник</PropertyRights>';
+      $xml_string.= '<PropertyRights>Собственник</PropertyRights>';
 
-      $xml_string.= sprintf('<ContactPhone>+7%s</ContactPhone>', $this->getPhone($row["ASSIGNED_BY_ID"]));
+      $xml_string.= sprintf('<ContactPhone>+7%s</ContactPhone>', self::PHONE_NUMBER);
 
       $xml_string.= sprintf('<Address>%s</Address>', $this->getAddress($row));
 
-      $xml_string.= sprintf('<Description>%s</Description>', (bool)$row['UF_CRM_1552294499136'] ? 
-      $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
+      $title = $this->getTitle($row, $category_id);
+
+      $xml_string.= sprintf("<Title>%s</Title>", $title);
+
+		//bool UF_CRM_1552294499136 - автотекст в xml
+		//string UF_CRM_1556017573094 - автотекст с сайта
+		// UF_CRM_1540471409 - описание объекта
+
+      if($category_id == self::RENT_BUSSINES) {
+
+      $xml_string.= sprintf("<Description>%s %s</Description>", $title, (bool)$row['UF_CRM_1552294499136'] ? 
+                        $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
+
+      } else {
+
+      $xml_string.= sprintf("<Description>%s</Description>", (bool)$row['UF_CRM_1552294499136'] ? 
+                    $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
+
+      }
+
+		//   $xml_string.= sprintf('<Description>%s</Description>', (bool)$row['UF_CRM_1552294499136'] ? 
+		//   $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
      
       $xml_string.= '<Category>Коммерческая недвижимость</Category>';
 
       $xml_string.= sprintf('<OperationType>%s</OperationType>', self::ADS_TYPE[$category_id]);
 
-      $xml_string.= sprintf('<Price>%s</Price>', (int)$row['OPPORTUNITY']);
+      $xml_string.= sprintf('<Price>%s</Price>', (int)$row['UF_CRM_1545649289833']);
 
       $xml_string.= sprintf('<ObjectType>%s</ObjectType>', self::OBJECT_TYPE[$row['UF_CRM_1540384807664']]);
 
@@ -100,7 +140,7 @@ final class AvitoXml extends ExportBase {
       $xml_string.= sprintf('<Floors>%s</Floors>',$row['UF_CRM_1540371585']);
 
       $xml_string.= '<Images>';
-      $xml_string.= $this->getPhotos((array)$row['UF_CRM_1540532330']);
+		$xml_string.= $this->getPhotos((array)$row['UF_CRM_1559649507']); // с вотермарками 'UF_CRM_1559649507' без 'UF_CRM_1540532330'
       $xml_string.= '</Images>';
 
       if($category_id == self::TYPE_DEAL['RENT_BUSSINES']) {
@@ -114,11 +154,11 @@ final class AvitoXml extends ExportBase {
 
       }
 
-      $xml_string.= '<LeaseDeposit>Без залога</LeaseDeposit>';
-      
-      $xml_string.= sprintf('<LeaseType>%s</LeaseType>', self::RENT_TYPE[$row['UF_CRM_1541056338255']]);
+		//  $xml_string.= '<LeaseDeposit>Без залога</LeaseDeposit>';
 
-      $xml_string.= sprintf('<LeaseCommissionSize>%s</LeaseCommissionSize>', $row['UF_CRM_1540532735882']);
+		//  $xml_string.= sprintf('<LeaseType>%s</LeaseType>', self::RENT_TYPE[$row['UF_CRM_1541056338255']]);
+
+		//  $xml_string.= sprintf('<LeaseCommissionSize>%s</LeaseCommissionSize>', $row['UF_CRM_1540532735882']);
       
       $xml_string.='</Ad>';
 
@@ -146,15 +186,62 @@ final class AvitoXml extends ExportBase {
  
   }
 
-  protected function getAddress(array $row) : string {
 
-    if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
+private function getTitle(array $row, int $category_id) : string {
 
-       return sprintf("Россия, %s, %s %s", $row['UF_CRM_1540202817'], $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
+    $square = ($category_id == self::RENT_BUSSINES) ? $row['UF_CRM_1541076330647'] : $row['UF_CRM_1540384944'];
+
+    $region = $this->enumValue((int)$row['UF_CRM_1540203111'],'UF_CRM_1540203111');
+    $region.= ', ';
+    
+    switch($category_id) {
+
+      case self::RENT :
+
+      return strtoupper(sprintf("%s, %s %s",  self::TITLE_ALIAS_SYNONYM[$category_id],$region, $this->getMetre($square)));
+
+      break;
+
+      case self::SALE :
+
+      return strtoupper(sprintf("%s, %s %s",  self::TITLE_ALIAS_SYNONYM[$category_id], $region, $this->getMetre($square)));
+
+      break;
+
+      case self::RENT_BUSSINES :
+
+      if($row['UF_CRM_1545906357580']) {
+
+          return strtoupper(sprintf("%s, окупаемость - %s", self::TITLE_ALIAS[$category_id],  $row['UF_CRM_1544431330']));
+
+      }
+
+      return strtoupper(sprintf("%s", self::TITLE_ALIAS[$category_id]));
+
+      break;
 
     }
 
-    return sprintf("%s, %s %s %s",$row['UF_CRM_1540202817'],  $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
+  }  
+
+ private function getAddress(array &$row) : string {
+
+  $city = $this->enumValue((int)$this->$row['UF_CRM_1540202667'], 'UF_CRM_1540202667');
+
+  if($city != self::MOSKOW) {
+
+     $city = $row['UF_CRM_1540202817'];
 
   }
+
+  if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
+
+	  return sprintf("%s, %s, %s %s %s",  self::COUNTRY, $city, $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
+
+  }
+
+  return sprintf("%s, %s, %s %s %s", self::COUNTRY, $city, $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
+
+ }
+
 }
