@@ -326,7 +326,7 @@ PDF.generate = function(typePDF) {
 
 					 BX.closeWait(BX('update_price'));
 					 
-					 let error_mess = 'Нет объявлений, проверьте поля адреса и поле площадь';
+					 let error_mess = 'Нет объявлений, проверьте раздел География и площадь, возможно не установлен флаг [Активировать автоматическое ценообразование]';
 
 					 if(response.error) {
 

@@ -19,7 +19,7 @@ const XML_PARSER_PATH = '/local/XML/Parser';
 const XML_CLASS_PATH = '/local/XML';
 const SEMANTIC_CLASS_PATH = '/local/XML/Semantic';
 const LOG_PATH = '/local/Cian/log.txt';
-const REQUEST_LOG = 'Y';
+const REQUEST_LOG = 'N';
 const GENERAL_BROKER = 15;
 const FILTER_PRECENT = 33;
 const YANDEX_API_KEY = '5e926399-e46a-4846-a809-c3d370aa399e';
@@ -43,6 +43,7 @@ const SEMANTIC_CODE = [
 ];
 
 Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
+     '\Cian\EventInterface'      => CIAN_ROOT_CLASS_PATH.'/EventInterface.php',
      '\Cian\CianHelper'          => CIAN_ROOT_CLASS_PATH.'/CianHelper.php',
      '\Cian\CianPriceMonitoring' => CIAN_ROOT_CLASS_PATH.'/CianPriceMonitoring.php',
      '\Cian\CrmObject'           => CIAN_ROOT_CLASS_PATH.'/CrmObject.php',

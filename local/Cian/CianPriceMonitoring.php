@@ -2,10 +2,10 @@
 namespace Cian;
 
 use \Cian\CrmObject,
-    \Cian\Logger,
-    \Stat\CompetitorEvent;
+    \Cian\EventInterface,
+    \Cian\Logger;
 
-final class CianPriceMonitoring {
+final class CianPriceMonitoring implements EventInterface {
 
   use \Cian\CianHelper;
 
@@ -35,7 +35,7 @@ final class CianPriceMonitoring {
 
   private const ERROR_COMPETITORS_UPDATE = 'ошибка обновления списка конкурентов';
 
-  private const ERROR_ADRESS_DECODE = 'ошибка декодированя адреса';
+  private const ERROR_ADRESS_DECODE = 'ошибка декодирования адреса';
 
   private $http_headers = ["Host"    => "api.cian.ru",
                            "Origin"  => "https://www.cian.ru",
@@ -87,10 +87,28 @@ final class CianPriceMonitoring {
 
   ];
 
+  private $events = [];
+
   public static function instance() : CianPriceMonitoring {
 
     return new static();
 
+  }
+
+  public function listen(string $event, callable $callback) : void {
+
+       $this->events[$event] = $callback;
+  }
+
+  public function notify(string $event, ...$args) : void {
+
+    if(array_key_exists($event,$this->events) && is_callable($this->events[$event])) {
+        
+        [$id, $data] = $args;
+      
+        $this->events[$event]($id, $data);
+
+    }
   }
   /**
   * 
@@ -103,6 +121,12 @@ final class CianPriceMonitoring {
   */
   public function run(array &$objects, $crontab = false) : ?array {
 
+    if(count($objects) == 0) {
+
+       return [];
+
+    }
+     
     foreach($objects as $object) {
 
       $object_id = $object['ID'];
@@ -131,8 +155,7 @@ final class CianPriceMonitoring {
            
               if(CrmObject::setPrice($object_id, $price, $price_step)) {
            
-                $event = new CompetitorEvent();
-                $event->dispatch($object_id, $competitors);
+                $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $competitors);
 
                 if(!$crontab)
 
@@ -153,7 +176,7 @@ final class CianPriceMonitoring {
 
                }
 
-              } else {
+             } else {
 
                 if(!$crontab) {
 
@@ -177,14 +200,11 @@ final class CianPriceMonitoring {
 
                 Logger::log(['объект' => $object_id, 'данные' => $competitors, 'ответ' => $response, 'error' => self::ERROR_COMPETITORS_UPDATE]);
 
-
               }
            }
          } else {
 
-          $event = new CompetitorEvent();
-
-          $event->dispatch($object_id, $data = []);
+          $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $data = []);
 
           CrmObject::setCompetitors($object_id, $data = []);
   
@@ -200,8 +220,6 @@ final class CianPriceMonitoring {
 
     }
   }
-
-  return null;
 
  }
 
