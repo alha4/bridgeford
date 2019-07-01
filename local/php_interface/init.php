@@ -8,7 +8,8 @@ if(!$_SERVER["DOCUMENT_ROOT"]) {
 
 use \Bitrix\Main\EventManager,
     \Raiting\RaitingFactory,
-    \Bitrix\Main\Web\HttpClient;
+    \Bitrix\Main\Web\HttpClient,
+    \Bitrix\Main\UserFieldTable;
 
 const PSR_CLASS_PATH = '/local/Psr/Log';
 const CIAN_ROOT_CLASS_PATH = '/local/Cian';
@@ -23,8 +24,26 @@ const GENERAL_BROKER = 15;
 const FILTER_PRECENT = 33;
 const YANDEX_API_KEY = '5e926399-e46a-4846-a809-c3d370aa399e';
 const DEBUG_AUTOTEXT = 'Y';
+const AUTOTEXT_API_URL = 'http://92.53.97.50/autotext.php';
+
+const OBJECT_TYPE = [
+
+  '0' => 'Аренда',
+  '1' => 'Продажа помещения',
+  '2' => 'Продажа арендного бизнеса'
+  
+];
+
+const SEMANTIC_CODE = [
+
+  '0' => 'UF_CRM_1540974006',
+  '1' => 'UF_CRM_1544172451',
+  '2' => 'UF_CRM_1544172560'
+
+];
 
 Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
+     '\Cian\CianHelper'          => CIAN_ROOT_CLASS_PATH.'/CianHelper.php',
      '\Cian\CianPriceMonitoring' => CIAN_ROOT_CLASS_PATH.'/CianPriceMonitoring.php',
      '\Cian\CrmObject'           => CIAN_ROOT_CLASS_PATH.'/CrmObject.php',
      '\Cian\Logger'              => CIAN_ROOT_CLASS_PATH.'/Logger.php',
@@ -51,18 +70,144 @@ $event = EventManager::getInstance();
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setGeoData');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setSquareClone');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setPaybackAutotext');
-
 $event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'setTiketSquareClone');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRaiting');
 //$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRealPrice');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setWatermark');
+$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAutotext');
 
 $event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setMapLocation');
 
 require_once $_SERVER['DOCUMENT_ROOT']."/local/Cian/CianPriceMonitoring.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/local/Cian/CrmObject.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/local/Raiting/RaitingFactory.php";
+
+
+function setAutotext($arFields)  {
+
+  $select = ['ID','UF_CRM_1540202667','UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540203015',
+           'UF_CRM_1543406565','UF_CRM_1540203111','UF_CRM_1540371261836','UF_CRM_1540371455','UF_CRM_1540371585',
+           'UF_CRM_1540371563','UF_CRM_1556020811397','UF_CRM_1540384807664','UF_CRM_1540384944','UF_CRM_1541076330647',
+           'UF_CRM_1540384963','UF_CRM_1540385040','UF_CRM_1540385060','UF_CRM_1540385112','UF_CRM_1540974006','UF_CRM_1544172451',
+           'UF_CRM_1544172560','UF_CRM_1540456417','UF_CRM_1541072013901','UF_CRM_1540392018', 'UF_CRM_1540397421'];
+
+  $keys = array_keys($arFields);
+  $id_index = array_search('ID',$keys);
+  $keys[$id_index] = null;
+  unset($keys[$id_index]);
+  
+  if(count(array_intersect($select, $keys)) > 0) {
+
+  $filter = ['CHECK_PERMISSIONS' => "N", "ID"=> $arFields['ID']];
+
+  $objects = \CCrmDeal::GetList(['ID'=>"DESC"], $filter, $select);
+
+  $jsonData = [];
+
+  while( $object = $objects->Fetch() ) {
+
+   $rawData = [];
+
+   foreach($object as $code=>&$value) {
+
+    if($code != 'ID') {
+
+      $userField = UserFieldTable::getList(array(
+
+        'filter' => ['FIELD_NAME'=> $code],
+        'select' => ['USER_TYPE_ID','MULTIPLE']
+  
+      ))->fetchAll()[0];
+
+      //print_r($userField);
+
+      switch($userField['USER_TYPE_ID']) {
+
+        case 'enumeration' :
+
+        if($userField['MULTIPLE'] != 'Y' && !is_array($value)) {
+
+           #echo $userField['MULTIPLE'], $code,'<br>';
+  
+          if(!is_null($value))
+
+             $value = enumValue($value, $code);
+
+        } else {
+
+           #echo $userField['MULTIPLE'], $code,'<br>';
+
+           if(in_array($code, \SEMANTIC_CODE)) {
+
+              $code = \SEMANTIC_CODE[\CCrmDeal::GetCategoryID($object['ID'])];
+
+              #echo $object['ID'],' ',$code,'<br>';
+
+
+           }
+
+           $values = [];
+
+           foreach($value as $enumID) {
+
+             $enumValue = enumValue($enumID, $code);
+
+             if(!is_numeric($enumValue) && !is_integer($enumValue)) {
+
+                $values[] = $enumValue;
+
+             }
+           }
+
+           $value = $values;
+
+        }
+
+        break;
+
+        case 'iblock_element' :
+
+        $value = iblockValue($value);
+
+        break;
+
+
+      }
+
+    }
+
+    if($value) {
+
+      $rawData['ID'] = $object['ID'];
+      $rawData['CATEGORY_ID'] = OBJECT_TYPE[\CCrmDeal::GetCategoryID($object['ID'])];
+      $rawData[$code] = $value;
+      
+    }
+   }
+
+   $jsonData[] = $rawData;
+
+  }
+
+  /*$http = new HttpClient();
+
+  $http->setHeader("Content-Type","application/json");
+
+  $responce = $http->post(\AUTOTEXT_API_URL, json_encode($jsonData,JSON_UNESCAPED_UNICODE));
+
+  if($http->getStatus() == 200) {
+
+
+  }
+
+  $logger = \Log\Logger::instance();
+  $logger->setPath('/local/logs/autotext_log.txt');
+  $logger->info( $responce);*/
+
+ }
+
+}
 
 function setWatermark(&$arFields) {
 

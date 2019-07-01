@@ -132,7 +132,6 @@ protected function enumValue(int $value_id, string $code) : string {
     
     return "$num метров";
 
-
    }
 
  }
