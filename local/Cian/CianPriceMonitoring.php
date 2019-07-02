@@ -145,7 +145,7 @@ final class CianPriceMonitoring implements EventInterface {
 
           if(CrmObject::setCompetitors($object_id, $competitors)) {
 
-            $price = CrmObject::findPrice($object_id, $object['MAIN_ANCHOR']);
+            $price = CrmObject::findMainAnchorPrice($object_id, $object['MAIN_ANCHOR']);
 
             $price = $price > 0 ? $price : $this->getMinPrice($response);
 
@@ -166,7 +166,7 @@ final class CianPriceMonitoring implements EventInterface {
   
                 if(!$crontab) {
 
-                    throw new \Exception(self::ERROR_PRICE_UPDATE);
+                   throw new \Exception(self::ERROR_PRICE_UPDATE);
 
                 } else {
 
@@ -198,11 +198,11 @@ final class CianPriceMonitoring implements EventInterface {
 
               } else {
 
-                Logger::log(['объект' => $object_id, 'данные' => $competitors, 'ответ' => $response, 'error' => self::ERROR_COMPETITORS_UPDATE]);
+                 Logger::log(['объект' => $object_id, 'данные' => $competitors, 'ответ' => $response, 'error' => self::ERROR_COMPETITORS_UPDATE]);
 
               }
            }
-         } else {
+        } else {
 
           $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $data = []);
 
@@ -217,6 +217,8 @@ final class CianPriceMonitoring implements EventInterface {
     } else {
 
        Logger::log(['объект' => $object_id, 'данные' => $geodecode, 'error' => self::ERROR_ADRESS_DECODE]);
+
+       return ['error' => self::ERROR_ADRESS_DECODE];
 
     }
   }
@@ -350,9 +352,9 @@ final class CianPriceMonitoring implements EventInterface {
 
  }
  /**
-  * @param array $data строка запроса для поиска объектов 
+  * @param array - $data ключи запроса для поиска объектов 
   *
-  * @return array результат список предложений
+  * @return array - список предложений
   *
   */
  private function searchOffers(array &$data) : array {

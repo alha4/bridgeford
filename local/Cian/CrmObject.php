@@ -14,7 +14,7 @@
   * UF_CRM_1540202817 - город
   * UF_CRM_1540202667 - регион
   * UF_CRM_1540202766 - район
-  * UF_CRM_1542955977 - геокодированные данные
+  * UF_CRM_1542955977 - геокодированный адрес
   * UF_CRM_1541753539107 - шаг цены
   * UF_CRM_1541678101879 - активировано автоматическое ценообразование
   * UF_CRM_1542011568379 - изначальная цена
@@ -29,10 +29,6 @@
    private const GEODATA_ROWS = 3;
 
    private const DEFAULT_CITY = 'Москва';
-
-   private const ACTUAL_STATUS = 329;
-
-   private const NOT_ACTUAL_STATUS = 330;
 
    public static $LAST_ERROR;
 
@@ -58,7 +54,9 @@
 
         $geodata = json_decode($row['UF_CRM_1542955977'], 1);
 
-        if(count($geodata) >= self::GEODATA_ROWS) {
+        $is_geo_encoded = count($geodata) >= self::GEODATA_ROWS ? true : false;
+
+        if($is_geo_encoded) {
    
           $arResult[] = [
 
@@ -78,7 +76,7 @@
 
         } else {
 
-         $arResult[] = [
+          $arResult[] = [
 
            'ID'     => $row['ID'],
            'SQUARE' => (int)$row['UF_CRM_1541076330647'],
@@ -91,7 +89,7 @@
            'CATEGORY_ID' => $row['CATEGORY_ID'],
            'MAIN_ANCHOR' => (int)$row['UF_CRM_1542029182'], 
            'IS_DECODED'  => 'N'
-        ];
+         ];
 
         }
       }
@@ -178,7 +176,7 @@
 
    }
 
-   public static function findPrice(int $object_id, string $cian_id) : float {
+   public static function findMainAnchorPrice(int $object_id, string $cian_id) : float {
   
      $competitors = \CCrmDeal::GetList($sort, ['CHECK_PERMISSIONS' => 'N', 'ID' => $object_id], ['UF_CRM_1542029126']);
 
@@ -195,48 +193,6 @@
      }
 
      return 0.0;
-
-   }
-
-   public static function finMinPrice() : float {
-
-    $prices = array_column($concurent,'PRICE');
-
-    $origin_price = $prices;
-
-    rsort($prices);
-
-    $min_price = array_pop($prices);
-
-    $index = array_search($min_price, $origin_price);
-
-    unset($origin_price);
-    
-   }
-
-   public static function actuality(int $object_id) : bool {
-
-    $deal = new \CCrmDeal(false);
-
-    global $USER;
-
-    $arFields = [
-
-      'UF_CRM_1544528494'    => self::ACTUAL_STATUS,
-      'UF_CRM_1544524903217' => date("d.m.Y"),
-      'UF_CRM_1540895373'    => $USER->GetID()
-
-    ];
-
-    if($deal->Update($object_id, $arFields)) {
-
-        return true;
-
-     }
-
-     self::$LAST_ERROR = $deal->LAST_ERROR;
-
-     return false;
 
    }
 
