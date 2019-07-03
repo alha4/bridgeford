@@ -166,7 +166,7 @@ final class CianPriceMonitoring implements EventInterface {
 
         if(!CrmObject::setPrice($object_id, $price, $object['PRICE_STEP'])) {
 
-          throw new \Exception(self::ERROR_PRICE_UPDATE);
+          throw new \Exception([$object_id, self::ERROR_PRICE_UPDATE, CrmObject::$LAST_ERROR]);
             
         }
 
