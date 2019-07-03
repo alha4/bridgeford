@@ -36,6 +36,14 @@ final class CianPriceMonitoring implements EventInterface {
   private const ERROR_COMPETITORS_UPDATE = 'ошибка обновления списка конкурентов';
 
   private const ERROR_ADRESS_DECODE = 'ошибка декодирования адреса';
+  
+  private const ERROR_COORDINATE_DECODE = 'ошибка геокодирования широты, долготы';
+
+  private const ERROR_GEO_ENCODE = 'ошибка геокодирования адреса объекта';
+
+  private const ERROR_EMPTY_DATA = 'нет данных';
+
+  private const SUCCESS_STATUS = 'цена обновлена';
 
   private $http_headers = ["Host"    => "api.cian.ru",
                            "Origin"  => "https://www.cian.ru",
@@ -112,117 +120,66 @@ final class CianPriceMonitoring implements EventInterface {
   }
   /**
   * 
-  *@var array $objects - список объектов недвижимости
+  *@param array $objects - список объектов недвижимости
   *
-  *@return 
+  *@return array - статус обработки
   *
   *@throws Exception - ошибки
   *
   */
-  public function run(array &$objects, $crontab = false) : ?array {
+  public function find(array &$objects) : array {
 
-    if(count($objects) == 0) {
-
-       return [];
-
-    }
-     
     foreach($objects as $object) {
 
       $object_id = $object['ID'];
 
-      $geodecode = $this->getGeocodedAdress($object);
+      $geocoded = $this->getGeocodedAdress($object);
 
-      if($geodecode) {
-   
-        $geodecode['CATEGORY_ID'] = $object['CATEGORY_ID'];
+      $offers = $this->searchOffers($geocoded);
 
-        $response = $this->searchOffers($geodecode);
+      if(!$offers) {
 
-        if(count($response) > 0) {
+        $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $data = []);
 
-          $competitors = $this->getOffersList($response);
+        CrmObject::setCompetitors($object_id, $data = []);
 
-          if(CrmObject::setCompetitors($object_id, $competitors)) {
+        return ['error' => self::ERROR_EMPTY_DATA];
 
-            $price = CrmObject::findMainAnchorPrice($object_id, $object['MAIN_ANCHOR']);
-
-            $price = $price > 0 ? $price : $this->getMinPrice($response);
-
-            if($price > 0) {
-
-              $price_step = $object['PRICE_STEP'];
-           
-              if(CrmObject::setPrice($object_id, $price, $price_step)) {
-           
-                $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $competitors);
-
-                if(!$crontab)
-
-                    return ['ID' => $object_id, 'status' => 'цена обновлена'];
-
-
-               } else {
-  
-                if(!$crontab) {
-
-                   throw new \Exception(self::ERROR_PRICE_UPDATE);
-
-                } else {
-
-                   Logger::log(['объект' => $object_id, 'данные' => $response, 'error' => self::ERROR_PRICE_UPDATE]);
-
-                }
-
-               }
-
-             } else {
-
-                if(!$crontab) {
-
-                  throw new \Exception(self::ERROR_PRICE_ZERO);
-
-                } else {
-
-                  Logger::log(['объект' => $object_id, 'данные' => $response, 'error' => self::ERROR_PRICE_ZERO]);
-
-                }
-
-             }
-
-           } else {
-
-              if(!$crontab) {
-
-                 throw new \Exception(self::ERROR_COMPETITORS_UPDATE);
-
-              } else {
-
-                 Logger::log(['объект' => $object_id, 'данные' => $competitors, 'ответ' => $response, 'error' => self::ERROR_COMPETITORS_UPDATE]);
-
-              }
-           }
-        } else {
-
-          $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $data = []);
-
-          CrmObject::setCompetitors($object_id, $data = []);
-  
-          if(!$crontab) {
-
-            return ['error' => 'нет данных'];
-
-        }
       }
-    } else {
 
-       Logger::log(['объект' => $object_id, 'данные' => $geodecode, 'error' => self::ERROR_ADRESS_DECODE]);
+      $competitors = $this->getOffersList($offers);
 
-       return ['error' => self::ERROR_ADRESS_DECODE];
+      if(!CrmObject::setCompetitors($object_id, $competitors)) {
+
+        throw new \Exception([self::ERROR_COMPETITORS_UPDATE, CrmObject::$LAST_ERROR]);
+
+      }
+
+      $price = CrmObject::findMainAnchorPrice($object_id, $object['MAIN_ANCHOR']);
+
+      $price = $price > 0 ? $price : $this->getMinPrice($offers);
+
+      if($price <= 0) {
+
+        throw new \Exception(self::ERROR_PRICE_ZERO);  
+
+      }
+
+      $price_step = $object['PRICE_STEP'];
+           
+      if(!CrmObject::setPrice($object_id, $price, $price_step)) {
+
+        throw new \Exception(self::ERROR_PRICE_UPDATE);
+            
+      }
+           
+      $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $competitors);
+
+      return ['ID' => $object_id, 'status' => self::SUCCESS_STATUS];
 
     }
-  }
 
+    return ['error' => self::ERROR_EMPTY_DATA];
  }
 
  /**
@@ -301,54 +258,37 @@ final class CianPriceMonitoring implements EventInterface {
  }
 
  /**
-  * @param $address поля адреса из сделки
+  * @param $object - поля сделки
   *
-  *"@return array|bool геокодированные поля адреса
+  *"@return array - геокодированные поля адреса
   *
   */
- public function getGeocodedAdress(array &$address) : ?array {
+ public function getGeocodedAdress(array &$object) : array {
 
-   if($address['IS_DECODED'] == 'Y') {
+   if($object['IS_DECODED'] == 'Y') {
 
-     return  [
-       'STREET' => $address['STREET'],
-       'HOUSE'  => $address['HOUSE'],
-       'CITY'   => $address['CITY'],
-       'IS_MOSKOW' => $address['IS_MOSKOW'],
-       'SQUARE'    => $address['SQUARE']
-     ];
+     return $object;
 
    }
 
-   $fullAddress = $this->adressToString($address);
+   $fullAddress = $this->adressToString($object);
 
    $boundedBy = $this->coordinate($fullAddress);
  
-   if($boundedBy) {
-
-    $data = [
+   $data = [
       "Lng" => $boundedBy['lng'],
       "Lat" => $boundedBy['lat'],
       "Kind" => "house",
-      "Address" => $this->prepareAdressString($address)
-    ];
+      "Address" => $this->prepareAdressString($object)
+   ];
 
-    $geoData = $this->geocoded($data);
+   $geoData = $this->geocoded($data);
 
-    if($geoData) {
-
-      $geoData['IS_MOSKOW'] = $address['IS_MOSKOW'];
-      $geoData['SQUARE']    = $address['SQUARE'];
+   $geoData['IS_MOSKOW'] = $object['IS_MOSKOW'];
+   $geoData['SQUARE']    = $object['SQUARE'];
+   $geoData['CATEGORY_ID'] = $object['CATEGORY_ID'];
  
-      return $geoData;
-
-   }
-
-   return null;
-
-  }  
-
-  return null;
+   return $geoData;
 
  }
  /**
@@ -412,12 +352,12 @@ final class CianPriceMonitoring implements EventInterface {
  }
 
  /**
-  *@param string $search строка адрес объекта 
+  *@param string $search -  адрес объекта 
   *
-  *@return array|void долгота и широта адреса 
+  *@return array - долгота и широта адреса 
   *
   */
- private function coordinate(string $search) : ?array {
+ private function coordinate(string $search) : array {
 
   $url = str_replace('#REGION#', urlencode($search), self::CIAN_API_REGION_SEARCH_URL);
 
@@ -430,7 +370,7 @@ final class CianPriceMonitoring implements EventInterface {
 
   }
 
-  return null;
+  throw new \Exception(self::ERROR_COORDINATE_DECODE);
 
  }
 
@@ -458,7 +398,7 @@ final class CianPriceMonitoring implements EventInterface {
     
   }
 
-  return [];
+  throw new \Exception(self::ERROR_GEO_ENCODE);
 
  }
 

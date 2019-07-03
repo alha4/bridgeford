@@ -76,7 +76,7 @@ $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRaiting');
 //$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRealPrice');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setWatermark');
-$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAutotext');
+$event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setAutotext');
 
 $event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setMapLocation');
 
@@ -85,13 +85,14 @@ require_once $_SERVER['DOCUMENT_ROOT']."/local/Cian/CrmObject.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/local/Raiting/RaitingFactory.php";
 
 
-function setAutotext($arFields)  {
+function setAutotext(&$arFields)  {
 
   $select = ['ID','UF_CRM_1540202667','UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540203015',
            'UF_CRM_1543406565','UF_CRM_1540203111','UF_CRM_1540371261836','UF_CRM_1540371455','UF_CRM_1540371585',
            'UF_CRM_1540371563','UF_CRM_1556020811397','UF_CRM_1540384807664','UF_CRM_1540384944','UF_CRM_1541076330647',
            'UF_CRM_1540384963','UF_CRM_1540385040','UF_CRM_1540385060','UF_CRM_1540385112','UF_CRM_1540974006','UF_CRM_1544172451',
-           'UF_CRM_1544172560','UF_CRM_1540456417','UF_CRM_1541072013901','UF_CRM_1540392018', 'UF_CRM_1540397421'];
+           'UF_CRM_1541055274251','UF_CRM_1541055405','UF_CRM_1541055237379','UF_CRM_1540202817',
+           'UF_CRM_1544172560','UF_CRM_1540456417','UF_CRM_1541072013901','UF_CRM_1540392018', 'UF_CRM_1540397421','UF_CRM_1540471409'];
 
   $keys = array_keys($arFields);
   $id_index = array_search('ID',$keys);
@@ -110,6 +111,11 @@ function setAutotext($arFields)  {
 
    $rawData = [];
 
+   $description = $object['UF_CRM_1540471409'];
+
+   $object['UF_CRM_1540471409'] = null;
+   unset($object['UF_CRM_1540471409']);
+
    foreach($object as $code=>&$value) {
 
     if($code != 'ID') {
@@ -119,7 +125,7 @@ function setAutotext($arFields)  {
         'filter' => ['FIELD_NAME'=> $code],
         'select' => ['USER_TYPE_ID','MULTIPLE']
   
-      ))->fetchAll()[0];
+      ))->fetch();
 
       //print_r($userField);
 
@@ -191,7 +197,8 @@ function setAutotext($arFields)  {
 
   }
 
-  /*$http = new HttpClient();
+
+  $http = new HttpClient();
 
   $http->setHeader("Content-Type","application/json");
 
@@ -199,12 +206,17 @@ function setAutotext($arFields)  {
 
   if($http->getStatus() == 200) {
 
+     $autotext = json_decode($responce,1)[0];
+
+     $arFields['UF_CRM_1540471409'] = $autotext['text'];
+
+     $logger = \Log\Logger::instance();
+     $logger->setPath('/local/logs/autotext_log.txt');
+     $logger->info( [$description , $autotext] );
+
+     return $arFields;
 
   }
-
-  $logger = \Log\Logger::instance();
-  $logger->setPath('/local/logs/autotext_log.txt');
-  $logger->info( $responce);*/
 
  }
 
