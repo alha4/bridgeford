@@ -1,8 +1,7 @@
 <?php
 namespace Cian;
 
-use \Cian\CrmObject,
-    \Cian\EventInterface,
+use \Cian\EventInterface,
     \Cian\Logger;
 
 final class CianPriceMonitoring implements EventInterface {
@@ -28,12 +27,6 @@ final class CianPriceMonitoring implements EventInterface {
   private const GEO_DATA_MOSKOW_ROWS = 4;
 
   private const OWNER_COMPANY_NAME = 'Bridgeford Capital';
-
-  private const ERROR_PRICE_UPDATE = 'ошибка обновления цены';
-
-  private const ERROR_PRICE_ZERO  = 'ошибка цена не может быть <= 0';
-
-  private const ERROR_COMPETITORS_UPDATE = 'ошибка обновления списка конкурентов';
 
   private const ERROR_ADRESS_DECODE = 'ошибка декодирования адреса';
   
@@ -73,7 +66,7 @@ final class CianPriceMonitoring implements EventInterface {
 
   /**
    * @const array CIAN_OFFICE_TYPE 
-   * [Офис,Торговая площадь,СкладПСН,Общепит,Гараж,Производство,Автосервис,Готовый бизнес,Здание,Бытовые услуги,Коммерческая земля]
+   * [Офис,Торговая площадь,СкладПСН,Общепит,Гараж,Производство,Автосервис,Готовый бизнес,Здание,Бытовые услуги]
    *
    */
   private const CIAN_OFFICE_TYPE = [
@@ -99,35 +92,13 @@ final class CianPriceMonitoring implements EventInterface {
 
   private $events = [];
 
-  public static function instance() : CianPriceMonitoring {
-
-    return new static();
-
-  }
-
-  public function listen(string $event, callable $callback) : void {
-
-    $this->events[$event] = $callback;
-
-  }
-
-  public function notify(string $event, ...$args) : void {
-
-    if(array_key_exists($event,$this->events) && is_callable($this->events[$event])) {
-        
-       [$id, $data] = $args;
-      
-       $this->events[$event]($id, $data);
-
-    }
-  }
   /**
   * 
   *@param array $objects - список объектов недвижимости
   *
-  *@return array - статус обработки
+  *@return array - SUCCESS_STATUS статус обработки
   *
-  *@throws Exception - ошибки
+  *@throws Exception - ERROR_EMPTY_DATA|ERROR_EMPTY_OBJECT 
   *
   */
   public function find(array &$objects) : array {
@@ -142,9 +113,7 @@ final class CianPriceMonitoring implements EventInterface {
 
       if(!$offers) {
 
-        $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $data = []);
-
-        CrmObject::setCompetitors($object_id, $data = []);
+        $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $competitors = []);
 
         return ['error' => self::ERROR_EMPTY_DATA];
 
@@ -152,33 +121,45 @@ final class CianPriceMonitoring implements EventInterface {
 
       $competitors = $this->getOffersList($offers);
 
-      if(!CrmObject::setCompetitors($object_id, $competitors)) {
+      $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $competitors);
 
-        throw new \Exception([self::ERROR_COMPETITORS_UPDATE, CrmObject::$LAST_ERROR, $object_id, $competitors]);
-
-      }
-
-      $price = CrmObject::findMainAnchorPrice($object_id, $object['MAIN_ANCHOR']);
+      $price = $this->findMainAnchorPrice($object_id, $object['MAIN_ANCHOR']);
 
       if($price == 0.0) {
 
         $price = $this->getMinPrice($offers);
 
-        if(!CrmObject::setPrice($object_id, $price, $object['PRICE_STEP'])) {
-
-          throw new \Exception([$object_id, self::ERROR_PRICE_UPDATE, CrmObject::$LAST_ERROR]);
-            
-        }
+        $this->notify(EventInterface::ON_SAVE_PRICE, $object_id, $price, $object['PRICE_STEP']);
 
       }
            
-      $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $competitors);
-
       return ['ID' => $object_id, 'status' => self::SUCCESS_STATUS];
 
     }
 
     return ['error' => self::ERROR_EMPTY_OBJECT];
+
+ }
+
+ public static function instance() : CianPriceMonitoring {
+
+   return new static();
+
+ } 
+
+ public function listen(string $event, callable $callback) : void {
+
+   $this->events[$event] = $callback;
+
+ }
+
+ public function notify(string $event, ...$args) : void {
+
+  if(array_key_exists($event,$this->events) && is_callable($this->events[$event])) {
+      
+    $this->events[$event](...$args);
+
+  }
  }
 
  /**
@@ -457,7 +438,6 @@ final class CianPriceMonitoring implements EventInterface {
     $data = array_column($data, 'bargainTerms');
 
   }
-
 
   $prices = array_column($data, $this->getPriceType($dealType) );
   $prices = array_unique($prices);

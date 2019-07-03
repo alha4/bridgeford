@@ -30,6 +30,12 @@
 
    private const DEFAULT_CITY = 'Москва';
 
+   private const ERROR_PRICE_UPDATE = 'ошибка обновления цены';
+
+   private const ERROR_PRICE_ZERO  = 'ошибка цена не может быть <= 0';
+ 
+   private const ERROR_COMPETITORS_UPDATE = 'ошибка обновления списка конкурентов';
+
    public static $LAST_ERROR;
 
    public static function getAll(?int $object_id) : array {
@@ -171,26 +177,6 @@
      self::$LAST_ERROR = $deal->LAST_ERROR;
 
      return false;
-
-   }
-
-   public static function findMainAnchorPrice(int $object_id, string $cian_id) : float {
-  
-     $competitors = \CCrmDeal::GetList($sort, ['CHECK_PERMISSIONS' => 'N', 'ID' => $object_id], ['UF_CRM_1542029126']);
-
-     $arCompetitors = json_decode($competitors->Fetch()['UF_CRM_1542029126'], 1);
-
-     foreach($arCompetitors as $item) {
-
-       if($item['ID'] == $cian_id) {
-
-          return (float)$item['PRICE'];
-
-       }
-
-     }
-
-     return 0.0;
 
    }
 

@@ -19,7 +19,7 @@ final class CompetitorEvent {
 
     array_walk($data, function(&$item) {
 
-       $item['TITLE'] = str_repeat("\n", "",  $item['TITLE']);
+       $item['TITLE'] = str_replace("\n", "",  $item['TITLE']);
 
     });
 

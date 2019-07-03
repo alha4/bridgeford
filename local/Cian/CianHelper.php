@@ -5,7 +5,26 @@ namespace Cian;
 use \Bitrix\Main\Web\HttpClient;
 
 trait CianHelper {
+	
+	private function findMainAnchorPrice(int $object_id, string $cian_id) : float {
   
+		$competitors = \CCrmDeal::GetList($sort, ['CHECK_PERMISSIONS' => 'N', 'ID' => $object_id], ['UF_CRM_1542029126']);
+
+		$arCompetitors = json_decode($competitors->Fetch()['UF_CRM_1542029126'], 1);
+
+		foreach($arCompetitors as $item) {
+
+			if($item['ID'] == $cian_id) {
+
+				 return (float)$item['PRICE'];
+
+			}
+
+		}
+
+		return 0.0;
+
+	}
   
   private function isStreet(?string $street) : bool {
 
