@@ -105,16 +105,17 @@ final class CianPriceMonitoring implements EventInterface {
 
   public function listen(string $event, callable $callback) : void {
 
-       $this->events[$event] = $callback;
+    $this->events[$event] = $callback;
+
   }
 
   public function notify(string $event, ...$args) : void {
 
     if(array_key_exists($event,$this->events) && is_callable($this->events[$event])) {
         
-        [$id, $data] = $args;
+       [$id, $data] = $args;
       
-        $this->events[$event]($id, $data);
+       $this->events[$event]($id, $data);
 
     }
   }
@@ -151,7 +152,7 @@ final class CianPriceMonitoring implements EventInterface {
 
       if(!CrmObject::setCompetitors($object_id, $competitors)) {
 
-        throw new \Exception([self::ERROR_COMPETITORS_UPDATE, CrmObject::$LAST_ERROR]);
+        throw new \Exception([self::ERROR_COMPETITORS_UPDATE, CrmObject::$LAST_ERROR, $object_id, $competitors]);
 
       }
 
@@ -164,10 +165,8 @@ final class CianPriceMonitoring implements EventInterface {
         throw new \Exception(self::ERROR_PRICE_ZERO);  
 
       }
-
-      $price_step = $object['PRICE_STEP'];
            
-      if(!CrmObject::setPrice($object_id, $price, $price_step)) {
+      if(!CrmObject::setPrice($object_id, $price, $object['PRICE_STEP'])) {
 
         throw new \Exception(self::ERROR_PRICE_UPDATE);
             
@@ -267,7 +266,7 @@ final class CianPriceMonitoring implements EventInterface {
 
    if($object['IS_DECODED'] == 'Y') {
 
-     return $object;
+      return $object;
 
    }
 
@@ -287,7 +286,7 @@ final class CianPriceMonitoring implements EventInterface {
    $geoData['IS_MOSKOW'] = $object['IS_MOSKOW'];
    $geoData['SQUARE']    = $object['SQUARE'];
    $geoData['CATEGORY_ID'] = $object['CATEGORY_ID'];
- 
+
    return $geoData;
 
  }
@@ -305,7 +304,7 @@ final class CianPriceMonitoring implements EventInterface {
 
   if(REQUEST_LOG == 'Y') {
 
-    Logger::log(['REQUEST' =>  $request, 'RESPONSE' => $response]);
+    Logger::log(['REQUEST' => $request, 'RESPONSE' => $response]);
 
   }
 

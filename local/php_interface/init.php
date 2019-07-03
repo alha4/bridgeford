@@ -521,13 +521,14 @@ function setGeoData(&$arFields) : void {
 
       'STREET' => \Cian\CrmObject::street($row['UF_CRM_1540202900'], $row['UF_CRM_1540202889']),
       'HOUSE'  => $row['UF_CRM_1540202908'],
-      'CITY'   => $row['UF_CRM_1540202817']
+      'CITY'   => $row['UF_CRM_1540202817'],
+      'IS_MOSKOW' => ($row['UF_CRM_1540202817'] == 'Москва' || enumValue($row['UF_CRM_1540202667'],'UF_CRM_1540202667') == 'Москва') ? 1 : 0,
 
     ];
 
   }
 
-  if(count(array_values($arResult)) >= 3) {
+  if(count(array_values($arResult)) > 3) {
 
     $cian = \Cian\CianPriceMonitoring::instance();
 

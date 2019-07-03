@@ -65,8 +65,7 @@
             'STREET' => $geodata['STREET'],
             'HOUSE'  => $geodata['HOUSE'],
             'CITY'   => $geodata['CITY'],
-            'IS_MOSKOW' => ($row['UF_CRM_1540202817'] == self::DEFAULT_CITY),
-            'REGION' => $row['UF_CRM_1540202667'],
+            'IS_MOSKOW' => ($row['UF_CRM_1540202817'] == self::DEFAULT_CITY || self::regionValue($row['UF_CRM_1540202667']) == self::DEFAULT_CITY ? 1: 0),
             'PRICE_STEP' => (float)$row['UF_CRM_1541753539107'],
             'CATEGORY_ID' => $row['CATEGORY_ID'],
             'MAIN_ANCHOR' => (int)$row['UF_CRM_1542029182'],
@@ -83,8 +82,7 @@
            'STREET' => self::street($row['UF_CRM_1540202900'], $row['UF_CRM_1540202889']),
            'HOUSE'  => $row['UF_CRM_1540202908'],
            'CITY'   => $row['UF_CRM_1540202817'],
-           'IS_MOSKOW' => ($row['UF_CRM_1540202817'] == self::DEFAULT_CITY),
-           'REGION' => $row['UF_CRM_1540202667'],
+           'IS_MOSKOW' => ($row['UF_CRM_1540202817'] == self::DEFAULT_CITY || self::regionValue($row['UF_CRM_1540202667']) == self::DEFAULT_CITY ? 1 : 0),
            'PRICE_STEP' => (float)$row['UF_CRM_1541753539107'],
            'CATEGORY_ID' => $row['CATEGORY_ID'],
            'MAIN_ANCHOR' => (int)$row['UF_CRM_1542029182'], 
@@ -196,5 +194,24 @@
 
    }
 
-   private function __construct(){}
+   private static function regionValue(int $value_id) : string {
+
+    $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => 'CRM_DEAL', "FIELD_NAME" => "UF_CRM_1540202667"));
+    $entity = $entityResult->Fetch();
+    
+    $enumResult = \CUserFieldEnum::GetList(['ID' => "DESC"], ["ID" => $value_id,"USER_FIELD_ID" => $entity['ID']]);
+  
+    while($enum = $enumResult->GetNext()) {
+  
+        if($enum['ID'] == $value_id) {
+  
+           return $enum['VALUE'];
+  
+        }
+      }
+  
+      return '';
+  }
+
+  private function __construct(){}
  }
