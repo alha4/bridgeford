@@ -43,6 +43,8 @@ final class CianPriceMonitoring implements EventInterface {
 
   private const ERROR_EMPTY_DATA = 'нет данных';
 
+  private const ERROR_EMPTY_OBJECT = 'нет объектов';
+
   private const SUCCESS_STATUS = 'цена обновлена';
 
   private $http_headers = ["Host"    => "api.cian.ru",
@@ -158,18 +160,16 @@ final class CianPriceMonitoring implements EventInterface {
 
       $price = CrmObject::findMainAnchorPrice($object_id, $object['MAIN_ANCHOR']);
 
-      $price = $price > 0 ? $price : $this->getMinPrice($offers);
+      if($price == 0.0) {
 
-      if($price <= 0) {
+        $price = $this->getMinPrice($offers);
 
-        throw new \Exception(self::ERROR_PRICE_ZERO);  
+        if(!CrmObject::setPrice($object_id, $price, $object['PRICE_STEP'])) {
 
-      }
-           
-      if(!CrmObject::setPrice($object_id, $price, $object['PRICE_STEP'])) {
-
-        throw new \Exception(self::ERROR_PRICE_UPDATE);
+          throw new \Exception(self::ERROR_PRICE_UPDATE);
             
+        }
+
       }
            
       $this->notify(EventInterface::ON_SAVE_COMPETITORS, $object_id, $competitors);
@@ -178,7 +178,7 @@ final class CianPriceMonitoring implements EventInterface {
 
     }
 
-    return ['error' => self::ERROR_EMPTY_DATA];
+    return ['error' => self::ERROR_EMPTY_OBJECT];
  }
 
  /**
