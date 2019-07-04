@@ -1,8 +1,7 @@
 <?php
 namespace Cian;
 
-use \Cian\EventInterface,
-    \Cian\Logger;
+use \Cian\EventInterface;
 
 final class CianPriceMonitoring implements EventInterface {
 
@@ -107,9 +106,13 @@ final class CianPriceMonitoring implements EventInterface {
 
       $object_id = $object['ID'];
 
-      $geocoded = $this->getGeocodedAdress($object);
+      if($object['IS_DECODED'] == 'N') {
 
-      $offers = $this->searchOffers($geocoded);
+         $this->getGeocodedAdress($object);
+  
+      }
+
+      $offers = $this->searchOffers($object);
 
       if(!$offers) {
 
@@ -243,13 +246,7 @@ final class CianPriceMonitoring implements EventInterface {
   *"@return array - геокодированные поля адреса
   *
   */
- public function getGeocodedAdress(array &$object) : array {
-
-   if($object['IS_DECODED'] == 'Y') {
-
-      return $object;
-
-   }
+ public function &getGeocodedAdress(array &$object) : array {
 
    $fullAddress = $this->adressToString($object);
 
@@ -264,11 +261,11 @@ final class CianPriceMonitoring implements EventInterface {
 
    $geoData = $this->geocoded($data);
 
-   $geoData['IS_MOSKOW'] = $object['IS_MOSKOW'];
-   $geoData['SQUARE']    = $object['SQUARE'];
-   $geoData['CATEGORY_ID'] = $object['CATEGORY_ID'];
+   $object['STREET'] = $geoData['STREET'];
+   $object['HOUSE']  = $geoData['HOUSE'];
+   $object['CITY']   = $geoData['CITY'];
 
-   return $geoData;
+   return $object;
 
  }
  /**
@@ -285,7 +282,10 @@ final class CianPriceMonitoring implements EventInterface {
 
   if(REQUEST_LOG == 'Y') {
 
-    Logger::log(['REQUEST' => $request, 'RESPONSE' => $response]);
+    $logger = \Log\Logger::instance();
+    $logger->setPath('/local/Cian/log.txt'); 
+
+    $logger->info(['REQUEST' => $request, 'RESPONSE' => $response]);
 
   }
 

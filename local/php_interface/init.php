@@ -68,7 +68,7 @@ Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
     
 $event = EventManager::getInstance();
 
-$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setGeoData');
+//$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setGeoData');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setSquareClone');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setPaybackAutotext');
 $event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'setTiketSquareClone');
