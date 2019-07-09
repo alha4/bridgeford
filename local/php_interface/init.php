@@ -25,6 +25,7 @@ const FILTER_PRECENT = 33;
 const YANDEX_API_KEY = '5e926399-e46a-4846-a809-c3d370aa399e';
 const DEBUG_AUTOTEXT = 'Y';
 const AUTOTEXT_API_URL = 'http://92.53.97.50/autotext.php';
+const NOT_ACTUAL_VALUE = 'не актуально';
 
 const OBJECT_TYPE = [
 
@@ -68,7 +69,7 @@ Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
     
 $event = EventManager::getInstance();
 
-//$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setGeoData');
+$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setGeoData');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setSquareClone');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setPaybackAutotext');
 $event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'setTiketSquareClone');
@@ -76,7 +77,8 @@ $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRaiting');
 //$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRealPrice');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setWatermark');
-$event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setAutotext');
+$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAutotext');
+$event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setAutotext');
 
 $event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setMapLocation');
 
@@ -92,31 +94,26 @@ function setAutotext(&$arFields)  {
            'UF_CRM_1540371563','UF_CRM_1556020811397','UF_CRM_1540384807664','UF_CRM_1540384944','UF_CRM_1541076330647',
            'UF_CRM_1540384963','UF_CRM_1540385040','UF_CRM_1540385060','UF_CRM_1540385112','UF_CRM_1540974006','UF_CRM_1544172451',
            'UF_CRM_1541055274251','UF_CRM_1541055405','UF_CRM_1541055237379','UF_CRM_1540202817',
-           'UF_CRM_1544172560','UF_CRM_1540456417','UF_CRM_1541072013901','UF_CRM_1540392018', 'UF_CRM_1540397421','UF_CRM_1540471409'];
+           'UF_CRM_1544172560','UF_CRM_1540456417','UF_CRM_1541072013901','UF_CRM_1540392018', 'UF_CRM_1540397421', 'UF_CRM_1541055727999'];
 
   $keys = array_keys($arFields);
   $id_index = array_search('ID',$keys);
   $keys[$id_index] = null;
   unset($keys[$id_index]);
-  
+
   if(count(array_intersect($select, $keys)) > 0) {
 
   $filter = ['CHECK_PERMISSIONS' => "N", "ID"=> $arFields['ID']];
 
-  $objects = \CCrmDeal::GetList(['ID'=>"DESC"], $filter, $select);
+  $object = \CCrmDeal::GetList(['ID'=>"DESC"], $filter, $select)->Fetch();
 
   $jsonData = [];
 
-  while( $object = $objects->Fetch() ) {
+  $rawData = [];
 
-   $rawData = [];
+  $ID = $object['ID'];
 
-   $description = $object['UF_CRM_1540471409'];
-
-   $object['UF_CRM_1540471409'] = null;
-   unset($object['UF_CRM_1540471409']);
-
-   foreach($object as $code=>&$value) {
+  foreach($object as $code=>&$value) {
 
     if($code != 'ID') {
 
@@ -127,15 +124,11 @@ function setAutotext(&$arFields)  {
   
       ))->fetch();
 
-      //print_r($userField);
-
       switch($userField['USER_TYPE_ID']) {
 
         case 'enumeration' :
 
         if($userField['MULTIPLE'] != 'Y' && !is_array($value)) {
-
-           #echo $userField['MULTIPLE'], $code,'<br>';
   
           if(!is_null($value))
 
@@ -143,14 +136,9 @@ function setAutotext(&$arFields)  {
 
         } else {
 
-           #echo $userField['MULTIPLE'], $code,'<br>';
-
            if(in_array($code, \SEMANTIC_CODE)) {
 
               $code = \SEMANTIC_CODE[\CCrmDeal::GetCategoryID($object['ID'])];
-
-              #echo $object['ID'],' ',$code,'<br>';
-
 
            }
 
@@ -191,12 +179,9 @@ function setAutotext(&$arFields)  {
       $rawData[$code] = $value;
       
     }
-   }
-
-   $jsonData[] = $rawData;
-
   }
 
+  $jsonData[] = $rawData;
 
   $http = new HttpClient();
 
@@ -208,13 +193,19 @@ function setAutotext(&$arFields)  {
 
      $autotext = json_decode($responce,1)[0];
 
-     $arFields['UF_CRM_1540471409'] = $autotext['text'];
+     $userType = new CUserTypeManager();
+
+     $arAutotext = [
+  
+       'UF_CRM_1556017573094' => $autotext['text']
+
+     ];
+
+     $userType->Update('CRM_DEAL', $ID, $arAutotext);
 
      $logger = \Log\Logger::instance();
      $logger->setPath('/local/logs/autotext_log.txt');
-     $logger->info( [$description , $autotext] );
-
-     return $arFields;
+     $logger->info( [$ID, $autotext['text']] );
 
   }
 
@@ -272,7 +263,7 @@ function mapPicureUpdate(int $id) {
 
   $data = $crm_object->Fetch();
 
-  $adress = sprintf("Россия,Москва,%s+%s,дом+%s", enumValue($data['UF_CRM_1540202889'],'UF_CRM_1540202889'), $data['UF_CRM_1540202900'], $data['UF_CRM_1540202908']);
+  $adress = sprintf("Россия,%s,%s+%s,дом+%s", getCity($data['UF_CRM_1540202817']), enumValue($data['UF_CRM_1540202889'],'UF_CRM_1540202889'), $data['UF_CRM_1540202900'], $data['UF_CRM_1540202908']);
 
   $http = new HttpClient();
 
@@ -588,6 +579,12 @@ function enumValue(int $value_id, string $code, ?string $entity = 'CRM_DEAL') : 
     }
 
     return '';
+}
+
+function getCity(string $value) : string {
+
+  return $value == NOT_ACTUAL_VALUE || !$value ? 'Москва' : $value;
+
 }
 
 function enumID(string $value, string $code, ?string $entity = 'CRM_DEAL') : int {
