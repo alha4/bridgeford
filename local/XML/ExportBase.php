@@ -38,7 +38,7 @@ abstract class ExportBase {
 
    ];
 
-   protected const HOST = 'https://bf.angravity.ru';
+   protected const HOST = 'https://crm.bridgeford.ru';
  
    abstract protected function buildXml() : string;
 
@@ -51,7 +51,7 @@ abstract class ExportBase {
      $xml->formatOutput = true;
      $xml->validateOnParse = true;
 
-     $xml->loadXML($this->buildXml());
+     $xml->loadXML('<?xml version="1.0" encoding="UTF-8"?>'.$this->buildXml());
 
      if($xml->save($_SERVER['DOCUMENT_ROOT'].$this->fileName)) {
 

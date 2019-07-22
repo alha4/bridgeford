@@ -7,9 +7,17 @@ final class AvitoXml extends ExportBase {
 
   protected $fileName = '/avito_commerc.xml';
 
-private const PHONE_NUMBER = '4951545354';
+  private const PHONE_NUMBER = '4951545354';
 
-private const COUNTRY = 'Россия';
+  private const COUNTRY = 'Россия';
+
+  private const MOSKOW_REGION = 'Московская область';
+
+  private const SUBMOSKOW = 'Подмосковье';
+
+  private const NEWMOSKOW = 'Новая Москва';
+
+  private const NOT_ACTUAL = 'не актуально';
 
   private const ADS_TYPE = [
 
@@ -21,17 +29,17 @@ private const COUNTRY = 'Россия';
 
   private const TITLE_ALIAS = [
 
-                  '0' => 'Аренда помещения',
-                  '1' => 'Помещение на продажу',
-                  '2' => 'Арендный бизнес'
+                '0' => 'Аренда помещения',
+                '1' => 'Помещение на продажу',
+                '2' => 'Арендный бизнес'
             
                 ];
             
 
   private const TITLE_ALIAS_SYNONYM = [
             
-                  '0' => 'Помещение в аренду',
-                  '1' => 'Продажа помещения'
+                 '0' => 'Помещение в аренду',
+                 '1' => 'Продажа помещения'
             
                 ];
 
@@ -73,7 +81,7 @@ private const COUNTRY = 'Россия';
                "UF_CRM_1540554743072","UF_CRM_1540371261836","UF_CRM_1540384916112","UF_CRM_1540456737395","UF_CRM_1543406565",
                "UF_CRM_1540203015","UF_CRM_1540202667","UF_CRM_1540203111","UF_CRM_1540371938","UF_CRM_1541072013901",
                "UF_CRM_1541072151310","UF_CRM_1540371455","UF_CRM_1552493240038","UF_CRM_1540456608","UF_CRM_1541055237379",
-               "UF_CRM_1544431330","UF_CRM_1541056313","UF_CRM_1540371802","UF_CRM_1555070914", "UF_CRM_1559649507", "UF_CRM_1545649289833", "UF_CRM_1545906357580", "UF_CRM_1556017573094"];
+               "UF_CRM_1544431330","UF_CRM_1541056313","UF_CRM_1540371802","UF_CRM_1555070914", "UF_CRM_1559649507", "UF_CRM_1545649289833", "UF_CRM_1545906357580", "UF_CRM_1556017573094", "UF_CRM_1540202807"];
     
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -222,11 +230,31 @@ private function getTitle(array $row, int $category_id) : string {
 
     }
 
-  }  
+  } 
+  
+  /**
+   * UF_CRM_1540202900 - улица
+   * UF_CRM_1540202908 - дом
+   * 
+   */
 
- private function getAddress(array &$row) : string {
+  private function getAddress(array &$row) : string {
 
-  $city = $this->enumValue((int)$this->$row['UF_CRM_1540202667'], 'UF_CRM_1540202667');
+  $region = $this->enumValue((int)$row['UF_CRM_1540202667'], 'UF_CRM_1540202667');
+
+  $cityType = $this->enumValue((int)$row['UF_CRM_1540202807'],'UF_CRM_1540202807');
+
+  $streetType = $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889');
+
+  if($cityType == self::NOT_ACTUAL) {
+     $cityType = '';
+  }
+
+  if($streetType  == self::NOT_ACTUAL) {
+     $streetType  = '';
+  }
+
+  $city = $region;
 
   if($city != self::MOSKOW) {
 
@@ -234,14 +262,53 @@ private function getTitle(array $row, int $category_id) : string {
 
   }
 
-  if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
+  if($region == self::SUBMOSKOW) {
 
-	  return sprintf("%s, %s, %s %s %s",  self::COUNTRY, $city, $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']);
+   if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
+    
+      return sprintf("%s, %s, %s %s, %s %s %s",
+        self::COUNTRY, self::MOSKOW_REGION, $cityType, $city, $streetType, 
+        $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']
+      );
+
+   }
+
+   return sprintf("%s, %s, %s %s, %s %s %s",
+            self::COUNTRY, self::MOSKOW_REGION, $cityType, $city, $row['UF_CRM_1540202900'], 
+            $streetType, $row['UF_CRM_1540202908']
+          );
 
   }
 
-  return sprintf("%s, %s, %s %s %s", self::COUNTRY, $city, $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
+  if($region == self::NEWMOSKOW) {
 
+   if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
+
+     return sprintf("%s, %s, %s %s, %s %s %s",
+        self::COUNTRY, self::MOSKOW, $cityType, $city, $streetType, 
+        $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']
+      );
+   }
+
+   return sprintf("%s, %s, %s %s, %s %s %s",
+           self::COUNTRY, self::MOSKOW, $cityType, $city, $row['UF_CRM_1540202900'], 
+           $streetType, $row['UF_CRM_1540202908']
+        );
+
+  }
+ 
+  if($row['UF_CRM_1540202889'] == self::STREET_TYPE) {
+
+   return sprintf("%s, %s, %s %s %s",
+       self::COUNTRY, $city, $streetType, 
+       $row['UF_CRM_1540202900'], $row['UF_CRM_1540202908']
+    );
+
+  }
+
+  return sprintf("%s, %s, %s %s %s",
+           self::COUNTRY, $city, $row['UF_CRM_1540202900'],
+           $streetType, $row['UF_CRM_1540202908']
+         );
  }
-
 }

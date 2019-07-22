@@ -180,6 +180,12 @@ final class CianXml extends ExportBase {
       $xml_string.= sprintf("<Address>%s</Address>", $this->getAddress($row));
       $xml_string.= sprintf("<Phones><PhoneSchema><CountryCode>+7</CountryCode><Number>%s</Number></PhoneSchema></Phones>",
                     self::PHONE_NUMBER);
+                  
+      $metroTime = $this->enumValue((int)$row['UF_CRM_1540203015'],'UF_CRM_1540203015');
+
+      $xml_string.= sprintf('<Undergrounds><UndergroundInfoSchema>%s</UndergroundInfoSchema></Undergrounds>', 
+      $this->getMetro((int)$row['UF_CRM_1543406565'], $metroTime));
+
       $xml_string.= sprintf("<FloorNumber>%s</FloorNumber>",$row['UF_CRM_1540384963']);
       $xml_string.= sprintf("<TotalArea>%s</TotalArea>", $row['UF_CRM_1541076330647']);
       $xml_string.= sprintf("<IsInHiddenBase>%s</IsInHiddenBase>", $row['UF_CRM_1541004853118']);
@@ -188,7 +194,7 @@ final class CianXml extends ExportBase {
       $xml_string.= "<PublishTerms><Terms><PublishTermSchema><Services><ServicesEnum>paid</ServicesEnum></Services></PublishTermSchema></Terms></PublishTerms>";
 
       $xml_string.= "<Photos>";
-		$xml_string.= $this->getPhotos((array)$row['UF_CRM_1559649507']); //без вотермарков  UF_CRM_1540532330   с вотермарками UF_CRM_1559649507
+		  $xml_string.= $this->getPhotos((array)$row['UF_CRM_1559649507']); //без вотермарков  UF_CRM_1540532330   с вотермарками UF_CRM_1559649507
       $xml_string.= "</Photos>";
 
       $xml_string.= '<Building>';
@@ -363,5 +369,31 @@ final class CianXml extends ExportBase {
   return sprintf("%s, %s %s %s", $city, $row['UF_CRM_1540202900'], $this->enumValue((int)$row['UF_CRM_1540202889'],'UF_CRM_1540202889'), $row['UF_CRM_1540202908']);
 
  }
+
+ private function getMetro(int $id, string $metroTime) : string {
+
+   $xml_metro = '';
+
+   $property = \CIBlockElement::GetList(['ID'=>'DESC'],['ID' => $id], false, false, ['PROPERTY_KOD_METRO'])->Fetch();
+
+   if($this->isTransportMetro($metroTime)) {
+
+     $xml_metro.= "<TransportType>transport</TransportType>";
+
+   } else {
+
+     $xml_metro.= "<TransportType>walk</TransportType>";
+
+   }
+
+   $xml_metro.= sprintf("<Time>%d</Time>", (int)$metroTime);
+
+   $xml_metro.= sprintf("<Id>%s</Id>", $property['PROPERTY_KOD_METRO_VALUE']);
+
+   return $xml_metro;
+
+
+  }
+ 
 
 }

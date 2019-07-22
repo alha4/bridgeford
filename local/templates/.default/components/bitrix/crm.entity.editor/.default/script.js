@@ -524,9 +524,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			
 			     fullAddress = (geoFields.map(
 
-							codeUF => { return document.querySelector('[data-cid="' + codeUF + '"] .crm-entity-widget-content-block-inner .field-item').textContent }
+							codeUF => { return document.querySelector('[data-cid="' + codeUF + '"] .crm-entity-widget-content-block-inner .field-item').textContent.replace(" ","+") }
 							
-					 )).join(",");
+					 ).filter( value => value != 'не+актуально' ? true : false )).join("+");
 
 					  locationAddress+= fullAddress ;
 
@@ -535,53 +535,43 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						action.parentNode.removeChild(action);
 
 						BX.showWait(geoMap);
+							//80d57e28-4091-4176-9941-5ff7145d65be
+							//5e926399-e46a-4846-a809-c3d370aa399e
+						BX.loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyAUi5d1Fe5Vl02YJE-cckShpqtqaVH4Jzk', function() {
 
-						BX.loadScript('https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=5e926399-e46a-4846-a809-c3d370aa399e', function() {
+							BX.ajax.loadJSON("https://maps.googleapis.com/maps/api/geocode/json", 
+							{
+								"address" : locationAddress,
+								"key"  : "AIzaSyAUi5d1Fe5Vl02YJE-cckShpqtqaVH4Jzk"
+							},
+							
+							function(response) {
+							
+								if(response.results && response.status == 'OK') {
 
-						ymaps.ready(function() {
 
-						var myMap = new ymaps.Map(geoMap, {
-							center: [55.753994, 37.622093],
-							zoom: 12
-						});
+									 var point = response.results[0].geometry.location;
+
+
+							 }
+
+							 var	map = new google.maps.Map(geoMap , {
+									center: {lat: point.lat, lng: point.lng},
+									zoom: 17
+								});
+
+								var marker = new google.maps.Marker({
+									position: {lat: point.lat, lng: point.lng},
+									map: map,
+									title: response.results[0].formatted_address
+								});
+
+								BX.closeWait(geoMap);
+								
 						
-						ymaps.geocode(locationAddress, {
-							/**
-							 * Опции запроса
-							 * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/geocode.xml
-							 */
-							// Сортировка результатов от центра окна карты.
-							// boundedBy: myMap.getBounds(),
-							// strictBounds: true,
-							// Вместе с опцией boundedBy будет искать строго внутри области, указанной в boundedBy.
-							// Если нужен только один результат, экономим трафик пользователей.
-							results: 1
-					 }).then(function (res) {
-									// Выбираем первый результат геокодирования.
-									var firstGeoObject = res.geoObjects.get(0),
-											// Координаты геообъекта.
-											coords = firstGeoObject.geometry.getCoordinates(),
-											// Область видимости геообъекта.
-											bounds = firstGeoObject.properties.get('boundedBy');
-			
-									firstGeoObject.options.set('preset', 'islands#darkBlueDotIconWithCaption');
-									// Получаем строку с адресом и выводим в иконке геообъекта.
-									firstGeoObject.properties.set('iconCaption', firstGeoObject.getAddressLine());
-			
-									// Добавляем первый найденный геообъект на карту.
-									myMap.geoObjects.add(firstGeoObject);
-									// Масштабируем карту на область видимости геообъекта.
-									myMap.setBounds(bounds, {
-											// Проверяем наличие тайлов на данном масштабе.
-											checkZoomRange: true
-									});
-
-									BX.closeWait(geoMap);
-
 							});
-					});	
 
-				}); 
+					 });
 		},
 
 		initializeBuildingEvent : function() {
@@ -2304,7 +2294,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	
 			this._views = []; // Представления режим view
 
-			this._timeout = 300;
+			this._timeout = 3000;
 
 			this._isAdmin = BX.prop.get(this._settings, "isAdmin", null);
 
@@ -2353,7 +2343,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._generalBrokerID  = BX.prop.get(this._settings, "generalBrokerID", null);
 	
 				this._customerID = BX.prop.get(this._settings, "customerID", null);
-
+				
 				switch(this.getDealCategory()) {
 
 				  case this._CATEGORY.TO_RENT :
@@ -2493,7 +2483,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			
 						this.initializeViews(); 
 
-					}, 2000);
+					}, 4000);
 					
 			  }
 		 }
@@ -3070,11 +3060,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			const self = this;
 
-			setTimeout(function() {
+			setTimeout(()=> {
 
 				self.initializeEventListener();
 
-			}, this._timeout);
+			}, self._timeout);
+
+		
 
 		},
 		unregisterActiveControl: function(control)

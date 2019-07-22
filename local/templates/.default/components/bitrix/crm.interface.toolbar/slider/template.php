@@ -18,6 +18,9 @@ $moreItems = array();
 $communicationPanel = null;
 $documentButton = null;
 $enableMoreButton = false;
+$subMenuButtonId = $prefix.'submenu';
+
+$PdfButtonId = 'toolbar_pdf_'.$arParams['ENTITY_ID'];
 
 foreach($arParams['BUTTONS'] as $item)
 {
@@ -106,7 +109,6 @@ BX.bind( BX('search_object'), 'click', function(e) {
  
  $uf = new CUserTypeManager();
  $brokerID = $uf->GetUserFieldValue('CRM_DEAL','UF_CRM_1540886934', $arParams['ENTITY_ID']);
-
 ?>
 
 <div class="ui-btn-double ui-btn-primary">
@@ -154,7 +156,7 @@ document.querySelector('#actuality_map').addEventListener('click', function(e) {
 
 var PDF = {};
 
-PDF.generate = function(typePDF) {
+PDF.generate = function(typePDF, watermark) {
 
 	BX.SidePanel.Instance.open("/local/mpdf/pdf_export.php", {
                                       cacheable : false,
@@ -162,7 +164,8 @@ PDF.generate = function(typePDF) {
                                       requestParams  : {
 																				sessid  : "<?=bitrix_sessid()?>",
 																				doc_id  : <?=$arParams['ENTITY_ID']?>,
-																				template : typePDF 
+																				template : typePDF,
+																				watermark : watermark
                                       }
 																		});
 																		
@@ -175,6 +178,7 @@ PDF.generate = function(typePDF) {
   
 };
 
+			
 </script>
  <?
 	 $pdfItems = [];
@@ -187,9 +191,36 @@ PDF.generate = function(typePDF) {
 		 'text' => 'Без шапки',
 		 'CODE' => 'OUT_HEAD',
 		 'ACTIVE' => 'Y',
-		 'onclick' => sprintf("PDF.generate('%s')", 'OUT_HEAD')
+		 'items' => [ array(
 
-	 );
+			'ID' => 1,
+			'SORT' => 1,
+			'MODULE_ID' => 'crm',
+			'text' => 'Без вотермарок',
+			'CODE' => 'WATERMARK_PHOTO',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'OUT_HEAD','WITHOUT_WATERMARK')), 
+			 array(
+		
+			'ID' => 2,
+			'SORT' => 2,
+			'MODULE_ID' => 'crm',
+			'text' => 'Вотермарки на экспликации',
+			'CODE' => 'WATERMARK_EXPL',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'OUT_HEAD','WATERMARK_EXPL')
+			 ), array(
+		
+			'ID' => 3,
+			'SORT' => 3,
+			'MODULE_ID' => 'crm',
+			'text' => 'Со всеми вотермаками',
+			'CODE' => 'WATERMARK_EXPL_PHOTO',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'OUT_HEAD','WATERMARK_ALL')
+		
+			)]
+	  );
 
 	 $pdfItems[] = array(
 
@@ -199,8 +230,7 @@ PDF.generate = function(typePDF) {
 		'text' => 'Только шапка',
 		'CODE' => 'ONLY_HEAD',
 		'ACTIVE' => 'Y',
-		'onclick' => sprintf("PDF.generate('%s')", 'ONLY_HEAD')
-
+		'items' =>  $subItems
 
 	);
 
@@ -212,7 +242,8 @@ PDF.generate = function(typePDF) {
 		'text' => 'Шапка + брокер',
 		'CODE' => 'BROKER_HEAD',
 		'ACTIVE' => 'Y',
-		'onclick' => sprintf("PDF.generate('%s')", 'BROKER_HEAD')
+		'onclick' => sprintf("PDF.generate('%s')", 'BROKER_HEAD'),
+	
 
 	);
 
@@ -227,12 +258,11 @@ PDF.generate = function(typePDF) {
 		'onclick' => sprintf("PDF.generate('%s')",  'BROKER_ONLY')
 
 	);
-
-	$PdfButtonId = 'toolbar_pdf_'.$arParams['ENTITY_ID'];
  
  ?>
  <script>
 	"use strict";
+
 
   BX.bind(BX('<?=$PdfButtonId?>'),'click', function(e) {
 		
@@ -241,11 +271,12 @@ PDF.generate = function(typePDF) {
 					offsetLeft: 0,
 					offsetTop: 0,
 					closeByEsc: true,
+					autoHide: true,
 					className: 'document-toolbar-menu'
 				});
 
-  });
-
+	});
+	
 	BX.bind(BX('search_ticket'),'click', function(e) {
 		
 		BX.SidePanel.Instance.open("/crm/search/lead/", {

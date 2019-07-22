@@ -1,6 +1,8 @@
 <?php
 
 namespace XML\Heplers;
+        
+use \Bitrix\Main\UserTable;
 
 class WhaterMark {
 
@@ -42,13 +44,15 @@ class WhaterMark {
 
  }
 
- public function createWhaterMark(int $fileID) : string {
+ public function createWhaterMark(int $fileID, int $id,int $cian_id, ?int $assigned_by_id = 0) : string {
 
   $arFile = \CFile::GetFileArray($fileID);
 
+  $user = UserTable::getList(["filter" => ['ID' => $assigned_by_id]])->fetch();
+
   if($arFile['WIDTH'] < self::MIN_WIDTH) {
 
-    $this->logger->info([ 'file' => $arFile['ORIGINAL_NAME'], 'msg' => 'картинка меньше минимальной ширины', 'WIDTH' =>  $arFile['WIDTH']]);
+    $this->logger->info(['user' => sprintf("%s %s %s",$user['LAST_NAME'],$user['NAME'],$user['SECOND_NAME']) ,'id' => $id,'site_id' => $cian_id,'file' => $arFile['ORIGINAL_NAME'], 'msg' => 'картинка меньше минимальной ширины', 'WIDTH' =>  $arFile['WIDTH']]);
 
     $arFile['WIDTH'] = self::MIN_WIDTH;
 
@@ -56,7 +60,7 @@ class WhaterMark {
 
   if($arFile['HEIGHT'] < self::MIN_HEIGHT) {
  
-    $this->logger->info([ 'file' => $arFile['ORIGINAL_NAME'], 'msg' => 'картинка меньше минимальной высоты', 'HEIGHT' => $arFile['HEIGHT'] ]);
+    $this->logger->info(['user' => sprintf("%s %s %s",$user['LAST_NAME'],$user['NAME'],$user['SECOND_NAME']), 'id' => $id, 'site_id' => $cian_id,'file' => $arFile['ORIGINAL_NAME'], 'msg' => 'картинка меньше минимальной высоты', 'HEIGHT' => $arFile['HEIGHT'] ]);
 
     $arFile['HEIGHT'] = self::MIN_HEIGHT;
 

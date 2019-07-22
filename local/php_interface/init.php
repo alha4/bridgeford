@@ -2,7 +2,7 @@
 
 if(!$_SERVER["DOCUMENT_ROOT"]) {
 
-  $_SERVER["DOCUMENT_ROOT"] = '/home/bitrix/ext_www/bf.angravity.ru';
+  $_SERVER["DOCUMENT_ROOT"] = '/home/bitrix/ext_www/crm.bridgeford.ru';
 
 }
 
@@ -49,6 +49,7 @@ Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
      '\Cian\CianPriceMonitoring' => CIAN_ROOT_CLASS_PATH.'/CianPriceMonitoring.php',
      '\Cian\CrmObject'           => CIAN_ROOT_CLASS_PATH.'/CrmObject.php',
      '\Cian\Logger'              => CIAN_ROOT_CLASS_PATH.'/Logger.php',
+     '\Raiting\RaitingFactory'   => "/local/Raiting/RaitingFactory.php",
      '\Stat\CompetitorEvent'     => STAT_ROOT_CLASS_PATH.'/CompetitorEvent.php',
      '\Search\SimilarObject'     => SEARCH_ROOT_CLASS_PATH."/SimilarObject.php",
      '\Search\SimilarTicket'     => SEARCH_ROOT_CLASS_PATH."/SimilarTicket.php",
@@ -77,15 +78,10 @@ $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRaiting');
 //$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRealPrice');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setWatermark');
+$event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setWatermark');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAutotext');
 $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setAutotext');
-
 $event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setMapLocation');
-
-require_once $_SERVER['DOCUMENT_ROOT']."/local/Cian/CianPriceMonitoring.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/local/Cian/CrmObject.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/local/Raiting/RaitingFactory.php";
-
 
 function setAutotext(&$arFields)  {
 
@@ -215,29 +211,44 @@ function setAutotext(&$arFields)  {
 
 function setWatermark(&$arFields) {
 
- if(array_key_exists('UF_CRM_1540532330',$arFields)) {
+ if(array_key_exists('UF_CRM_1540532330',$arFields) || array_key_exists('UF_CRM_1540532459',$arFields)) {
 
-  $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], ["ID","UF_CRM_1540532330"])->Fetch();
+  $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], 
+  ["ID","UF_CRM_1540532330","UF_CRM_1540532459", "ORIGIN_ID","ASSIGNED_BY_ID"])->Fetch();
 
   $watermark = new \XML\Heplers\WhaterMark();
-  $watermark->setPath('/upload/newwater.png');
+  $watermark->setPath('/upload/br2.png');
 
   $logger = \Log\Logger::instance();
   $logger->setPath('/local/logs/watermark_log.txt');
 
   $watermark->setLogger($logger);
 
-  $files = $crm_object['UF_CRM_1540532330'];
+  $photos = $crm_object['UF_CRM_1540532330'];
 
-  $arWatermark = [];
+  $arPhotoWatermark = [];
 
-  foreach($files as $fileID) {
+  foreach($photos as $fileID) {
 
-    $arWatermark[] = \CFile::MakeFileArray($watermark->createWhaterMark($fileID));
+    $arPhotoWatermark[] = \CFile::MakeFileArray($watermark->createWhaterMark($fileID, (int)$crm_object['ID'], (int)$crm_object['ORIGIN_ID'],(int)$crm_object['ASSIGNED_BY_ID']));
 
   }
 
-  $fields = ['UF_CRM_1559649507' => $arWatermark];
+  $watermark->setPath('/upload/br.png');
+
+  $explications = $crm_object['UF_CRM_1540532459'];
+
+  $arExplWatermark = [];
+
+  foreach($explications as $fileID) {
+
+    $arExplWatermark[] = \CFile::MakeFileArray($watermark->createWhaterMark($fileID, (int)$crm_object['ID'], (int)$crm_object['ORIGIN_ID'],(int)$crm_object['ASSIGNED_BY_ID']));
+
+  }
+
+
+  $fields = ['UF_CRM_1559649507' => $arPhotoWatermark,
+             'UF_CRM_1563270390'  => $arExplWatermark];
 
   $userField = new \CUserTypeManager();
 
@@ -396,6 +407,8 @@ function setRaiting(&$arFields) : void {
 
   }
 
+  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/local/logs/raiting_log.txt', print_r( $arFields ,1).date("d/m/Y H:i:s")."\r\n");
+  
   $raiting = RaitingFactory::create($arFields, \CCrmDeal::GetCategoryID($arFields['ID']));
 
   $UF = new CUserTypeManager;
@@ -521,6 +534,8 @@ function setGeoData(&$arFields) : void {
 
   if(count(array_values($arResult)) > 3) {
 
+  try {
+
     $cian = \Cian\CianPriceMonitoring::instance();
 
     $geodata  = $cian->getGeocodedAdress( $arResult  );
@@ -541,6 +556,13 @@ function setGeoData(&$arFields) : void {
 
     }
 
+   } catch(Exception $e) {
+
+     $logger = \Log\Logger::instance();
+     $logger->setPath('/local/logs/cian_log.txt');
+     $logger->error($e->getMessage());
+
+   }
   }
 }
 
@@ -562,7 +584,7 @@ function setPaybackAutotext(&$arFields) : void {
 
 }
 
-function enumValue(int $value_id, string $code, ?string $entity = 'CRM_DEAL') : string {
+function enumValue(?int $value_id = 0, string $code, ?string $entity = 'CRM_DEAL') : string {
 
   $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => $entity, "FIELD_NAME" => $code));
   $entity = $entityResult->Fetch();

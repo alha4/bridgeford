@@ -158,7 +158,7 @@ final class CianPriceMonitoring implements EventInterface {
 
  public function notify(string $event, ...$args) : void {
 
-  if(array_key_exists($event,$this->events) && is_callable($this->events[$event])) {
+  if(!array_key_exists($event,$this->events) && is_callable($this->events[$event])) {
       
     $this->events[$event](...$args);
 
@@ -350,7 +350,7 @@ final class CianPriceMonitoring implements EventInterface {
 
   }
 
-  throw new \Exception(self::ERROR_COORDINATE_DECODE);
+  throw new \Exception(json_encode([self::ERROR_COORDINATE_DECODE,$response],JSON_UNESCAPED_UNICODE));
 
  }
 
@@ -378,7 +378,7 @@ final class CianPriceMonitoring implements EventInterface {
     
   }
 
-  throw new \Exception(self::ERROR_GEO_ENCODE);
+  throw new \Exception(json_encode([self::ERROR_GEO_ENCODE,$response],JSON_UNESCAPED_UNICODE));
 
  }
 
