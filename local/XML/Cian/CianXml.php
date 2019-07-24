@@ -35,30 +35,39 @@ final class CianXml extends ExportBase {
             
   private const SERVICE_TYPE = [
 
-                  '198' => 'free',
-                  '199' => 'paid',
-                  '200' => 'top3',
-                  '201' => 'highlight'
+     
+                  '200' => 'paid',
+                  '201' => 'premium',
+                  '479' => 'top3',
+                  '199' => 'highlight'
 
                 ];
 
   private const SERVICE_TYPE_1 = [
 
-                  '202' => 'free',
-                  '203' => 'paid',
-                  '204' => 'top3',
-                  '205' => 'highlight'
+
+                  '204' => 'paid',
+                  '205' => 'premium',
+                  '475' => 'top3',
+                  '203' => 'highlight'
 
                 ];
 
   private const SERVICE_TYPE_2 = [
 
-                  '206' => 'free',
-                  '207' => 'paid',
-                  '208' => 'top3',
-                  '209' => 'highlight'
+
+                  '208' => 'paid',
+                  '477' => 'top3',
+                  '207' => 'highlight',
+                  '209' => 'premium'
 
                 ];
+              
+  private const SERVICE_NO_PREMIUM = 480;
+
+  private const SERVICE_TYPE_1_NO_PREMIUM = 481;
+              
+  private const SERVICE_TYPE_2_PREMIUM = 482;
   
   private const CATEGORY_ADS = [
 
@@ -191,7 +200,11 @@ final class CianXml extends ExportBase {
       $xml_string.= sprintf("<IsInHiddenBase>%s</IsInHiddenBase>", $row['UF_CRM_1541004853118']);
       $xml_string.= sprintf("<InputType>%s</InputType>", self::INPUTTYPE[$row["UF_CRM_1540385040"]]);
       $xml_string.= sprintf("<Electricity>%s</Electricity>", $row['UF_CRM_1540385112']);
-      $xml_string.= "<PublishTerms><Terms><PublishTermSchema><Services><ServicesEnum>paid</ServicesEnum></Services></PublishTermSchema></Terms></PublishTerms>";
+      
+      
+      $xml_string.= sprintf("<PublishTerms><Terms><PublishTermSchema><Services>%s</Services>%s</PublishTermSchema></Terms></PublishTerms>", 
+      $this->getAdsServices($row),
+      $this->getAdsExcluded((int)$row['UF_CRM_1540976407661']));
 
       $xml_string.= "<Photos>";
 		  $xml_string.= $this->getPhotos((array)$row['UF_CRM_1559649507']); //без вотермарков  UF_CRM_1540532330   с вотермарками UF_CRM_1559649507
@@ -270,6 +283,18 @@ final class CianXml extends ExportBase {
     }
 
   }  
+
+  private function getAdsExcluded(int $variant) : string {
+
+    if($variant != self::SERVICE_NO_PREMIUM) {
+
+       return '';
+
+    }
+
+    return '<ExcludedService><Services><ServicesEnum>premium</ServicesEnum></Services></ExcludedService>';
+
+  }
   
   private function getAdsServices(array $data)  : string {
 

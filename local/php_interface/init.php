@@ -23,6 +23,7 @@ const REQUEST_LOG = 'N';
 const GENERAL_BROKER = 15;
 const FILTER_PRECENT = 33;
 const YANDEX_API_KEY = '5e926399-e46a-4846-a809-c3d370aa399e';
+const GOOGLE_API_KEY = 'AIzaSyAUi5d1Fe5Vl02YJE-cckShpqtqaVH4Jzk';
 const DEBUG_AUTOTEXT = 'Y';
 const AUTOTEXT_API_URL = 'http://92.53.97.50/autotext.php';
 const NOT_ACTUAL_VALUE = 'не актуально';
@@ -248,7 +249,7 @@ function setWatermark(&$arFields) {
 
 
   $fields = ['UF_CRM_1559649507' => $arPhotoWatermark,
-             'UF_CRM_1563270390'  => $arExplWatermark];
+             'UF_CRM_1563270390' => $arExplWatermark];
 
   $userField = new \CUserTypeManager();
 
@@ -274,16 +275,26 @@ function mapPicureUpdate(int $id) {
 
   $data = $crm_object->Fetch();
 
-  $adress = sprintf("Россия,%s,%s+%s,дом+%s", getCity($data['UF_CRM_1540202817']), enumValue($data['UF_CRM_1540202889'],'UF_CRM_1540202889'), $data['UF_CRM_1540202900'], $data['UF_CRM_1540202908']);
+  $adress = str_replace([" ",","],"+",sprintf("Россия+%s+%s+%s+д%s", getCity($data['UF_CRM_1540202817']), enumValue($data['UF_CRM_1540202889'],'UF_CRM_1540202889'), $data['UF_CRM_1540202900'], $data['UF_CRM_1540202908']));
 
   $http = new HttpClient();
 
-  $result = json_decode($http->get(sprintf("https://geocode-maps.yandex.ru/1.x/?apikey=%s&geocode=%s&format=json&lang=ru_RU&rspn=0", YANDEX_API_KEY, $adress )) ,1);
+  //https://geocode-maps.yandex.ru/1.x/?apikey=%s&geocode=%s&format=json&lang=ru_RU&rspn=0
 
-  $ll = str_replace(' ',',', $result['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']);
+  $result = json_decode($http->get(sprintf("https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s&language=ru", urlencode($adress), GOOGLE_API_KEY)) ,1);
 
-  $mapUrl = "https://static-maps.yandex.ru/1.x/?ll=$ll&size=500,420&z=16&l=map&pt=$ll,pm2bll";
+  //$ll = str_replace(' ',',', $result['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos']);
 
+  $location = $result['results'][0]['geometry']['location'];
+
+  $mapUrl = sprintf("https://maps.googleapis.com/maps/api/staticmap?center=%s&zoom=17&size=500x420&maptype=roadmap&markers=color:blue|%s,%s|label:S&key=%s",
+  $adress, 
+  $location['lat'],
+  $location['lng'],
+  GOOGLE_API_KEY);
+
+  //"https://static-maps.yandex.ru/1.x/?ll=$ll&size=500,420&z=16&l=map&pt=$ll,pm2bll";
+  
   $arFile = CFile::MakeFileArray($mapUrl);
 
   $type = array_pop(explode('/',$arFile['type']));
@@ -295,7 +306,7 @@ function mapPicureUpdate(int $id) {
 
   $arFields['UF_CRM_1548410231729'] = $arFile;
 
-  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt', print_r( $arFile  ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
+  file_put_contents($_SERVER['DOCUMENT_ROOT'].'/map_log.txt',   $mapUrl.print_r($location ,1).date("d/m/Y H:i:s")."\r\n", FILE_APPEND);
 
   return $arFile;
 

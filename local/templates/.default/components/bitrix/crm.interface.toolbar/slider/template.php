@@ -230,7 +230,35 @@ PDF.generate = function(typePDF, watermark) {
 		'text' => 'Только шапка',
 		'CODE' => 'ONLY_HEAD',
 		'ACTIVE' => 'Y',
-		'items' =>  $subItems
+		'items' => [ array(
+
+			'ID' => 1,
+			'SORT' => 1,
+			'MODULE_ID' => 'crm',
+			'text' => 'Без вотермарок',
+			'CODE' => 'ONLY_HEAD_WATERMARK_PHOTO',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'ONLY_HEAD','WITHOUT_WATERMARK')), 
+			 array(
+		
+			'ID' => 2,
+			'SORT' => 2,
+			'MODULE_ID' => 'crm',
+			'text' => 'Вотермарки на экспликации',
+			'CODE' => 'ONLY_HEAD_WATERMARK_EXPL',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'ONLY_HEAD','WATERMARK_EXPL')
+			 ), array(
+		
+			'ID' => 3,
+			'SORT' => 3,
+			'MODULE_ID' => 'crm',
+			'text' => 'Со всеми вотермаками',
+			'CODE' => 'ONLY_HEAD_WATERMARK_EXPL_PHOTO',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'ONLY_HEAD','WATERMARK_ALL')
+		
+			)]
 
 	);
 
@@ -242,7 +270,35 @@ PDF.generate = function(typePDF, watermark) {
 		'text' => 'Шапка + брокер',
 		'CODE' => 'BROKER_HEAD',
 		'ACTIVE' => 'Y',
-		'onclick' => sprintf("PDF.generate('%s')", 'BROKER_HEAD'),
+		'items' => [ array(
+
+			'ID' => 1,
+			'SORT' => 1,
+			'MODULE_ID' => 'crm',
+			'text' => 'Без вотермарок',
+			'CODE' => 'BROKER_HEAD_WATERMARK_PHOTO',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'BROKER_HEAD','WITHOUT_WATERMARK')), 
+			 array(
+		
+			'ID' => 2,
+			'SORT' => 2,
+			'MODULE_ID' => 'crm',
+			'text' => 'Вотермарки на экспликации',
+			'CODE' => 'BROKER_HEAD_WATERMARK_EXPL',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'BROKER_HEAD','WATERMARK_EXPL')
+			 ), array(
+		
+			'ID' => 3,
+			'SORT' => 3,
+			'MODULE_ID' => 'crm',
+			'text' => 'Со всеми вотермаками',
+			'CODE' => 'BROKER_HEAD_WATERMARK_EXPL_PHOTO',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'BROKER_HEAD','WATERMARK_ALL')
+		
+			)]
 	
 
 	);
@@ -255,8 +311,35 @@ PDF.generate = function(typePDF, watermark) {
 		'text' => 'Только брокер',
 		'CODE' => 'BROKER_ONLY',
 		'ACTIVE' => 'Y',
-		'onclick' => sprintf("PDF.generate('%s')",  'BROKER_ONLY')
+		'items' => [ array(
 
+			'ID' => 1,
+			'SORT' => 1,
+			'MODULE_ID' => 'crm',
+			'text' => 'Без вотермарок',
+			'CODE' => 'BROKER_ONLY_WATERMARK_PHOTO',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'BROKER_ONLY','WITHOUT_WATERMARK')), 
+			 array(
+		
+			'ID' => 2,
+			'SORT' => 2,
+			'MODULE_ID' => 'crm',
+			'text' => 'Вотермарки на экспликации',
+			'CODE' => 'BROKER_ONLY_WATERMARK_EXPL',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'BROKER_ONLY','WATERMARK_EXPL')
+			 ), array(
+		
+			'ID' => 3,
+			'SORT' => 3,
+			'MODULE_ID' => 'crm',
+			'text' => 'Со всеми вотермаками',
+			'CODE' => 'BROKER_ONLY_WATERMARK_EXPL_PHOTO',
+			'ACTIVE' => 'Y',
+			'onclick' => sprintf("PDF.generate('%s','%s')", 'BROKER_ONLY','WATERMARK_ALL')
+		
+			)]
 	);
  
  ?>
