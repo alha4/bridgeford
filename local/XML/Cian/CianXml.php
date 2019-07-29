@@ -71,11 +71,7 @@ class CianXml extends ExportBase {
 
                 ];
               
-  protected const SERVICE_NO_PREMIUM = 480;
-
-  protected const SERVICE_TYPE_1_NO_PREMIUM = 481;
-              
-  protected const SERVICE_TYPE_2_PREMIUM = 482;
+  protected static $SERVICE_NO_PREMIUM = 480;
   
   protected const CATEGORY_ADS = [
 
@@ -358,7 +354,7 @@ class CianXml extends ExportBase {
 
   protected function getAdsExcluded(int $variant) : string {
 
-    if($variant != self::SERVICE_NO_PREMIUM) {
+    if($variant != static::$SERVICE_NO_PREMIUM) {
 
        return '';
 
@@ -372,7 +368,7 @@ class CianXml extends ExportBase {
 
     $xml_service = sprintf("<ServicesEnum>%s</ServicesEnum>",self::SERVICE_TYPE[$data['UF_CRM_1540976407661']]);
 
-    if($data['UF_CRM_1540977227270'] > 0) {
+    /*if($data['UF_CRM_1540977227270'] > 0) {
 
       $xml_service.= sprintf("<ServicesEnum>%s</ServicesEnum>",static::SERVICE_TYPE_1[$data['UF_CRM_1540977227270']]);
 
@@ -382,7 +378,7 @@ class CianXml extends ExportBase {
 
       $xml_service.= sprintf("<ServicesEnum>%s</ServicesEnum>",static::SERVICE_TYPE_2[$data['UF_CRM_1540977306391']]);
 
-    }
+    } */
 
     return $xml_service;
 
