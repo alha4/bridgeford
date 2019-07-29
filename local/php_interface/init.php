@@ -58,6 +58,7 @@ Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
      '\Semantic\SemanticFactory' => SEMANTIC_CLASS_PATH.'/SemanticFactory.php',
      '\XML\Heplers\WhaterMark'   => XML_CLASS_PATH.'/Helpers/WhaterMark.php',
      '\XML\ExportBase'           => XML_CLASS_PATH.'/ExportBase.php',
+     '\XML\Helpers\Speciality'   => XML_CLASS_PATH.'/Helpers/Speciality.php',
      '\XML\Helpers\ExportHelper' => XML_CLASS_PATH.'/Helpers/ExportHelper.php',
      '\XML\Parser\ParserFactory' => XML_PARSER_PATH."/ParserFactory.php",
      '\XML\Parser\Parser'        => XML_PARSER_PATH."/Parser.php",

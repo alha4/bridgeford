@@ -174,7 +174,7 @@ PDF.generate = function(typePDF, watermark) {
 																
 	setTimeout(function() {
 			BX.SidePanel.Instance.close();
-	},8000);																
+	},10000);																
   
 };
 

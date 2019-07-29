@@ -3,6 +3,12 @@ namespace XML\Yandex;
 
 use XML\ExportBase;
 
+\Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
+
+   '\XML\Yandex\YandexXmlClone'  => XML_CLASS_PATH.'/Yandex/YandexXmlClone.php',
+ 
+ ));
+
 class YandexXml extends ExportBase {
 
   protected $fileName = '/yandex_commerc.xml';
@@ -11,7 +17,9 @@ class YandexXml extends ExportBase {
 
   protected static $AGENT_SITE = 'bridgeford.ru';
 
-  private const TYPE = [
+  protected $isClone = false;
+
+  protected const TYPE = [
 
                    '0' => 'аренда',
                    '1' => 'продажа',
@@ -19,7 +27,7 @@ class YandexXml extends ExportBase {
 
                 ];
 
-  private const BUILDING_TYPE = [
+   protected const BUILDING_TYPE = [
 
                   '74' => 'residential building',
                   '75' => 'detached building',
@@ -32,7 +40,7 @@ class YandexXml extends ExportBase {
 
                 ];
                
-	private const BUILDING_TYPE_COMERCIAL = [  //значения из тип здания
+   protected const BUILDING_TYPE_COMERCIAL = [  //значения из тип здания
                    
                  '88' => 'retail',
                  '89' => 'free purpose',
@@ -45,7 +53,7 @@ class YandexXml extends ExportBase {
                 ];
 
 
-  private const SERVICE_TYPE = [
+   protected const SERVICE_TYPE = [
 
                   '210' => 'premium',
                   '211' => 'raise',
@@ -53,7 +61,7 @@ class YandexXml extends ExportBase {
 
   ];
 
-  private const CURRENCY =  [
+  protected const CURRENCY =  [
 
                   "144" => 'RUB',
                   "145" => 'USD',
@@ -61,28 +69,28 @@ class YandexXml extends ExportBase {
 
                ];
 
-  private const VATTYPE = [
+  protected const VATTYPE = [
 
                  "150" => 'УСН',
                  "151" => 'НДС'
              ];
 
-  private const EMPTY_VAT = 468;
+  protected const EMPTY_VAT = 468;
 
-  private const INPUTTYPE = [
+  protected const INPUTTYPE = [
 
                  "96"  =>  "common",
                  "95"  =>  "separate"
 
                ];
 
-  private const METRO_NOT_SELECT = 159;
+   protected const METRO_NOT_SELECT = 159;
 
-  private const NOT_ACTUAL_LOCALITY = 288;
+   protected const NOT_ACTUAL_LOCALITY = 288;
 
-  private const UTILITY_INCLUDE = 282;
+   protected const UTILITY_INCLUDE = 282;
 
-  private const NOT_ACTUAL_DISTRICT = 'не актуально';
+   protected const NOT_ACTUAL_DISTRICT = 'не актуально';
 
   /**
    * 
@@ -94,7 +102,7 @@ class YandexXml extends ExportBase {
 
     $sort   = ["UF_CRM_1545199624" => "DESC"];
 
-    $filter = ["CHECK_PERMISSIONS" => "N", "UF_CRM_1545199624" => self::STATUS_OBJECT, "UF_CRM_1543834597" => 1];
+    $filter = ["CHECK_PERMISSIONS" => "N","UF_CRM_1545199624" => self::STATUS_OBJECT, "UF_CRM_1543834597" => 1];
 
     $select = ["OPPORTUNITY","UF_CRM_1540977409431","UF_CRM_1540371261836", "UF_CRM_1540202817",
                "UF_CRM_1540202667","UF_CRM_1540203111","UF_CRM_1540202889","UF_CRM_1540202900",
@@ -104,11 +112,11 @@ class YandexXml extends ExportBase {
                "UF_CRM_1543406565","UF_CRM_154020301","UF_CRM_1540384807664","UF_CRM_1540202908",
                "UF_CRM_1540203015","UF_CRM_1540202807","UF_CRM_1540202766","UF_CRM_1540974006",
                "UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136","UF_CRM_1540371938",
-              "UF_CRM_1540202817","UF_CRM_1540456737395","UF_CRM_1540384944","UF_CRM_1540392018",
-              "UF_CRM_1540456417","UF_CRM_1540554743072","UF_CRM_1540371585","UF_CRM_1541072013901",
-              "UF_CRM_1541072151310","UF_CRM_1540371455","UF_CRM_1541055237379","UF_CRM_1544431330",
-              "UF_CRM_1541056313","UF_CRM_1540371802","UF_CRM_1545649289833","DATE_CREATE","UF_CRM_1545906357580",
-              "UF_CRM_1556017573094","UF_CRM_1559649507"];
+               "UF_CRM_1540202817","UF_CRM_1540456737395","UF_CRM_1540384944","UF_CRM_1540392018",
+               "UF_CRM_1540456417","UF_CRM_1540554743072","UF_CRM_1540371585","UF_CRM_1541072013901",
+               "UF_CRM_1541072151310","UF_CRM_1540371455","UF_CRM_1541055237379","UF_CRM_1544431330",
+               "UF_CRM_1541056313","UF_CRM_1540371802","UF_CRM_1545649289833","DATE_CREATE","UF_CRM_1545906357580",
+               "UF_CRM_1556017573094","UF_CRM_1559649507"];
 
     $date_create = gmdate('c');
 
@@ -321,30 +329,33 @@ class YandexXml extends ExportBase {
       }
 
       $xml_string.= '</offer>';
-    
-      }
 
-      $xml_string.= '</realty-feed>';
+     } 
 
-      return $xml_string;
+     $yaClone = YandexXmlClone::instance();
+
+     $xml_string.= $yaClone->getCopy();
+
+     $xml_string.= '</realty-feed>';
+
+
+     return $xml_string;
 
   }
 
-  private function getUnilities(string $value) : bool {
+  protected function getUnilities(string $value) : bool {
    
      return $value == self::UTILITY_INCLUDE ? 1 : 0;
 
   }
 
-  private function getVasType(?string $variant = '0') : string {
+  protected function getVasType(?string $variant = '0') : string {
 
      return self::SERVICE_TYPE[$variant] ? : '';
 
   }
 
-
-
- private function getAddress(array &$row) : string {
+  protected function getAddress(array &$row) : string {
 
   /*$city = $this->enumValue((int)$this->$row['UF_CRM_1540202667'], 'UF_CRM_1540202667');
 
@@ -364,25 +375,21 @@ class YandexXml extends ExportBase {
 
  }
 
-
-
-  private function getVatType(?string $type = ' ') : ?string {
+ protected function getVatType(?string $type = ' ') : ?string {
 
     return self::VATTYPE[$type];
 
   }
 
-  private function getPhotos(array &$data = []) : string {
+  protected function getPhotos(array &$data = []) : string {
 
     $xml_photo = '';
  
     foreach($data as $file_id) {
       
-
        $fileSrc = \CFile::GetFileArray($file_id)['SRC'];
 
        $xml_photo.= sprintf("<image>%s%s</image>", self::HOST,  $fileSrc);
- 
  
     }
  

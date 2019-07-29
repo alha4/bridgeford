@@ -2,22 +2,30 @@
 
 namespace XML\Cian;
 
-use XML\ExportBase;
+use XML\ExportBase,
+    XML\Helpers\Speciality;
 
-final class CianXml extends ExportBase {
+\Bitrix\Main\Loader::registerAutoLoadClasses(null, array(
+
+  '\XML\Cian\CianCloneFirst'  => XML_CLASS_PATH.'/Cian/CianCloneFirst.php',
+  '\XML\Cian\CianCloneSecond' => XML_CLASS_PATH.'/Cian/CianCloneSecond.php',
+    
+));
+
+class CianXml extends ExportBase {
 
   protected $fileName = '/cian_commerc.xml';
 
-  private const PHONE_NUMBER = '4951545346';
+  protected const PHONE_NUMBER = '4951545346';
   
-  private const CATEGORY = [
+  protected const CATEGORY = [
 
                    '0' => 'Rent',
                    '1' => 'Sale',
                    '2' => 'Sale'
                 ];
               
-  private const TITLE_ALIAS = [
+  protected const TITLE_ALIAS = [
 
                   '0' => 'Аренда помещения',
                   '1' => 'Помещение на продажу',
@@ -26,14 +34,14 @@ final class CianXml extends ExportBase {
                 ];
             
             
-  private const TITLE_ALIAS_SYNONYM = [
+  protected const TITLE_ALIAS_SYNONYM = [
             
                   '0' => 'Помещение в аренду',
                   '1' => 'Продажа помещения'
             
                 ];
             
-  private const SERVICE_TYPE = [
+  protected const SERVICE_TYPE = [
 
      
                   '200' => 'paid',
@@ -43,7 +51,7 @@ final class CianXml extends ExportBase {
 
                 ];
 
-  private const SERVICE_TYPE_1 = [
+  protected const SERVICE_TYPE_1 = [
 
 
                   '204' => 'paid',
@@ -53,7 +61,7 @@ final class CianXml extends ExportBase {
 
                 ];
 
-  private const SERVICE_TYPE_2 = [
+  protected const SERVICE_TYPE_2 = [
 
 
                   '208' => 'paid',
@@ -63,13 +71,13 @@ final class CianXml extends ExportBase {
 
                 ];
               
-  private const SERVICE_NO_PREMIUM = 480;
+  protected const SERVICE_NO_PREMIUM = 480;
 
-  private const SERVICE_TYPE_1_NO_PREMIUM = 481;
+  protected const SERVICE_TYPE_1_NO_PREMIUM = 481;
               
-  private const SERVICE_TYPE_2_PREMIUM = 482;
+  protected const SERVICE_TYPE_2_PREMIUM = 482;
   
-  private const CATEGORY_ADS = [
+  protected const CATEGORY_ADS = [
 
                   '88' => 'shoppingArea',
                   '89' => 'freeAppointmentObject',
@@ -81,7 +89,7 @@ final class CianXml extends ExportBase {
 
                 ];
 
-  private const BUILDING_TYPE = [
+  protected const BUILDING_TYPE = [
 
                   '74' => 'residentialHouse',
                   '75' => 'administrativeBuilding',
@@ -94,7 +102,7 @@ final class CianXml extends ExportBase {
 
                 ];
 
-  private const CURRENCY =  [
+  protected const CURRENCY =  [
 
                   "144" => 'rur',
                   "145" => 'usd',
@@ -102,30 +110,37 @@ final class CianXml extends ExportBase {
 
                 ];
 
-  private const VATTYPE = [
+  protected const VATTYPE = [
 
                    "150" => 'usn',
                    "151" => 'vatIncluded',
                    " "   => 'vatNotIncluded'
                 ];
 
-  private const INPUTTYPE = [
+  protected const INPUTTYPE = [
 
                    "96"  =>  "commonFromStreet",
                    "95"  =>  "separateFromStreet"
 
                 ];
 
-  private const AREATYPE = [
+  protected const AREATYPE = [
 
                   "86" => "owned",
                   "87" => "rent"
 
                 ];
 
+  protected const SPECIALITY_FIELD_MAP = [
+                  'UF_CRM_1540392018',
+                  'UF_CRM_1540397421',
+                  'UF_CRM_1540392118',
+                  'UF_CRM_1540393032',
+                  'UF_CRM_1540397194'
+               ];
   /**
    * 
-   * bool UF_CRM_1543837331299 - Реклама циан 
+   * bool UF_CRM_1543837331299 - Реклама в циан 
    * 
   */             
               
@@ -174,12 +189,12 @@ final class CianXml extends ExportBase {
 
       if($category_id == self::RENT_BUSSINES) {
 
-      $xml_string.= sprintf("<Description>%s %s</Description>", $title, (bool)$row['UF_CRM_1552294499136'] ? 
+      $xml_string.= sprintf("<Description><![CDATA[%s %s]]></Description>", $title, (bool)$row['UF_CRM_1552294499136'] ? 
                         $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
 
       } else {
 
-      $xml_string.= sprintf("<Description>%s</Description>", (bool)$row['UF_CRM_1552294499136'] ? 
+      $xml_string.= sprintf("<Description><![CDATA[%s]]></Description>", (bool)$row['UF_CRM_1552294499136'] ? 
                     $this->getDescription($category_id, $semantic, $row) : $this->escapeEntities($row['UF_CRM_1540471409']));
 
       }
@@ -237,9 +252,18 @@ final class CianXml extends ExportBase {
 
       $xml_string.= sprintf("<Currency>%s</Currency>", self::CURRENCY[$row['UF_CRM_1540456473']]);
 
+      $xml_string.= $this->getSpeciality($category_id, $row);
+
       $xml_string.= '</object>';
 
+      
     }
+
+    $cianCloneFirst = CianCloneFirst::instance();
+    $xml_string.= $cianCloneFirst->getCopy();
+
+    $cianCloneSecond = CianCloneSecond::instance();
+    $xml_string.= $cianCloneSecond->getCopy();
 
     $xml_string.= '</feed>';
 
@@ -247,7 +271,7 @@ final class CianXml extends ExportBase {
 
   }
 
-  private function getTitle(array $row, int $category_id) : string {
+  protected function getTitle(array $row, int $category_id) : string {
 
     $square = ($category_id == self::RENT_BUSSINES) ? (int)$row['UF_CRM_1541076330647'] : (int)$row['UF_CRM_1540384944'];
 
@@ -284,7 +308,55 @@ final class CianXml extends ExportBase {
 
   }  
 
-  private function getAdsExcluded(int $variant) : string {
+  /**
+   *@var array $arSpeciality - массив выбранных id вариантов списка  
+   *@var $code - код поля
+   *@param $data - все поля сделки
+   */
+  protected function getSpeciality(int $category_id, array &$data) : string {
+
+    $specialityMap = Speciality::getMap();
+
+    $xml_string = '<Specialty><Types>';
+
+    if($category_id == self::RENT || $category_id == self::SALE) {
+
+      $xml_string.= '<String>Коммерция</String><String>Стрит ритейл</String><String>Торговля</String><String>Торговая площадь</String>';
+      
+      foreach(self::SPECIALITY_FIELD_MAP as &$code) {
+
+        $arSpeciality = $data[$code];
+
+        if($code == 'UF_CRM_1540392018' && count($arSpeciality) > 0) {
+
+          $xml_string.= '<String>Магазин</String>';
+
+        }
+
+        foreach($arSpeciality as $value_id) {
+
+          $items = $specialityMap[$this->enumValue($value_id, $code)];
+
+          foreach($items as $value) {
+          
+            $xml_string.= sprintf("<String>%s</String>", $value);
+
+          } 
+        }
+      }
+    } elseif($category_id == self::RENT_BUSSINES) {
+
+      $xml_string.= '<String>Арендный бизнес</String><String>Стрит ритейл</String><String>Готовый бизнес</String>';
+
+    }
+
+    $xml_string.= '</Types></Specialty>';
+
+    return $xml_string;
+
+  }
+
+  protected function getAdsExcluded(int $variant) : string {
 
     if($variant != self::SERVICE_NO_PREMIUM) {
 
@@ -292,23 +364,23 @@ final class CianXml extends ExportBase {
 
     }
 
-    return '<ExcludedService><Services><ServicesEnum>premium</ServicesEnum></Services></ExcludedService>';
+    return '<ExcludedService><ExcludedServiceEnum>premium</ExcludedServiceEnum></ExcludedService>';
 
   }
   
-  private function getAdsServices(array $data)  : string {
+  protected function getAdsServices(array $data)  : string {
 
     $xml_service = sprintf("<ServicesEnum>%s</ServicesEnum>",self::SERVICE_TYPE[$data['UF_CRM_1540976407661']]);
 
     if($data['UF_CRM_1540977227270'] > 0) {
 
-      $xml_service.= sprintf("<ServicesEnum>%s</ServicesEnum>",self::SERVICE_TYPE_1[$data['UF_CRM_1540977227270']]);
+      $xml_service.= sprintf("<ServicesEnum>%s</ServicesEnum>",static::SERVICE_TYPE_1[$data['UF_CRM_1540977227270']]);
 
     }
 
     if($data['UF_CRM_1540977306391'] > 0) {
 
-      $xml_service.= sprintf("<ServicesEnum>%s</ServicesEnum>",self::SERVICE_TYPE_2[$data['UF_CRM_1540977306391']]);
+      $xml_service.= sprintf("<ServicesEnum>%s</ServicesEnum>",static::SERVICE_TYPE_2[$data['UF_CRM_1540977306391']]);
 
     }
 
@@ -316,7 +388,7 @@ final class CianXml extends ExportBase {
 
   }
 
-  private function getBuildingType(int $type, $is_mansion) : string {
+  protected function getBuildingType(int $type, $is_mansion) : string {
 
     if((bool)$is_mansion) {
 
@@ -328,7 +400,7 @@ final class CianXml extends ExportBase {
 
   }
 
-  private function getCategory(string $type, int $category_id, int $full_building) : string {
+  protected function getCategory(string $type, int $category_id, int $full_building) : string {
 
     if((bool)$full_building) {
 
@@ -336,11 +408,15 @@ final class CianXml extends ExportBase {
 
     }
 
-    return self::CATEGORY_ADS[$type].self::CATEGORY[$category_id];
+   /* $log = \Log\Logger::instance();
+    $log->setPath("/local/logs/cian_clone.txt");
+    $log->info($type);*/
+
+    return static::CATEGORY_ADS[$type].self::CATEGORY[$category_id];
 
   }
 
-  private function getPhotos(array $data = []) : string {
+  protected function getPhotos(array $data = []) : string {
 
    $xml_photo = '';
 
@@ -358,7 +434,7 @@ final class CianXml extends ExportBase {
 
  }
 
- private function getVideos(array $data = []) : string {
+ protected function getVideos(array $data = []) : string {
 
     $xml_video = '';
 
@@ -375,7 +451,7 @@ final class CianXml extends ExportBase {
 
  }
 
- private function getAddress(array &$row) : string {
+ protected function getAddress(array &$row) : string {
 
   $city = $this->enumValue((int)$this->$row['UF_CRM_1540202667'], 'UF_CRM_1540202667');
 
@@ -395,7 +471,7 @@ final class CianXml extends ExportBase {
 
  }
 
- private function getMetro(int $id, string $metroTime) : string {
+ protected function getMetro(int $id, string $metroTime) : string {
 
    $xml_metro = '';
 
@@ -419,6 +495,5 @@ final class CianXml extends ExportBase {
 
 
   }
- 
 
 }

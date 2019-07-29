@@ -134,7 +134,6 @@ final class BridgefordXml extends ExportBase {
 
       if($region == self::DEFAULT_REGION) {
 
-  
         $xml_string.= sprintf('<Moscow-ring>%s</Moscow-ring>', $this->enumValue((int)$row['UF_CRM_1540203144'],'UF_CRM_1540203144'));
 
       }
@@ -160,7 +159,7 @@ final class BridgefordXml extends ExportBase {
       $xml_string.= sprintf('<is-basement>%s</is-basement>', $row['UF_CRM_1540384916112'] ? 'YES' : 'NO');
       $xml_string.= sprintf('<is-mansion>%s</is-mansion>',   $row['UF_CRM_1540371938'] ? 'YES' : 'NO');
       $xml_string.= sprintf('<whole-building>%s</whole-building>',   $row['UF_CRM_1556020811397'] ? 'YES' : 'NO');
-		  $xml_string.= sprintf('<description>%s</description>', $this->escapeEntities($row['UF_CRM_1540471409']));   // Описание объекта в UF_CRM_1540471409  было UF_CRM_1556017573094
+		  $xml_string.= sprintf('<description>%s</description>', nl2br($this->escapeEntities($row['UF_CRM_1540471409'])));   // Описание объекта в UF_CRM_1540471409  было UF_CRM_1556017573094
       $xml_string.= sprintf('<photo>%s</photo>', $this->getPhotos((array)$row['UF_CRM_1540532330']));
       $xml_string.= sprintf('<photo-scheme>%s</photo-scheme>',  $this->getPhotos((array)$row['UF_CRM_1540532459']));
       

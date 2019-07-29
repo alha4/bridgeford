@@ -88,7 +88,7 @@ protected function enumValue(int $value_id, string $code) : string {
 
  protected function escapeEntities(string $value) : string {
 
-  return htmlspecialchars($value, ENT_QUOTES | ENT_XML1, "UTF-8");
+  return htmlspecialchars(nl2br($value), ENT_QUOTES | ENT_XML1, "UTF-8");
 
  }
 
