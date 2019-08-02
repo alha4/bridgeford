@@ -284,13 +284,13 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 					this._regionSelect = this.nodeSelect("UF_CRM_1540202667");
 
-					if(!this._regionSelect) {
+					if(!this._regionSelect && this.getMode() == BX.Crm.EntityEditorMode.edit) {
              console.log('ещё не создан регион');
 					}
-					
+
 		      this.bindEvent(this._regionSelect, 'change', this.onRegionChange );
 	
-			}, 	this._entityId > 0 ? 0 : 1000);
+			}, 2000);
 
 
 		},
@@ -307,16 +307,18 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		},
 
 		showGeoFields : function() {
+			
+		 setTimeout(()=> {
 
 			if(this.nodeSelect("UF_CRM_1540202667")) {
 
-				const regionValue  = this.nodeSelectValue(this.nodeSelect("UF_CRM_1540202667"));
+				const regionValue  = this.nodeSelectValue(this.nodeSelect("UF_CRM_1540202667")) || 0;
 						
-		    if(regionValue) {
+		    if(regionValue >= 0) {
 
 				   this.geoView(regionValue);
 	  
-	 	    } else {
+	 	    } else { 
 
 				  console.log('Не готов [Регион] география');
 				 
@@ -324,20 +326,21 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 	   } else if(this.node("UF_CRM_1540202667")) {
 
-			const geoControl  = this.node("UF_CRM_1540202667"),
+			 const geoControl  = this.node("UF_CRM_1540202667"),
 
 			    	regionTextValue = this.getTextValue(geoControl);
 						
-		  if(regionTextValue) {
+		   if(regionTextValue) {
 
 				 this.geoView(regionTextValue);
 	  
-	 	  } else {
+	 	   } else {
 
 				 console.log('Не готов текстовый узел [Регион] география');
 				 
+			 }
 			}
-		 }
+		 }, 1500);
 		},
 
 		geoView : function(regionValue) {
@@ -346,7 +349,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		      viewData = { 'edit' :   {
 
-					             	EMPTY      : { value : '' }, 
+					             	EMPTY      : { value : 0 }, 
 		                  	SUB_MOSCOW : { value : 28 }, 
 		                    NEW_MOSCOW : { value : 27 }, 
 		                    MOSCOW     : { value : 26 } 
@@ -972,27 +975,32 @@ if(typeof BX.Crm.EntityEditor === "undefined")
  
 			 const priceOn1SQM  = this.nodeInput('UF_CRM_1541072151310'),
 
-					   priceObj     = parseInt( this.nodeInput('UF_CRM_1541072013901').value ),
+					   priceObj     = parseInt(this.nodeInput('UF_CRM_1541072013901').value),
 
 						 squareValue  = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
 						 
 				if(this.getDealCategory() == this._CATEGORY.TO_BUSSINES) {
 
-					 const priceMAP     = parseInt(this.getTextValue(this.node('UF_CRM_1541055727999')).replace(/\s+/ig,"") ) * 12;// это уже ГАП , т.е. годовой
-								 cashing      = this.nodeInput('UF_CRM_1541067645026'), //доходность
-								 payback      = this.nodeInput('UF_CRM_1544431330'), //окупаемость
+					 let priceMAP = parseInt(this.nodeInput('UF_CRM_1541055727999').value) || 
+					                parseInt(this.getTextValue(this.node('UF_CRM_1541055727999')).replace(/\s+/ig,""));
+					 
+					 priceMAP = priceMAP * 12;// это уже ГАП , т.е. годовой
+					 
+					 cashing      = this.nodeInput('UF_CRM_1541067645026'), //доходность
+					 payback      = this.nodeInput('UF_CRM_1544431330'), //окупаемость
 
-								 paybackValue =  (priceObj / priceMAP).toFixed(1);
+					 console.log(priceMAP);
 
-								 cashing.value = ((priceMAP / priceObj) * 100).toFixed(0); // + "%"	
+					 paybackValue =  (priceObj / priceMAP).toFixed(1);
 
-								 payback.value = this.precentToDate(paybackValue);
+				 	 cashing.value = ((priceMAP / priceObj) * 100).toFixed(0); // + "%"	
+
+					 payback.value = this.precentToDate(paybackValue);
 				}
-
 
 				priceOn1SQM.value = BX.Currency.currencyFormat(Math.round(priceObj / squareValue), 'RUB', true);
 
-				console.log(priceObj);
+				//console.log(priceObj);
 
 		},
 
@@ -1136,17 +1144,17 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 		showAdvertisingFields : function() {
 
-			if(this.isAdmin()) {
+		  if(this.isAdmin()) {
+
+			this.showField(document.querySelector('#section_reklama'));
 
 			const textValue = this.getTextValue(this.node('UF_CRM_1543834597')) || 
 			                  this.nodeRadioChecked('UF_CRM_1543834597').checked;
 
-			      this.showField(document.querySelector('#section_reklama'));
 
 						this.advertisingView(textValue);
 						
-			}
-            
+		 }        
 		},
 
 		initializeAdvertisingEvent : function() {
@@ -1183,7 +1191,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 						});
 
-						console.log(state, viewModel.YES);
+						//console.log(state, viewModel.YES);
 
 			if(state === viewModel.YES) {
 
@@ -1814,7 +1822,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			 if(node) {
 
-				 return	node.options[node.selectedIndex].value;
+				 return	parseInt(node.options[node.selectedIndex].value);
 
 			 }
 
@@ -3056,17 +3064,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				this._modeChangeNotifier.notify([ this ]);
 			}
 
-			//console.log(control._contentContainer.id);
-
-			const self = this;
-
 			setTimeout(()=> {
 
-				self.initializeEventListener();
+				this.initializeEventListener();
 
-			}, self._timeout);
-
-		
+			}, 3000);
 
 		},
 		unregisterActiveControl: function(control)
@@ -3436,13 +3438,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				}
 			}
 
-			const self = this;
+      setTimeout(()=> {
 
-      setTimeout(function() {
-
-			     self.initializeViews();
+			     this.initializeViews();
 				
-			}, this._timeout);
+			}, 2000);
 
 		},
 		//endregion

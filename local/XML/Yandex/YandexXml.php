@@ -102,7 +102,7 @@ class YandexXml extends ExportBase {
 
     $sort   = ["UF_CRM_1545199624" => "DESC"];
 
-    $filter = ["CHECK_PERMISSIONS" => "N","UF_CRM_1545199624" => self::STATUS_OBJECT, "UF_CRM_1543834597" => 1];
+    $filter = ["CHECK_PERMISSIONS" => "N","UF_CRM_1545199624" => self::STATUS_OBJECT, "UF_CRM_1543834597" => 1,"UF_CRM_1541572359657" => 1];
 
     $select = ["OPPORTUNITY","UF_CRM_1540977409431","UF_CRM_1540371261836", "UF_CRM_1540202817",
                "UF_CRM_1540202667","UF_CRM_1540203111","UF_CRM_1540202889","UF_CRM_1540202900",
@@ -249,7 +249,8 @@ class YandexXml extends ExportBase {
       $xml_string.='<unit>кв. м</unit>';
       $xml_string.= '</area>';
 
-      $xml_string.= $this->getPhotos($row['UF_CRM_1559649507']);
+      $photos = (array)$row['UF_CRM_1559649507'];
+      $xml_string.= $this->getPhotos($photos);
 
       if($row['UF_CRM_1540371585'] > 0 ) {
 
@@ -381,7 +382,7 @@ class YandexXml extends ExportBase {
 
   }
 
-  protected function getPhotos(array &$data = []) : string {
+  protected function getPhotos(?array &$data = []) : string {
 
     $xml_photo = '';
  

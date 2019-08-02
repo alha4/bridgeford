@@ -288,7 +288,7 @@ function mapPicureUpdate(int $id) {
 
   $location = $result['results'][0]['geometry']['location'];
 
-  $mapUrl = sprintf("https://maps.googleapis.com/maps/api/staticmap?center=%s&zoom=17&size=500x420&maptype=roadmap&markers=color:blue|%s,%s|label:S&key=%s",
+  $mapUrl = sprintf("https://maps.googleapis.com/maps/api/staticmap?center=%s&zoom=17&size=500x420&maptype=roadmap&markers=color:blue|%s,%s|label:S&key=%s&language=ru-RU",
   $adress, 
   $location['lat'],
   $location['lng'],
