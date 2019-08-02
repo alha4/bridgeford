@@ -1011,7 +1011,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				priceOn1SQM.value = BX.Currency.currencyFormat(Math.round(priceObj / squareValue), 'RUB', true);
 
-				realPrice.value = Number(priceObj / squareValue).toFixed(0) + "|RUB";
+				realPrice.value = Number(priceObj).toFixed(0) + "|RUB";
 
 				console.log( squareValue);
 
