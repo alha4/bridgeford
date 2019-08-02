@@ -975,15 +975,26 @@ if(typeof BX.Crm.EntityEditor === "undefined")
  
 			 const priceOn1SQM  = this.nodeInput('UF_CRM_1541072151310'),
 
+			       realPrice    = this.nodeInput('UF_CRM_1545649289833'),
+
 					   priceObj     = parseInt(this.nodeInput('UF_CRM_1541072013901').value),
 
-						 squareValue  = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
+						 squareValue  = parseInt(this.nodeInput("UF_CRM_1540384944").value) || 1;
 						 
 				if(this.getDealCategory() == this._CATEGORY.TO_BUSSINES) {
 
-					 let priceMAP = parseInt(this.nodeInput('UF_CRM_1541055727999').value) || 
-					                parseInt(this.getTextValue(this.node('UF_CRM_1541055727999')).replace(/\s+/ig,""));
-					 
+					 let priceMAP = null;
+					               
+					 if(this.nodeInput('UF_CRM_1541055727999')) {
+						 
+							priceMAP  = parseInt(this.nodeInput('UF_CRM_1541055727999').value) || 0;
+							
+					 } else {
+
+						  priceMAP =  parseInt(this.getTextValue(this.node('UF_CRM_1541055727999')).replace(/\s+/ig,""));
+
+					 }
+
 					 priceMAP = priceMAP * 12;// это уже ГАП , т.е. годовой
 					 
 					 cashing      = this.nodeInput('UF_CRM_1541067645026'), //доходность
@@ -1000,7 +1011,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				priceOn1SQM.value = BX.Currency.currencyFormat(Math.round(priceObj / squareValue), 'RUB', true);
 
-				//console.log(priceObj);
+				realPrice.value = Number(priceObj / squareValue).toFixed(0) + "|RUB";
+
+				console.log( squareValue);
 
 		},
 
@@ -1336,7 +1349,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					});
            console.log('рекламные поля дублирование 1 нет');
 				}
-		   }, this._timeout + 300);
+		   },  300);
 	
 		 }
 		},
