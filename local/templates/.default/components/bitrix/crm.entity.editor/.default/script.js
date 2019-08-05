@@ -977,9 +977,20 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 			       realPrice    = this.nodeInput('UF_CRM_1545649289833'),
 
-					   priceObj     = parseInt(this.nodeInput('UF_CRM_1541072013901').value),
+					   priceObj     = parseInt(this.nodeInput('UF_CRM_1541072013901').value);
 
-						 squareValue  = parseInt(this.nodeInput("UF_CRM_1540384944").value) || 1;
+				let	 squareValue  = null;
+						 
+			
+				if(this.nodeInput("UF_CRM_1540384944")) {
+					
+					squareValue = parseInt(this.nodeInput("UF_CRM_1540384944").value) || 1;
+
+				} else if(this.node('UF_CRM_1540384944')) {
+						 
+					squareValue = parseInt(this.getTextValue(this.node('UF_CRM_1540384944'))) || 1;
+
+				}
 						 
 				if(this.getDealCategory() == this._CATEGORY.TO_BUSSINES) {
 
@@ -1011,9 +1022,11 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				priceOn1SQM.value = BX.Currency.currencyFormat(Math.round(priceObj / squareValue), 'RUB', true);
 
-				realPrice.value = Number(priceObj).toFixed(0) + "|RUB";
+				if(!this.getTextValue(this.node('UF_CRM_1545649289833'))) {
+			
+					realPrice.value = Number(priceObj).toFixed(0) + "|RUB";
 
-				console.log( squareValue);
+				}
 
 		},
 

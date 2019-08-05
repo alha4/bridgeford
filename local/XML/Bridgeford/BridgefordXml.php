@@ -264,9 +264,9 @@ final class BridgefordXml extends ExportBase {
 
   }
 
-  private function getActualityUser(int $user_id) : string {
+  private function getActualityUser(?int $user_id) : string {
 
-    if(!$user_id) return false;
+    if(!$user_id) return ' ';
 
     $order = array('id' => 'asc');
     $sort = 'id';
