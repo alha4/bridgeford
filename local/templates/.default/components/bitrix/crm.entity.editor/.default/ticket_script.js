@@ -241,7 +241,9 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   buildingTypeView : function() {
 
-    const rentBusiness = ['UF_CRM_1565854434','UF_CRM_1547631768634','UF_CRM_1547628348754','UF_CRM_1547628374048','UF_CRM_1565250284'];
+    const rentBusiness = ['UF_CRM_1547218667182','UF_CRM_1565854434','UF_CRM_1547631768634','UF_CRM_1547628348754','UF_CRM_1547628374048','UF_CRM_1565250284'],
+          rent = ['UF_CRM_1547218667182'],
+          sale = [''];
 
     for(code of rentBusiness) {
 
@@ -266,6 +268,9 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
         this.showField(this.node(code));
   
       }
+
+      this.renameNode(this.node('UF_CRM_1547551210'), 'Стоимость объекта');
+      this.renameNode(this.node('UF_CRM_1565250601'), 'Стоимость объекта До');
       
       break;
 
@@ -279,6 +284,12 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
       case 'Помещение в аренду' :
       case 362 :
+
+      for(code of rent) {
+
+          this.showField(this.node(code));
+      
+      }
 
       break;
 
@@ -515,70 +526,69 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
   rentPriceView : function() {
 			
     const priceSq2OnYear  = this.nodeInput('UF_CRM_1547218667182'),
-          priceOnMonth    = this.nodeInput('UF_CRM_1547218684391'),
+          priceOnMonth    = this.nodeInput('UF_CRM_1565853455'),
 
           cashing         = this.nodeInput('UF_CRM_1547628374048'), //доходность
           payback         = this.nodeInput('UF_CRM_1547628348754'), //окупаемость
 
           priceRental     = parseFloat(this.nodeInput('UF_CRM_1547551210').value),
 
-          squareValue     = parseInt(this.nodeInput("UF_CRM_1547551577246").value) || 1,
+          squareValue     = parseInt(this.nodeInput("UF_CRM_1547120946759").value) || 1,
 
           costType        = parseInt(this.nodeSelectValue(this._costTypeSelect));
 
           NDS_SELECT      = 416,
 
-          rentTypeModel = this.prepareModel({
+          priceModel = this.prepareModel({
 
-             'edit' : {
-                SQ1YEAR :    { value : 413},
-                ALL1MONTH :  { value : 412}, 
-                ALL1YEAR   : { value : 414}
-             }
+            'edit' : {
 
+              RENT : { value : 362},
+              SALE : { value : 363},
+              RENT_BUSSINES : {value : 364}
+
+            },
+
+            'view' : {
+
+              RENT : { value : 'Помещение в аренду'},
+              SALE : { value : 'Помещение на продажу'},
+              RENT_BUSSINES : { value : 'Арендный бизнес'}
+
+            }
           });
 
-    let  nds = 0;  
+     let  nds = 0;  
  
-         if(this.nodeSelectValue(this.nodeSelect('UF_CRM_1547218608920')) == NDS_SELECT) {
+     if(this.nodeSelectValue(this.nodeSelect('UF_CRM_1547218608920')) == NDS_SELECT) {
+ 
+        nds = (priceRental * 18) / 118;
+ 
+     }
 
-            nds = (priceRental * 18) / 118;
+     if(this.getTypeBuilding() == priceModel.RENT)  {
 
-         }
+        priceSq2OnYear.value = BX.Currency.currencyFormat(((priceRental + nds) / squareValue) * 12, 'RUB', true);
 
-         switch(costType) {
+     }
 
-                 /** стоимость за 1 кв.м. в год */
-            case rentTypeModel.SQ1YEAR : 
+     if(this.getTypeBuilding() == priceModel.SALE)  {
 
-                  priceSq2OnYear.value  = BX.Currency.currencyFormat(priceRental + nds, 'RUB', true);
-          
-                  priceOnMonth.value  = BX.Currency.currencyFormat( (priceRental / squareValue) + nds, 'RUB', true);  
+        priceOnMonth.value = BX.Currency.currencyFormat((priceRental + nds) / squareValue, 'RUB', true);
 
-            break;
-                  /**стоимость в месяц за весь объект */
-            case rentTypeModel.ALL1MONTH : 
+     }
 
-                  priceSq2OnYear.value = BX.Currency.currencyFormat(Math.round(priceRental * 12 / squareValue) + nds, 'RUB', true);  
-    
-                  priceOnMonth.value  = BX.Currency.currencyFormat(priceRental + nds, 'RUB', true);
+     if(this.getTypeBuilding() == priceModel.RENT_BUSSINES)  {
 
-            break;
 
-                  /**стоимость все помещение в год */
-            case rentTypeModel.ALL1YEAR : 
+      priceSq2OnYear.value = BX.Currency.currencyFormat(((priceRental + nds) / squareValue) * 12, 'RUB', true);
+      priceOnMonth.value = BX.Currency.currencyFormat((priceRental + nds) / squareValue, 'RUB', true);
 
-                  priceSq2OnYear.value =  BX.Currency.currencyFormat(priceRental + nds, 'RUB', true); 
-    
-                  priceOnMonth.value  = BX.Currency.currencyFormat( (priceRental / squareValue) + nds, 'RUB', true); 
-
-            break;
-
-         }
+     }
          
-         if(this.getTypeBuilding() == 'Арендный бизнес') {
+     /*if(this.getTypeBuilding() == 'Арендный бизнес') {
 
-            const priceMAP  = parseInt(this.getTextValue(this.node('UF_CRM_1547629103665')).replace(/\s+/ig,"") ) * 12;//МАП 
+        const priceMAP  = parseInt(this.getTextValue(this.node('UF_CRM_1547629103665')).replace(/\s+/ig,"") ) * 12;//МАП 
             
                   paybackValue = ((priceRental + nds) / priceMAP).toFixed(1);
 
@@ -589,7 +599,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
                   payback.value = this.precentToDate(paybackValue);
                   
                   
-         }
+    }*/
         
   },
 
