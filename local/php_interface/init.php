@@ -9,7 +9,10 @@ if(!$_SERVER["DOCUMENT_ROOT"]) {
 use \Bitrix\Main\EventManager,
     \Raiting\RaitingFactory,
     \Bitrix\Main\Web\HttpClient,
-    \Bitrix\Main\UserFieldTable;
+    \Bitrix\Main\UserFieldTable,
+    \Bitrix\Main\Loader,
+    \Bitrix\Main\ORM\Query\Result,
+    \Bitrix\Crm\DealTable;
 
 const PSR_CLASS_PATH = '/local/Psr/Log';
 const CIAN_ROOT_CLASS_PATH = '/local/Cian';
@@ -79,11 +82,78 @@ $event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'setTiketSquareClone');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRaiting');
 //$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRealPrice');
+$event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setRealPrice');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setWatermark');
 $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setWatermark');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAutotext');
 $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setAutotext');
 $event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setMapLocation');
+$event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setActuality');
+$event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setLocation');
+
+
+function setActuality(&$arFields)  {
+
+  global $USER;
+
+  $uf = new CUserTypeManager();
+
+  $price = $arFields['UF_CRM_1540456417'] ? : $arFields['UF_CRM_1541072013901'];
+
+  $fields = [
+
+   'UF_CRM_1540895373' => $USER->GetID(),
+   'UF_CRM_1544524903217' => date("d.m.Y"),
+   'UF_CRM_1544528494' => 329,
+   'UF_CRM_1545199624' => 357,
+   'UF_CRM_1545649289833' => "$price|RUB"
+  ];
+
+  $uf->Update('CRM_DEAL', $arFields['ID'], $fields);
+
+
+}
+
+
+function setLocation(&$arFields)  {
+
+  $logger = \Log\Logger::instance();
+
+  $logger->setPath("/local/logs/location.txt");
+
+  $logger->info($arFields); 
+
+// $select = ['ID','UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667'];
+$ID_loc = $arFields['ID'];
+$typestreet_loc = $arFields['UF_CRM_1540202889'];
+$street_loc = $arFields['UF_CRM_1540202900'];
+$house_loc = $arFields['UF_CRM_1540202908'];
+$city_loc = $arFields['UF_CRM_1540202817'];
+$region_loc = $arFields['UF_CRM_1540202667'];
+
+  $adress = str_replace([" ",","],"+",sprintf("Россия+%s+%s+%s+%s", getCity($city_loc), enumValue($typestreet_loc,'UF_CRM_1540202889'), $street_loc, $house_loc));
+
+  $http = new HttpClient();
+
+  $result = json_decode($http->get(sprintf("https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s&language=ru", urlencode($adress), GOOGLE_API_KEY)) ,1);
+
+
+  if($result['results'][0]['geometry']['location']) {
+
+    $loc2 = $result['results'][0]['geometry']['location'];
+
+    $userField = new CUserTypeManager();
+
+    $arFields = [
+      'UF_CRM_1565253760' => sprintf("%s,%s", $loc2['lat'],  $loc2['lng'])
+    ];
+
+    $userField->Update('CRM_DEAL',$ID_loc,  $arFields);
+
+  }
+
+}
+
 
 function setAutotext(&$arFields)  {
 
@@ -203,7 +273,7 @@ function setAutotext(&$arFields)  {
 
      $logger = \Log\Logger::instance();
      $logger->setPath('/local/logs/autotext_log.txt');
-     $logger->info( [$ID, $autotext['text']] );
+     $logger->info( ['id'=> $ID, 'request' => $jsonData, 'response' => $autotext['text']] );
 
   }
 
@@ -276,7 +346,7 @@ function mapPicureUpdate(int $id) {
 
   $data = $crm_object->Fetch();
 
-  $adress = str_replace([" ",","],"+",sprintf("Россия+%s+%s+%s+д%s", getCity($data['UF_CRM_1540202817']), enumValue($data['UF_CRM_1540202889'],'UF_CRM_1540202889'), $data['UF_CRM_1540202900'], $data['UF_CRM_1540202908']));
+  $adress = str_replace([" ",","],"+",sprintf("Россия+%s+%s+%s+%s", getCity($data['UF_CRM_1540202817']), enumValue($data['UF_CRM_1540202889'],'UF_CRM_1540202889'), $data['UF_CRM_1540202900'], $data['UF_CRM_1540202908'])); // "Россия+%s+%s+%s+д%s"
 
   $http = new HttpClient();
 

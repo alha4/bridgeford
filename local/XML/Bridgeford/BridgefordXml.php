@@ -75,7 +75,7 @@ final class BridgefordXml extends ExportBase {
                "UF_CRM_1540974006","UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136",
                "UF_CRM_1555070914","UF_CRM_1552493240038","UF_CRM_1540371802","UF_CRM_1560505660340",
                "UF_CRM_1540371455","UF_CRM_1545649289833","UF_CRM_1556017573094","UF_CRM_1540532459",
-               "UF_CRM_1540202807","UF_CRM_1563276840"];
+               "UF_CRM_1540202807","UF_CRM_1563276840","UF_CRM_1542955977","UF_CRM_1565253760"];
     
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -119,6 +119,13 @@ final class BridgefordXml extends ExportBase {
          $xml_string.= sprintf('<town-type>%s</town-type>', $this->enumValue((int)$row['UF_CRM_1540202807'],'UF_CRM_1540202807'));
          $xml_string.= sprintf('<town>%s</town>', $row['UF_CRM_1540202817']);
 
+      }
+
+      if($row['UF_CRM_1565253760']) {
+
+        [$lat, $lng] = explode(',', $row['UF_CRM_1565253760']);
+
+        $xml_string.= sprintf('<location><lat>%s</lat><lng>%s</lng></location>', $lat, $lng);
 
       }
 

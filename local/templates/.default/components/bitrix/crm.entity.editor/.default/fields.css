@@ -120,7 +120,7 @@ div[data-cid="OPPORTUNITY_WITH_CURRENCY"] .crm-entity-widget-content-select {
 /*
 конец поля только для чтения
 */
-div.editable :before {
+div.editable :before,#section_regulyarnaya_sdelka {
   display:none!important;
 }
 div.editable .field-item input {

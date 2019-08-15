@@ -29,6 +29,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
      
     }
 
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializeBuildingTypeEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');
@@ -120,6 +121,36 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
     }
   },
 
+  hideSections : function() {
+
+    this.hideField(this.nodeSection('.crm-section_arendator'));
+
+    switch(this.getTypeBuilding()) {
+
+
+      case 'Арендный бизнес' :
+      case 364 :
+
+      break;
+
+      case 'Помещение на продажу' :
+      case 363 :
+
+
+      break;
+
+      case 'Помещение в аренду' :
+      case 362 :
+
+
+      break;
+
+
+   }
+
+
+  },
+
   showSections : function() {
 
 
@@ -147,10 +178,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
 
      }
-
-
   },
-
 
   showAllFields : function() {
 
@@ -181,7 +209,6 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
     }
 
-
   },
 
   nodeSection : function(exp) {
@@ -189,7 +216,76 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
       return document.querySelector(`${exp}`);
 
   },
+
+  renameNode : function(node, nodeName) {
+
+    if(node) {
+
+       node.querySelector('.crm-entity-widget-content-block-title-text').textContent = nodeName;
+
+    }
+
+  },
+
+  initializeBuildingTypeEvent : function() {
+
+    this.bindEvent(this.nodeSelect('UF_CRM_1545389958'),'change', this.onBuildingTypeChange);
   
+  },
+
+  onBuildingTypeChange : function() {
+
+    this.buildingTypeView();
+
+  },
+
+  buildingTypeView : function() {
+
+    const rentBusiness = ['UF_CRM_1565854434','UF_CRM_1547631768634','UF_CRM_1547628348754','UF_CRM_1547628374048','UF_CRM_1565250284'];
+
+    for(code of rentBusiness) {
+
+      this.hideField(this.node(code));
+
+    }
+
+    this.renameNode(this.node('UF_CRM_1547551210'), 'Стоимость аренды');
+    this.renameNode(this.node('UF_CRM_1565250601'), 'Стоимость аренды До');
+
+    this.hideSections();
+    this.showSections();
+
+    switch(this.getTypeBuilding()) {
+
+
+      case 'Арендный бизнес' :
+      case 364 :
+
+      for(code of rentBusiness) {
+
+        this.showField(this.node(code));
+  
+      }
+      
+      break;
+
+      case 'Помещение на продажу' :
+      case 363 :
+
+      this.renameNode(this.node('UF_CRM_1547551210'), 'Стоимость объекта');
+      this.renameNode(this.node('UF_CRM_1565250601'), 'Стоимость объекта До');
+
+      break;
+
+      case 'Помещение в аренду' :
+      case 362 :
+
+      break;
+
+   }
+
+  },
+
   initializeNeedGeoEvent : function() {
 
     this._regionTicketSelect = this.nodeSelect("UF_CRM_1545390144");
@@ -337,7 +433,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
   onCommisionChange : function() {
 
 
-      this.commnisionView(this.nodeSelectValue(this._commision));
+    this.commnisionView(this.nodeSelectValue(this._commision));
 
   },
 
@@ -412,7 +508,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   onTiketRentPriceChange : function() {
 
-      this.rentPriceView();
+    this.rentPriceView();
 
   },
 
@@ -564,14 +660,14 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   showPlannedRunFields : function() {
 
-    if(this.nodeRadio('UF_CRM_1547218826')) {
+   /* if(this.nodeRadio('UF_CRM_1547218826')) {
 
       this.plannedRunView(this.nodeRadioChecked('UF_CRM_1547218826').value);
 
     } else {
 
        this.plannedRunView(this.getTextValue(this.node('UF_CRM_1547218826')));
-    }
+    }*/
 
   }
 

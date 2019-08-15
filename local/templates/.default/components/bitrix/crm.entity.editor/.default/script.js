@@ -386,8 +386,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 NOT_ACTUAL	 = {
 						 
 							MOSCOW :     ['UF_CRM_1540202747','UF_CRM_1540202807','UF_CRM_1540202766','UF_CRM_1540202817'],
-							NEW_MOSCOW : ['UF_CRM_1540203144','UF_CRM_1540203015','UF_CRM_1543406565','UF_CRM_1540202817'],
-							SUB_MOSCOW : ['UF_CRM_1540203111','UF_CRM_1540203015','UF_CRM_1543406565','UF_CRM_1540203144','UF_CRM_1540202817']
+							NEW_MOSCOW : ['UF_CRM_1540203144','UF_CRM_1540203015','UF_CRM_1543406565'],
+							SUB_MOSCOW : ['UF_CRM_1540203111','UF_CRM_1540203015','UF_CRM_1543406565','UF_CRM_1540203144']
 					 },
 
 					 NOT_SELECT = {
@@ -431,7 +431,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					/**
 					 * не выбрано
 					 */
-					this.setNotSelectValue();
+					//this.setNotSelectValue();
 					
 					/**
 					 * не актуально Москва
@@ -468,7 +468,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  */
 				 if(regionValue == regions.SUB_MOSCOW) {
 
-					this.setNotSelectValue();
+					//this.setNotSelectValue();
 
 					for(uf of NOT_ACTUAL.SUB_MOSCOW) {
 
@@ -483,7 +483,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 */
 				if(regionValue == regions.NEW_MOSCOW) {
 
-				 this.setNotSelectValue();
+				 //this.setNotSelectValue();
 
 				 for(uf of NOT_ACTUAL.NEW_MOSCOW) {
 
@@ -688,7 +688,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					   console.log('поле с даты здание не готово');	
 					}
 
-				 }, this._timeout + 600);
+				 }, 600);
 			
 			 	}
 		 },
@@ -1121,7 +1121,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						
 						});
 
-				 },this._timeout);
+				 },1000);
 
 			}
 		},
