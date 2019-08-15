@@ -241,9 +241,9 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   buildingTypeView : function() {
 
-    const rentBusiness = ['UF_CRM_1547218667182','UF_CRM_1565854434','UF_CRM_1547631768634','UF_CRM_1547628348754','UF_CRM_1547628374048','UF_CRM_1565250284'],
+    const rentBusiness = ['UF_CRM_1565853455','UF_CRM_1547218667182','UF_CRM_1565854434','UF_CRM_1547631768634','UF_CRM_1547628348754','UF_CRM_1547628374048','UF_CRM_1565250284'],
           rent = ['UF_CRM_1547218667182'],
-          sale = [''];
+          sale = ['UF_CRM_1565853455'];
 
     for(code of rentBusiness) {
 
@@ -280,6 +280,12 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
       this.renameNode(this.node('UF_CRM_1547551210'), 'Стоимость объекта');
       this.renameNode(this.node('UF_CRM_1565250601'), 'Стоимость объекта До');
 
+      for(code of sale) {
+
+        this.showField(this.node(code));
+  
+      }
+
       break;
 
       case 'Помещение в аренду' :
@@ -290,6 +296,8 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
           this.showField(this.node(code));
       
       }
+
+      this.hideField(this.node('UF_CRM_1565853455'));
 
       break;
 
