@@ -65,8 +65,6 @@ class SimilarTicket {
     $area_value_multi = self::enumValuemulti($arResult['UF_CRM_1565850691']); // здесь множественное округ
     $area_multi = self::enumIDmulti($area_value_multi); // здесь множественное округ
 
-    $logger->info( ['area_value_multi' => $area_value_multi, 'area_multi' => $area_multi] );
-
     $region = enumID($region_value, 'UF_CRM_1540202667');
     $area   = enumID($area_value, 'UF_CRM_1540203111');
 
@@ -121,23 +119,24 @@ class SimilarTicket {
 
 // для АБ добавляем поле окупаемость в поиск
 
-
+$object = [];
+foreach ($area_multi as $value) {
 
     if($type == '2') {
 
        if(in_array($arResult['UF_CRM_1545390144'], self::MOSKOW_REGION)) {
     
-         $object = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
+         $object[] = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
          where('CATEGORY_ID','=', $type)->
          where('UF_CRM_1540202667', '=',  $region)->
-         where('UF_CRM_1540203111', '=',  $area)->
+         where('UF_CRM_1540203111', '=',  $value)->
          whereBetween("UF_CRM_1566542004", $okupaemost_from, $okupaemost_to)->   //окупаемость
          whereBetween("UF_CRM_1541076330647", $square_from, $square_to)->
          whereBetween("UF_CRM_1541072013901", $price_from, $price_to)->exec();
     
        } else {
     
-         $object = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
+         $object[] = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
          where('CATEGORY_ID','=', $type)->
          where('UF_CRM_1540202667', '=',  $region)->
          where('UF_CRM_1545390183', '=',  $arResult['UF_CRM_1540202766'])->
@@ -147,22 +146,22 @@ class SimilarTicket {
     
        }
     
-       return $object;
+ //      return $object;
 
     }
     
     if(in_array($arResult['UF_CRM_1545390144'], self::MOSKOW_REGION)) {
     
-       $object = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
+       $object[] = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
        where('CATEGORY_ID','=', $type)->
        where('UF_CRM_1540202667', '=',  $region)->
-       where('UF_CRM_1540203111', '=',  $area)->
+       where('UF_CRM_1540203111', '=',  $value)->
        whereBetween("UF_CRM_1541076330647", $square_from, $square_to)->
        whereBetween("UF_CRM_1541072013901", $price_from, $price_to)->exec();
     
     } else {
     
-      $object = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
+      $object[] = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
       where('CATEGORY_ID','=', $type)->
       where('UF_CRM_1540202667', '=',  $region)->
       where('UF_CRM_1545390183', '=',  $arResult['UF_CRM_1540202766'])->
@@ -171,6 +170,13 @@ class SimilarTicket {
     
     }
     
+ //   return $object;
+
+
+  }
+
+ //   $logger->info( ['area_value_multi' => $area_value_multi, 'area_multi' => $area_multi, 'object' => $object] );
+
     return $object;
 
   }

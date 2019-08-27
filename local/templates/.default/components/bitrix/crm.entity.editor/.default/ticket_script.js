@@ -84,6 +84,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
               ON_SEARCH :    {value : 359, enumerable : true},
               ON_OBJECT :    {value : 360, enumerable : true},
               ON_PERMANENT : {value : 361, enumerable : true}
+              
           }});
 
     if(this.getTicketCategoryID() == ticketModel.ON_OBJECT) {

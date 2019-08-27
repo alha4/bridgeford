@@ -292,7 +292,6 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	
 			}, 2000);
 
-
 		},
 		
 		onRegionChange : function() {
@@ -865,6 +864,83 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	
 				}
 			}
+		},
+
+		initializeCompensationEvent : function() {
+
+			this._сompensation = this.nodeSelect("UF_CRM_1556182166156");
+			 
+			this.bindEvent(this._сompensation, 'change', this.onCompensationChange);
+
+
+		},
+
+		onCompensationChange : function() {
+
+
+			this.compensationView(this.nodeSelectValue(this._сompensation));
+
+
+		},
+
+
+		compensationView : function(value) {
+
+			const compensationModel = this.prepareModel({
+
+				'edit' : {
+
+					 PRECENT_ON_PRICE : { value : 466},
+					 FIXED_ON_PRICE :   { value : 467},
+					 PRECENT_ON_MAP :   { value : 472}
+
+					},
+
+				'view' : { 
+
+					PRECENT_ON_PRICE : { value : '% от цены'},
+					FIXED_ON_PRICE :   { value : 'Фиксированная оплата'},
+					PRECENT_ON_MAP :   { value : '% от МАП'}
+
+				}
+			}),
+
+			viewModel = ['UF_CRM_1556186036149','UF_CRM_1556182207180','UF_CRM_1556185907'];
+
+
+			viewModel.map( (code) => this.hideField(this.node(code)));
+
+			switch(value) {
+
+				case compensationModel.PRECENT_ON_PRICE : 
+
+				this.showField(this.node('UF_CRM_1556186036149'));
+
+				break;
+
+				case compensationModel.FIXED_ON_PRICE : 
+
+				this.showField(this.node('UF_CRM_1556182207180'));
+
+				break;
+
+
+				case compensationModel.PRECENT_ON_MAP : 
+
+				this.showField(this.node('UF_CRM_1556185907'));
+
+				break;
+
+			}
+
+		},
+
+		showCompensationFields : function() {
+
+
+			this.compensationView(this.getTextValue(this.node('UF_CRM_1556182166156')));
+
+
 		},
 
 		initializeExploitationEvent : function() {
@@ -2439,6 +2515,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializePaideExplotationEvent');
 				  this.registerEventListener(this._CATEGORY.TO_BUSSINES,'showDescriptionFields');
 					this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeDuplicationEvent');
+					this.registerEventListener(this._CATEGORY.TO_BUSSINES,'initializeCompensationEvent');
 					
 					break;
 
@@ -2502,6 +2579,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  	this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication1Fields');
 						this.registerView(this._CATEGORY.TO_BUSSINES, 'showDuplication2Fields');
 						this.registerView(this._CATEGORY.TO_BUSSINES, 'numberToMoney'); 
+						this.registerView(this._CATEGORY.TO_BUSSINES, 'showCompensationFields');
 						
 						break;
 
