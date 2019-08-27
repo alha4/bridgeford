@@ -26,7 +26,7 @@ div[data-cid="UF_CRM_1547631768634"],
 div[data-cid="UF_CRM_1565276254256"],
 div[data-cid="UF_CRM_1566212549228"],
 .crm-section_arendator {
-  display:none;
+  display:none!important;
 }
 div.show-field {
   display: block!important;
