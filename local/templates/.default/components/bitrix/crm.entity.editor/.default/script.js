@@ -1010,6 +1010,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 					 
 					 cashing      = this.nodeInput('UF_CRM_1541067645026'), //доходность
 					 payback      = this.nodeInput('UF_CRM_1544431330'), //окупаемость
+		//			 paybackDigital      = this.nodeInput('UF_CRM_1566542004'), //окупаемость цифровое - перенес в init в setRealPrice, тк. поле скрытое
 
 					 console.log(priceMAP);
 
@@ -1018,6 +1019,8 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				 	 cashing.value = ((priceMAP / priceObj) * 100).toFixed(0); // + "%"	
 
 					 payback.value = this.precentToDate(paybackValue);
+
+		//			 paybackDigital.value = paybackValue;
 				}
 
 				priceOn1SQM.value = BX.Currency.currencyFormat(Math.round(priceObj / squareValue), 'RUB', true);
@@ -2328,7 +2331,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 	
 			this._views = []; // Представления режим view
 
-			this._timeout = 3000;
+			this._timeout = 2000;
 
 			this._isAdmin = BX.prop.get(this._settings, "isAdmin", null);
 
@@ -2517,7 +2520,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			
 						this.initializeViews(); 
 
-					}, 4000);
+					}, 2000);
 					
 			  }
 		 }
@@ -3094,7 +3097,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 
 				this.initializeEventListener();
 
-			}, 3000);
+			}, 2000);
 
 		},
 		unregisterActiveControl: function(control)

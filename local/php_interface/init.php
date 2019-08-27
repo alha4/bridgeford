@@ -79,6 +79,9 @@ $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setGeoData');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setSquareClone');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setPaybackAutotext');
 $event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'setTiketSquareClone');
+$event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'tiketSave');
+$event->addEventHandler('crm', 'OnAfterCrmLeadAdd', 'tiketSave');
+$event->addEventHandler('crm', 'OnBeforeCrmLeadAdd', 'ObligatoryFieldFill');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRaiting');
 //$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setAdvertisingStatus');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setRealPrice');
@@ -91,6 +94,158 @@ $event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setMapLocation');
 $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setActuality');
 $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setLocation');
 
+
+function ObligatoryFieldFill(&$arFields) {
+
+ $logger = \Log\Logger::instance();
+ $logger->setPath("/local/logs/leadsObligatryFill.txt");
+
+ if ($arFields['UF_CRM_1545389896'] == '360') {
+
+
+  $userTypeManager = new CUserTypeManager();
+
+  $arLeadFields['UF_CRM_1545390144'] = '526';
+  $arLeadFields['UF_CRM_1547551210'] = '1'; //стоимость
+  $arLeadFields['UF_CRM_1547120946759'] = '1'; //площадь
+
+  $userTypeManager->Update('CRM_LEAD', $arFields['ID'], $arLeadFields);
+  $logger->info([$arLeadFields]); 
+    
+  }
+
+}
+
+
+function tiketSave(&$arFields) {
+
+ $logger = \Log\Logger::instance();
+ $logger->setPath("/local/logs/leads.txt");
+
+ if(array_key_exists('UF_CRM_1565872302', $arFields)) {
+
+   $deal_id = (int)str_replace('D_','', $arFields['UF_CRM_1565872302']);
+
+ } else {
+
+   $lead = \Bitrix\Crm\LeadTable::getList(['filter' => ['ID' => $arFields['ID']] ,'select' => ['UF_CRM_1565872302']])->fetch();
+
+   $deal_id = (int)str_replace('D_','',$lead['UF_CRM_1565872302']);
+
+ }
+
+ if($deal_id > 0) {
+
+  $commonFields = ['UF_CRM_1540384944','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667','UF_CRM_1540203111','UF_CRM_1543406565','UF_CRM_1540203015',
+  'UF_CRM_1545649289833','UF_CRM_1541072013901','UF_CRM_1540456417','UF_CRM_1540554743072','UF_CRM_1541072151310','UF_CRM_1541055727999','UF_CRM_1544431330','UF_CRM_1541055405','UF_CRM_1541055672','UF_CRM_1541055237379','UF_CRM_1541055274251']; 
+  
+  $mapFields = [
+
+     '362' => array_merge($commonFields, []),
+     '363' => array_merge($commonFields, []),
+     '364' => array_merge($commonFields, [])
+
+  ];
+
+  $listTypeMap = [
+
+    'UF_CRM_1540202667' => [
+      '26' => 365,
+      '27' => 512,
+      '28' => 366   
+    ],
+
+  
+/** округ заявки (объект) - 495 ЦАО (58), 496 САО (59), 497 СВАО (60), 498 ВАО (61), 499 ЮВАО (62), 500 ЮАО (63), 501 ЮЗАО (64), 502 ЗАО (65), 503 СЗАО (66), 504 Зеленоградский АО (67), 505 Новомосковский АО (68), 506 Троицкий АО (69), не актуально (289)
+*
+*    'UF_CRM_1540203111' => [       
+*
+*      '58' => 495,
+*      '59' => 496,
+*      '60' => 497,
+*      '61' => 498,
+*      '62' => 499,
+*      '63' => 500,
+*      '64' => 501,
+*      '65' => 502,
+*      '66' => 503,
+*      '67' => 504,
+*      '68' => 505,
+*      '69' => 506
+*    ]
+*/
+
+
+  ];
+
+
+  $select = $mapFields[ $arFields['UF_CRM_1545389958'] ];
+
+  $filter = ['ID' => $deal_id];
+
+  $object = \CCrmDeal::GetList(['ID'=>"DESC"], $filter, $select)->Fetch();
+
+  // UF_CRM_1541055672 - второй тип арендатора а объектах, UF_CRM_1547632842691 - второй тип в заявках
+  // UF_CRM_1541055237379 - название арендатора стандартное в объектах, UF_CRM_1566804181754 - название стандартное в заявках
+  // UF_CRM_1541055274251 - иное название арендатора в объектах, UF_CRM_1547632526938 - иное название в заявках
+  // UF_CRM_1540203015 - расстояние до метро объекты, UF_CRM_1547117427 - расстояние до метро заявки
+
+  $rastmetro_value = enumValue($object['UF_CRM_1540203015'],'UF_CRM_1540203015'); // находим значение поля расстояние до метро в объектах
+  $rastmetro = enumID($rastmetro_value, 'UF_CRM_1547117427', 'CRM_LEAD');  // находим id по значению расстояние до метро в заявках
+
+  $firsttip_value = enumValue($object['UF_CRM_1541055405'],'UF_CRM_1541055405'); // находим значение поля 1 тип арендатора в объектах
+  $firsttip = enumID($firsttip_value, 'UF_CRM_1547632637130', 'CRM_LEAD');  // находим id по значению 1 тип арендатора в заявках
+
+  $secondtip_value = enumValue($object['UF_CRM_1541055672'],'UF_CRM_1541055672'); // находим значение поля 2 тип арендатора в объектах
+  $secondtip = enumID($secondtip_value, 'UF_CRM_1547632842691', 'CRM_LEAD');  // находим id по значению 2 тип арендатора в заявках
+
+  $arendstandart_value = enumValue($object['UF_CRM_1541055237379'],'UF_CRM_1541055237379'); // находим значение поля Стандартное название арендатора в объектах
+  $arendstandart = enumID($arendstandart_value, 'UF_CRM_1566804181754', 'CRM_LEAD');  // находим id по значению Стандартное название арендатора в заявках
+
+  $area_value = enumValue($object['UF_CRM_1540203111'],'UF_CRM_1540203111'); // находим значение Округ в объектах
+  $area_multi = enumID($area_value, 'UF_CRM_1565850691', 'CRM_LEAD');  // находим id по значению Округ в заявках в поле Округ множественное
+  $area = enumID($area_value, 'UF_CRM_1566212549228', 'CRM_LEAD');  // находим id по значению Округ в заявках
+
+  $userTypeManager = new CUserTypeManager();
+
+  $arLeadFields['UF_CRM_1545390144'] = $listTypeMap['UF_CRM_1540202667'][$object['UF_CRM_1540202667']];
+  $arLeadFields['UF_CRM_1565850328'] = [$object['UF_CRM_1543406565']];
+  $arLeadFields['UF_CRM_1547120946759'] = $object['UF_CRM_1540384944'];
+
+  $arLeadFields['UF_CRM_1547551210'] = $object['UF_CRM_1540456417'] ? : $object['UF_CRM_1541072013901']; // стоимость заявки из "Стоимость аренды за все помещение в месяц" или "Стоимость объекта"  
+
+  $arLeadFields['UF_CRM_1565850691'] = [$area_multi]; // Округ множественное
+  $arLeadFields['UF_CRM_1566212549228'] = $area; // Округ 
+
+  $logger->info([$area_multi, $area]); 
+
+  $arLeadFields['UF_CRM_1547218667182'] = $object['UF_CRM_1540554743072']; // стоимость за 1 кв. м в год
+  
+  $arLeadFields['UF_CRM_1565853455'] = $object['UF_CRM_1541072151310']; // стоимость за 1 кв. м 
+
+  $arLeadFields['UF_CRM_1547632526938'] = $object['UF_CRM_1541055237379']; // арендатор добавляется id элемента списка, а не значение
+
+  $arLeadFields['UF_CRM_1547629103665'] = $object['UF_CRM_1541055727999']; // мап
+
+  $arLeadFields['UF_CRM_1547628348754'] = $object['UF_CRM_1544431330']; // окупаемость  
+  $arLeadFields['UF_CRM_1547632637130'] = $firsttip; // 1 тип  
+  $arLeadFields['UF_CRM_1547632842691'] = $secondtip; // 2 тип
+  $arLeadFields['UF_CRM_1566804181754'] = $arendstandart; // стандартное название арендатора
+  $arLeadFields['UF_CRM_1547632526938'] = $object['UF_CRM_1541055274251']; // иное название арендатора 
+
+  $arLeadFields['UF_CRM_1547117427'] = $rastmetro; // расстояние до метро
+
+  $userTypeManager->Update('CRM_LEAD', $arFields['ID'], $arLeadFields);
+
+  $logger->info([$arLeadFields]); 
+
+
+ } else {
+
+  $logger->info([$arFields,$deal_id]); 
+
+ }
+}
 
 function setActuality(&$arFields)  {
 
@@ -183,6 +338,12 @@ function setAutotext(&$arFields)  {
 
   foreach($object as $code=>&$value) {
 
+    if($code == 'UF_CRM_1540456417' && \CCrmDeal::GetCategoryID($ID) == 2) {
+
+      continue;
+
+    }
+
     if($code != 'ID') {
 
       $userField = UserFieldTable::getList(array(
@@ -242,8 +403,8 @@ function setAutotext(&$arFields)  {
 
     if($value) {
 
-      $rawData['ID'] = $object['ID'];
-      $rawData['CATEGORY_ID'] = OBJECT_TYPE[\CCrmDeal::GetCategoryID($object['ID'])];
+      $rawData['ID'] = $ID;
+      $rawData['CATEGORY_ID'] = OBJECT_TYPE[\CCrmDeal::GetCategoryID($ID)];
       $rawData[$code] = $value;
       
     }
@@ -416,17 +577,44 @@ function setMapLocation(&$arFields)  {
 /**
  * UF_CRM_1545649289833 - Реальная цена 
  * UF_CRM_1540456417 - Стоимость аренды за все помещение в месяц
- * UF_CRM_1541072013901 - Стоимость объекта 
+ * UF_CRM_1541072013901 - Стоимость объекта
+ * UF_CRM_1566542004 - окупаемость цифровое 
+ * UF_CRM_1541055727999 - МАП
  */
 function setRealPrice(&$arFields) : void {
 
-  $select = ['UF_CRM_1540456417','UF_CRM_1541072013901'];
+  $select = ['UF_CRM_1540456417','UF_CRM_1541072013901','UF_CRM_1541055727999'];
 
   $crm_object = \CCrmDeal::GetList(['ID'=>'DESC'], ['ID' => $arFields['ID'] ], $select);
 
   $object = $crm_object->Fetch();
 
   $category = \CCrmDeal::GetCategoryID($arFields['ID']);
+
+// проставляем значение "Окупаемость цифровое"
+
+  if($category == 2 && $object['UF_CRM_1541055727999'] > 0) {
+
+    $map_year = $object['UF_CRM_1541055727999'] * 12;
+    $paybackDigital = round($object['UF_CRM_1541072013901'] / $map_year, 1);
+
+    $UF = new CUserTypeManager;
+
+    $fields = [
+ 
+      'UF_CRM_1566542004' => $paybackDigital
+  
+    ];
+
+    if(!$UF->Update("CRM_DEAL", $arFields['ID'], $fields)) {
+
+      file_put_contents($_SERVER['DOCUMENT_ROOT'].'/log.txt', print_r( $fields  ,1).date("d/m/Y H:i:s")."\r\n");
+
+    }
+
+  }
+
+
 
   if($category > 0 && $object['UF_CRM_1541072013901'] > 0) {
 

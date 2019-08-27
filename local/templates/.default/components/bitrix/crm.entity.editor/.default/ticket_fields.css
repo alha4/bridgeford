@@ -20,16 +20,28 @@ div[data-cid="UF_CRM_1547631814802"],
 div[data-cid="UF_CRM_1547631768634"],
 div[data-cid="UF_CRM_1565250284"],
 div[data-cid="UF_CRM_1565853455"],
+div[data-cid="UF_CRM_1547218608920"],
+div[data-cid="UF_CRM_1547121130737"],
+div[data-cid="UF_CRM_1547631768634"],
+div[data-cid="UF_CRM_1565276254256"],
+div[data-cid="UF_CRM_1566212549228"],
 .crm-section_arendator {
   display:none;
 }
 div.show-field {
   display: block!important;
 }
+div[data-cid="UF_CRM_1547218667182"] .field-item input,
+div[data-cid="UF_CRM_1565853455"]  .field-item input {
+  border:inherit!important;
+  background-color:#fff;
+}
 div[data-cid="UF_CRM_1547218667182"] :before,
 div[data-cid="UF_CRM_1547218684391"] :before,
 div[data-cid="UF_CRM_1547628374048"] :before,
 div[data-cid="UF_CRM_1547628348754"] :before,
+div[data-cid="UF_CRM_1547218667182"] :before,
+div[data-cid="UF_CRM_1565853455"] :before, 
 .only-read :before { 
   content: ' ';
   width: 100%;

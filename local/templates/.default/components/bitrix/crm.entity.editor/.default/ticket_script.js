@@ -33,7 +33,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');
-    this.registerEventListener(TicketModel.ON_SEARCH, 'showPaybackCashingFields');
+  //  this.registerEventListener(TicketModel.ON_SEARCH, 'showPaybackCashingFields');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeCalculateCostEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTiketRentPriceEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTicketNDSEvent');
@@ -44,16 +44,18 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
     this.registerEventListener(TicketModel.ON_SEARCH, 'showAllFields');
     this.registerEventListener(TicketModel.ON_SEARCH, 'showCommercFields');
 
+
     if(!this._entityId) {
 
-        this.initializeEventListener();
+       this.hideFormEdit();
+       this.initializeEventListener();
     }
 
     if(this._entityId > 0) {
 
       this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
       this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');
-      this.registerView(TicketModel.ON_SEARCH, 'showCommisionFields');
+  //    this.registerView(TicketModel.ON_SEARCH, 'showCommisionFields');  убрали поле Платит ли комиссию
       this.registerView(TicketModel.ON_SEARCH, 'showClientContactFields');
       this.registerView(TicketModel.ON_SEARCH, 'showPlannedRunFields');
       this.registerView(TicketModel.ON_SEARCH, 'showCommercFields');
@@ -65,10 +67,47 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
         this.showAllFields();
         this.showCommercFields();
 
-       }, 1000);
+       }, 500);
 
    }   
 
+  },
+
+  hideFormEdit : function() {
+
+    const allSections = document.querySelectorAll('div[id^="section_"]'),
+          viewModel = ['section_o_zayavke'],
+          ticketModel = this.prepareModel({
+				 
+            'edit' : {
+
+              ON_SEARCH :    {value : 359, enumerable : true},
+              ON_OBJECT :    {value : 360, enumerable : true},
+              ON_PERMANENT : {value : 361, enumerable : true}
+          }});
+
+    if(this.getTicketCategoryID() == ticketModel.ON_OBJECT) {
+
+      for(var section of allSections) {
+
+        if(viewModel.indexOf(section.id) == -1) {
+
+           section.parentNode.style.display = 'none';
+
+        }
+
+      }
+
+    } else {
+
+      for(var section of allSections) {
+
+        section.parentNode.style.display = 'block';
+
+      }
+
+    }
+ 
   },
 
   getTicketCategoryID : function() {
@@ -97,9 +136,11 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   showCommercFields : function() {
 
-    const fieldsRent = ['UF_CRM_1547218455352','UF_CRM_1547218493343','UF_CRM_1547218667182','UF_CRM_1547218758','UF_CRM_1547218826'],
+    const fieldsRent = ['UF_CRM_1547218667182','UF_CRM_1547218608920','UF_CRM_1547121130737','UF_CRM_1547631768634','UF_CRM_1565276254256'], //,'UF_CRM_1547218758','UF_CRM_1547218826' - убрал поля
 
-          fieldsRentBusiness = ['UF_CRM_1547628348754','UF_CRM_1547628374048'];
+	  fieldsSale = ['UF_CRM_1565853455'],
+
+          fieldsRentBusiness = ['UF_CRM_1565853455','UF_CRM_1547218667182','UF_CRM_1547628348754','UF_CRM_1565250284','UF_CRM_1547218608920','UF_CRM_1547121130737','UF_CRM_1547631768634','UF_CRM_1565276254256'];
 
     if(this.getTypeBuilding() == 362 ||
        this.getTypeBuilding() == 'Помещение в аренду') {
@@ -110,6 +151,15 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
        }
 
+    } else if(this.getTypeBuilding() == 363 ||
+              this.getTypeBuilding() == 'Помещение на продажу') {
+
+        for(var uf of fieldsSale) {
+
+           this.showField(this.node(uf));
+        
+        }
+    
     } else if(this.getTypeBuilding() == 364 ||
               this.getTypeBuilding() == 'Арендный бизнес') {
 
@@ -241,8 +291,8 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   buildingTypeView : function() {
 
-    const rentBusiness = ['UF_CRM_1565853455','UF_CRM_1547218667182','UF_CRM_1565854434','UF_CRM_1547631768634','UF_CRM_1547628348754','UF_CRM_1547628374048','UF_CRM_1565250284'],
-          rent = ['UF_CRM_1547218667182'],
+    const rentBusiness = ['UF_CRM_1565853455','UF_CRM_1547218667182','UF_CRM_1565854434','UF_CRM_1547631768634','UF_CRM_1547628348754','UF_CRM_1565250284','UF_CRM_1547218608920','UF_CRM_1547121130737','UF_CRM_1547631768634','UF_CRM_1565276254256'], // добавляем поля для направлений
+          rent = ['UF_CRM_1547218667182','UF_CRM_1547218608920','UF_CRM_1547121130737','UF_CRM_1547631768634','UF_CRM_1565276254256'],
           sale = ['UF_CRM_1565853455'];
 
     for(code of rentBusiness) {
@@ -339,8 +389,11 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
     }),
 
+
+
     fieldsSubMoskow = ['UF_CRM_1545390183','UF_CRM_1545390196'],
-    fieldsMoskow    = ['UF_CRM_1545390443','UF_CRM_1545390372'];
+    fieldsMoskow    = ['UF_CRM_1545390443','UF_CRM_1566212549228'], // округ указать UF_CRM_1566212549228
+    fieldsNewMoskow = ['UF_CRM_1545390183','UF_CRM_1545390196','UF_CRM_1566212549228'];
 
     if(regionValue == regionModel.SUB_MOSKOW) {
 
@@ -354,6 +407,20 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
           this.showField(this.node(uf));
       }
+
+    } else if (regionValue == 512 || regionValue == 'Новая Москва'){
+   
+      for(var uf of  fieldsMoskow) {
+
+        this.hideField(this.node(uf));
+
+      }
+
+      for(var uf of  fieldsNewMoskow) {
+
+        this.showField(this.node(uf));
+      }
+
 
     } else {
    
@@ -486,7 +553,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   showCommisionFields : function() {
 
-      this.commnisionView(this.getTextValue(this.node('UF_CRM_1547204814')));
+ //     this.commnisionView(this.getTextValue(this.node('UF_CRM_1547204814'))); // убрали поле Платит ли комиссию
 
   },
 
@@ -536,12 +603,10 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
     const priceSq2OnYear  = this.nodeInput('UF_CRM_1547218667182'),
           priceOnMonth    = this.nodeInput('UF_CRM_1565853455'),
 
-          cashing         = this.nodeInput('UF_CRM_1547628374048'), //доходность
-          payback         = this.nodeInput('UF_CRM_1547628348754'), //окупаемость
+    //     cashing         = this.nodeInput('UF_CRM_1547628374048'), //доходность
+    //      payback         = this.nodeInput('UF_CRM_1547628348754'), //окупаемость
 
           priceRental     = parseFloat(this.nodeInput('UF_CRM_1547551210').value),
-
-          squareValue     = parseInt(this.nodeInput("UF_CRM_1547120946759").value) || 1,
 
           costType        = parseInt(this.nodeSelectValue(this._costTypeSelect));
 
@@ -566,14 +631,26 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
             }
           });
 
-     let  nds = 0;  
+     let  nds = 0,
+          squareValue = 1; 
  
      if(this.nodeSelectValue(this.nodeSelect('UF_CRM_1547218608920')) == NDS_SELECT) {
  
         nds = (priceRental * 18) / 118;
  
      }
+   
+     if(this.nodeInput('UF_CRM_1547120946759')) {
 
+        squareValue = parseInt(this.nodeInput('UF_CRM_1547120946759').value);
+
+     } else if(this.getTextValue(this.node('UF_CRM_1547120946759'))) {
+
+        squareValue = parseInt(this.getTextValue(this.node('UF_CRM_1547120946759')));
+
+     }  
+     
+           
      if(this.getTypeBuilding() == priceModel.RENT)  {
 
         priceSq2OnYear.value = BX.Currency.currencyFormat(((priceRental + nds) / squareValue) * 12, 'RUB', true);
@@ -598,9 +675,9 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
         const priceMAP  = parseInt(this.getTextValue(this.node('UF_CRM_1547629103665')).replace(/\s+/ig,"") ) * 12;//МАП 
             
-                  paybackValue = ((priceRental + nds) / priceMAP).toFixed(1);
+           //       paybackValue = ((priceRental + nds) / priceMAP).toFixed(1);
 
-                  cashing.value = (priceMAP / (priceRental + nds)) * 100 + "%";	
+           //       cashing.value = (priceMAP / (priceRental + nds)) * 100 + "%";	
 
                   console.log(priceMAP, paybackValue);
 
@@ -615,8 +692,8 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
     if(this.getTypeBuilding() == 'Арендный бизнес') {
 
-      this.showField(this.node('UF_CRM_1547628348754'));
-      this.showField(this.node('UF_CRM_1547628374048'));
+    //  this.showField(this.node('UF_CRM_1547628348754'));  //окупаемость
+   //   this.showField(this.node('UF_CRM_1547628374048')); // отключаем доходность в АБ
 
     }
 

@@ -8,6 +8,7 @@ use \Bitrix\Main\Loader,
 
 Loader::IncludeModule("crm");
 
+
 class SimilarObject {
 
   private const MOSKOW_REGION = [26, 27];
@@ -29,12 +30,16 @@ class SimilarObject {
     *  UF_CRM_1545649289833 [string] - Реальная цена
     */
 
-    $select = ['UF_CRM_1541076330647','UF_CRM_1545649289833','UF_CRM_1540203111','UF_CRM_1540202667','UF_CRM_1540202766','UF_CRM_1544431330'];
+    $select = ['UF_CRM_1541076330647','UF_CRM_1545649289833','UF_CRM_1540203111','UF_CRM_1540202667','UF_CRM_1540202766','UF_CRM_1544431330','CATEGORY_ID'];
 
     $category_id = \CCrmDeal::GetCategoryID($id);
     
     $current = \CCrmDeal::GetList($sort, $filter, $select);
     $arResult = $current->Fetch();
+
+// $logger = \Log\Logger::instance();
+// $logger->setPath("/local/logs/SimilarObject.txt");
+// $logger->info([$category_id]); 
 
     $real_price = (int)$arResult['UF_CRM_1545649289833'];
     $square     = (int)$arResult['UF_CRM_1541076330647'];
@@ -48,6 +53,7 @@ class SimilarObject {
     if(in_array($arResult['UF_CRM_1540202667'], self::MOSKOW_REGION)) {
     
     $object = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
+       where('CATEGORY_ID','=', $category_id)->
        where('UF_CRM_1540202667', '=',  $arResult['UF_CRM_1540202667'])->
        where('UF_CRM_1540203111', '=',  $arResult['UF_CRM_1540203111'])->
        whereBetween("UF_CRM_1541076330647", $square_from, $square_to)->
@@ -56,6 +62,7 @@ class SimilarObject {
     } else {
     
       $object = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
+      where('CATEGORY_ID','=', $category_id)->
       where('UF_CRM_1540202667', '=',  $arResult['UF_CRM_1540202667'])->
       where('UF_CRM_1540202766', '=',  $arResult['UF_CRM_1540202766'])->
       whereBetween("UF_CRM_1541076330647", $square_from, $square_to)->
