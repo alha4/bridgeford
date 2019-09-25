@@ -22,7 +22,10 @@ Main\UI\Extension::load("ui.dropdown");
 
 //Main\Page\Asset::getInstance()->addJs('/bitrix/js/main/core/core_dragdrop.js');
 Main\Page\Asset::getInstance()->addJs('/bitrix/js/crm/interface_form.js');
-Main\Page\Asset::getInstance()->addJs('/bitrix/js/crm/common.js');
+
+//Контроль дуюликатов
+Main\Page\Asset::getInstance()->addJs('/local/js/crm/common.js');
+
 Main\Page\Asset::getInstance()->addJs('/bitrix/js/crm/phase.js');
 Main\Page\Asset::getInstance()->addJs('/bitrix/js/main/dd.js');
 Main\Page\Asset::getInstance()->addJs('/bitrix/js/crm/dialog.js');
@@ -728,4 +731,18 @@ if(!empty($htmlEditorConfigs))
 			);
 		}
 	);
+
+var isAdmin = <?if($USER->IsAdmin()):?> true <?else:?> false<?endif?>   ;
+BX.addCustomEvent('onPopupFirstShow', (e) => { 
+
+if(!isAdmin && 
+	(e.uniquePopupId == 'contact_0_details_editor_dup_warn' || 
+	 e.uniquePopupId == 'company_0_details_editor_dup_warn')) {
+ 
+	const entityType = e.uniquePopupId.split("_")[0];
+
+	document.querySelector(`#${entityType}_0_details_editor_dup_warn`).querySelector('.popup-window-button-create').remove();
+
+}
+});
 </script>

@@ -449,7 +449,7 @@ class CianXml extends ExportBase {
 
  protected function getAddress(array &$row) : string {
 
-  $city = $this->enumValue((int)$this->$row['UF_CRM_1540202667'], 'UF_CRM_1540202667');
+  $city = $this->enumValue((int)$row['UF_CRM_1540202667'], 'UF_CRM_1540202667');  // было   $city = $this->enumValue((int)$this->$row['UF_CRM_1540202667'], 'UF_CRM_1540202667'); 
 
   if($city != self::MOSKOW) {
 

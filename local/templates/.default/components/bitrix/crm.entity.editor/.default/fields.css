@@ -64,8 +64,8 @@ div[data-cid="UF_CRM_1543504475389"], /* Длительность каникул
 div[data-cid="UF_CRM_1556182207180"],
 div[data-cid="UF_CRM_1556186036149"],
 div[data-cid="UF_CRM_1556185907"],
-.crm-entity-card-widget-title-edit-icon,
-.pagetitle-sub {
+.crm-entity-card-widget-title-edit-icon
+{
   display:none;
 }
 div[data-cid="UF_CRM_1542089326915"] { /* кол-во конкурентов */

@@ -12,7 +12,10 @@ use \Bitrix\Main\EventManager,
     \Bitrix\Main\UserFieldTable,
     \Bitrix\Main\Loader,
     \Bitrix\Main\ORM\Query\Result,
-    \Bitrix\Crm\DealTable;
+    \Bitrix\Main\ORM\Query\Query,
+    \Bitrix\Crm\Category\DealCategory,
+    \Bitrix\Crm\DealTable,
+    \Bitrix\Crm\LeadTable;
 
 const PSR_CLASS_PATH = '/local/Psr/Log';
 const CIAN_ROOT_CLASS_PATH = '/local/Cian';
@@ -24,7 +27,7 @@ const SEMANTIC_CLASS_PATH = '/local/XML/Semantic';
 const LOG_PATH = '/local/Cian/log.txt';
 const REQUEST_LOG = 'N';
 const GENERAL_BROKER = 15;
-const FILTER_PRECENT = 33;
+const FILTER_PRECENT = 10;
 const YANDEX_API_KEY = '5e926399-e46a-4846-a809-c3d370aa399e';
 const GOOGLE_API_KEY = 'AIzaSyAUi5d1Fe5Vl02YJE-cckShpqtqaVH4Jzk';
 const DEBUG_AUTOTEXT = 'Y';
@@ -93,7 +96,460 @@ $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setAutotext');
 $event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setMapLocation');
 $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setActuality');
 $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setLocation');
+ $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setLocation');
+$event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setSemantic');
 
+$event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setObjectList');
+$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'updateObjectList');
+$event->addEventHandler('crm', 'OnBeforeCrmDealDelete', 'deleteObjectList');
+$event->addEventHandler('crm', 'OnAfterCrmLeadAdd', 'setTicketList');
+$event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'updateTicketList');
+$event->addEventHandler('crm', 'OnBeforeCrmLeadDelete', 'deleteTicketList');
+
+const OBJECT_LIST_ID  = 31;
+
+const TICKET_LIST_ID  = 32;
+
+
+function setTicketList(&$arFields) {
+
+$logger = \Log\Logger::instance();
+$logger->setPath("/local/logs/binder.txt");
+
+$select = ['ID','TITLE','UF_CRM_1545389896','UF_CRM_1545389958','UF_CRM_1566919640','UF_CRM_1566919661'];
+
+$ID = $arFields['ID'];
+
+$crm_object = LeadTable::query()
+->where('ID', '=' , $ID)
+->where(Query::filter()
+ ->logic('or')
+ ->where('UF_CRM_1566919640', '>', 0)
+ ->where('UF_CRM_1566919661', '>', 0) 
+)
+->setSelect($select)
+->exec()->fetch();
+
+if($crm_object['UF_CRM_1566919640'] || $crm_object['UF_CRM_1566919661']) {
+  
+  $list = new \CIBlockElement(false);
+
+  $arObject = [
+
+  'IBLOCK_ID' => \TICKET_LIST_ID,
+  'NAME' => $crm_object['TITLE'],
+
+    'PROPERTY_VALUES' => [
+
+      'KONTAKT'     => $crm_object['UF_CRM_1566919640'],
+      'KOMPANIYA'   => $crm_object['UF_CRM_1566919661'],
+      'ID_ZAYAVKI'  => sprintf("<a href='/crm/lead/details/%d/'>%d</a>",$ID, $ID),
+      'ID_ZAYAVKI_TSIFRA' => $ID,
+      'TIP_ZAYAVKI' => enumValue($crm_object['UF_CRM_1545389896'],$ID,'UF_CRM_1545389896','CRM_LEAD'),
+      'TIP_OBEKTA'  => enumValue($crm_object['UF_CRM_1545389958'],$ID,'UF_CRM_1545389958','CRM_LEAD'),
+
+   ]
+  ];
+  
+  $logger->info($crm_object);
+
+
+  if(!$list->Add($arObject)) {
+
+    $logger->error([$ID, $list->LAST_ERROR,  $arObject]);
+
+  }
+ }
+}
+
+
+function updateTicketList(&$arFields) {
+
+$logger = \Log\Logger::instance();
+$logger->setPath("/local/logs/binder_update.txt");
+
+$select = ['ID','TITLE','UF_CRM_1545389896','UF_CRM_1545389958','UF_CRM_1566919640','UF_CRM_1566919661'];
+
+$ID = $arFields['ID'];
+
+$crm_object = LeadTable::query()
+->where('ID', '=' , $ID)
+->where(Query::filter()
+ ->logic('or')
+ ->where('UF_CRM_1566919640', '>', 0)
+ ->where('UF_CRM_1566919661', '>', 0) 
+)
+->setSelect($select)
+->exec()->fetch();
+
+if($crm_object['UF_CRM_1566919640'] || $crm_object['UF_CRM_1566919661']) {
+  
+  $list = new \CIBlockElement(false);
+
+  $arObject = [
+
+  'IBLOCK_ID' => \TICKET_LIST_ID,
+  'NAME' => $crm_object['TITLE'],
+
+    'PROPERTY_VALUES' => [
+
+      'KONTAKT'     => $crm_object['UF_CRM_1566919640'],
+      'KOMPANIYA'   => $crm_object['UF_CRM_1566919661'],
+      'ID_ZAYAVKI'  => sprintf("<a href='/crm/lead/details/%d/'>%d</a>",$ID, $ID),
+      'ID_ZAYAVKI_TSIFRA' => $ID,
+      'TIP_ZAYAVKI' => enumValue($crm_object['UF_CRM_1545389896'],$ID,'UF_CRM_1545389896','CRM_LEAD'),
+      'TIP_OBEKTA'  => enumValue($crm_object['UF_CRM_1545389958'],$ID,'UF_CRM_1545389958','CRM_LEAD'),
+
+   ]
+  ];
+  
+    $logger->info($arObject);
+
+    $arSelect = Array("ID", "IBLOCK_ID", "PROPERTY_ID_ZAYAVKI_TSIFRA");
+    $arFilter = Array("IBLOCK_ID"=>\TICKET_LIST_ID, "PROPERTY_ID_ZAYAVKI_TSIFRA"=>$ID); //
+    $res = CIBlockElement::GetList(Array("SORT"=>"ASC"), $arFilter, false, false, $arSelect);
+    while($ar_fields = $res->GetNext())
+    {
+      $logger->info($ar_fields['ID']);
+
+      if(!$list->Update($ar_fields['ID'],$arObject)) {
+
+        $logger->error([$ID, $list->LAST_ERROR,  $arObject]);
+
+      }
+
+    }
+
+ }
+}
+
+
+function deleteTicketList($ID) {
+
+$logger = \Log\Logger::instance();
+$logger->setPath("/local/logs/binder_delete.txt");
+
+$select = ['ID','TITLE','UF_CRM_1545389896','UF_CRM_1545389958','UF_CRM_1566919640','UF_CRM_1566919661'];
+
+$logger->info($ID);
+
+$crm_object = LeadTable::query()
+->where('ID', '=' , $ID)
+->where(Query::filter()
+ ->logic('or')
+ ->where('UF_CRM_1566919640', '>', 0)
+ ->where('UF_CRM_1566919661', '>', 0) 
+)
+->setSelect($select)
+->exec()->fetch();
+
+if($crm_object['UF_CRM_1566919640'] || $crm_object['UF_CRM_1566919661']) {
+  
+  $list = new \CIBlockElement(false);
+  $deleted = "Заявка удалена";
+
+  $arObject = [
+
+  'IBLOCK_ID' => \TICKET_LIST_ID,
+  'NAME' => $crm_object['TITLE'],
+
+    'PROPERTY_VALUES' => [
+
+      'KONTAKT'     => $crm_object['UF_CRM_1566919640'],
+      'KOMPANIYA'   => $crm_object['UF_CRM_1566919661'],
+      'ID_ZAYAVKI'  => sprintf("<a href='/crm/lead/details/%d/'>%d</a>",$ID, $ID),
+      'ID_ZAYAVKI_TSIFRA' => $ID,
+      'TIP_ZAYAVKI' => enumValue($crm_object['UF_CRM_1545389896'],$ID,'UF_CRM_1545389896','CRM_LEAD'),
+      'TIP_OBEKTA'  => enumValue($crm_object['UF_CRM_1545389958'],$ID,'UF_CRM_1545389958','CRM_LEAD'),
+      'UDALENA' => $deleted
+   ]
+  ];
+  
+    $logger->info($arObject);
+
+    $arSelect = Array("ID", "IBLOCK_ID", "PROPERTY_ID_ZAYAVKI_TSIFRA");
+    $arFilter = Array("IBLOCK_ID"=>\TICKET_LIST_ID, "PROPERTY_ID_ZAYAVKI_TSIFRA"=>$ID); //
+    $res = CIBlockElement::GetList(Array("SORT"=>"ASC"), $arFilter, false, false, $arSelect);
+    while($ar_fields = $res->GetNext())
+    {
+      $logger->info($ar_fields['ID']);
+
+      if(!$list->Update($ar_fields['ID'],$arObject)) {
+
+        $logger->error([$ID, $list->LAST_ERROR,  $arObject]);
+
+      }
+
+    }
+
+ }
+}
+
+
+function setObjectList(&$arFields) {
+
+  $logger = \Log\Logger::instance();
+  $logger->setPath("/local/logs/binder.txt");
+
+  $select = ['ID','TITLE','CATEGORY_ID','UF_CRM_1540202908','UF_CRM_1541072013901','UF_CRM_1540202889',
+            'UF_CRM_1540895685','UF_CRM_1558086250','UF_CRM_1541076330647','UF_CRM_1540202900',
+            'UF_CRM_1540456417','UF_CRM_1540384944'];
+
+  $ID = $arFields['ID'];
+
+  $crm_object = DealTable::query()
+    ->where('ID', '=' , $ID)
+    ->where(Query::filter()
+    ->logic('or')
+     ->where('UF_CRM_1540895685', '>', 0)
+     ->where('UF_CRM_1558086250', '>', 0) 
+    )
+    ->setSelect($select)
+    ->exec()->fetch();
+
+  if($crm_object['UF_CRM_1540895685'] || $crm_object['UF_CRM_1558086250']) {
+    
+    $list = new \CIBlockElement(false);
+
+    $arObject = [
+
+    'IBLOCK_ID' => \OBJECT_LIST_ID,
+    'NAME' => $crm_object['TITLE'],
+
+    'PROPERTY_VALUES' => [
+
+       'KONTAKT'    => $crm_object['UF_CRM_1558086250'],
+       'KOMPANIYA'  => $crm_object['UF_CRM_1540895685'],
+       'ID_OBEKTA'  => sprintf("<a href='/crm/deal/details/%d/'>%d</a>",$ID, $ID),
+       'ID_OBEKTA_TSIFRA' => $ID,
+       'TIP_OBEKTA' => DealCategory::getName($crm_object['CATEGORY_ID']),
+       'NOMER_DOMA' => $crm_object['UF_CRM_1540202908'],
+       'PLOSHCHAD'  => $crm_object['UF_CRM_1540384944'],
+       'ULITSA'     => $crm_object['UF_CRM_1540202900'],
+       'STOIMOST'   => SaleFormatCurrency($crm_object['CATEGORY_ID'] == 0 ? $crm_object['UF_CRM_1540456417'] : $crm_object['UF_CRM_1541072013901'],'RUB'),
+       'TIP_ULITSY' => enumValue($crm_object['UF_CRM_1540202889'], $ID, 'UF_CRM_1540202889')
+
+     ]
+    ];
+    
+    $logger->info($crm_object);
+
+
+    if(!$list->Add( $arObject)) {
+
+      $logger->error([$ID, $list->LAST_ERROR,  $arObject]);
+
+    }
+
+  }
+
+}
+
+
+function updateObjectList(&$arFields) {
+
+  $logger = \Log\Logger::instance();
+  $logger->setPath("/local/logs/binder_update.txt");
+
+  $select = ['ID','TITLE','CATEGORY_ID','UF_CRM_1540202908','UF_CRM_1541072013901','UF_CRM_1540202889',
+            'UF_CRM_1540895685','UF_CRM_1558086250','UF_CRM_1541076330647','UF_CRM_1540202900',
+            'UF_CRM_1540456417','UF_CRM_1540384944'];
+
+  $ID = $arFields['ID'];
+
+  $crm_object = DealTable::query()
+    ->where('ID', '=' , $ID)
+    ->where(Query::filter()
+    ->logic('or')
+     ->where('UF_CRM_1540895685', '>', 0)
+     ->where('UF_CRM_1558086250', '>', 0) 
+    )
+    ->setSelect($select)
+    ->exec()->fetch();
+
+  if($crm_object['UF_CRM_1540895685'] || $crm_object['UF_CRM_1558086250']) {
+    
+    $list = new \CIBlockElement(false);
+
+    $arObject = [
+
+    'IBLOCK_ID' => \OBJECT_LIST_ID,
+    'NAME' => $crm_object['TITLE'],
+
+    'PROPERTY_VALUES' => [
+
+       'KONTAKT'    => $crm_object['UF_CRM_1558086250'],
+       'KOMPANIYA'  => $crm_object['UF_CRM_1540895685'],
+       'ID_OBEKTA'  => sprintf("<a href='/crm/deal/details/%d/'>%d</a>",$ID, $ID),
+       'ID_OBEKTA_TSIFRA' => $ID,
+       'TIP_OBEKTA' => DealCategory::getName($crm_object['CATEGORY_ID']),
+       'NOMER_DOMA' => $crm_object['UF_CRM_1540202908'],
+       'PLOSHCHAD'  => $crm_object['UF_CRM_1540384944'],
+       'ULITSA'     => $crm_object['UF_CRM_1540202900'],
+       'STOIMOST'   => SaleFormatCurrency($crm_object['CATEGORY_ID'] == 0 ? $crm_object['UF_CRM_1540456417'] : $crm_object['UF_CRM_1541072013901'],'RUB'),
+       'TIP_ULITSY' => enumValue($crm_object['UF_CRM_1540202889'], $ID, 'UF_CRM_1540202889')
+
+     ]
+    ];
+    
+    $logger->info($arObject);
+
+    $arSelect = Array("ID", "IBLOCK_ID", "PROPERTY_ID_OBEKTA_TSIFRA");
+    $arFilter = Array("IBLOCK_ID"=>\OBJECT_LIST_ID, "PROPERTY_ID_OBEKTA_TSIFRA"=>$ID); //
+    $res = CIBlockElement::GetList(Array("SORT"=>"ASC"), $arFilter, false, false, $arSelect);
+    while($ar_fields = $res->GetNext())
+    {
+      $logger->info($ar_fields['ID']);
+
+      if(!$list->Update($ar_fields['ID'],$arObject)) {
+
+        $logger->error([$ID, $list->LAST_ERROR,  $arObject]);
+
+      }
+
+    }
+
+  }
+
+}
+
+
+function deleteObjectList($ID) {
+
+  $logger = \Log\Logger::instance();
+  $logger->setPath("/local/logs/binder_delete.txt");
+
+  $select = ['ID','TITLE','CATEGORY_ID','UF_CRM_1540202908','UF_CRM_1541072013901','UF_CRM_1540202889',
+            'UF_CRM_1540895685','UF_CRM_1558086250','UF_CRM_1541076330647','UF_CRM_1540202900',
+            'UF_CRM_1540456417','UF_CRM_1540384944'];
+
+  $logger->info($ID);
+
+  $crm_object = DealTable::query()
+    ->where('ID', '=' , $ID)
+    ->where(Query::filter()
+    ->logic('or')
+     ->where('UF_CRM_1540895685', '>', 0)
+     ->where('UF_CRM_1558086250', '>', 0) 
+    )
+    ->setSelect($select)
+    ->exec()->fetch();
+
+  if($crm_object['UF_CRM_1540895685'] || $crm_object['UF_CRM_1558086250']) {
+    
+    $list = new \CIBlockElement(false);
+    $deleted = "Объект удален";
+
+    $arObject = [
+
+    'IBLOCK_ID' => \OBJECT_LIST_ID,
+    'NAME' => $crm_object['TITLE'],
+
+    'PROPERTY_VALUES' => [
+
+       'KONTAKT'    => $crm_object['UF_CRM_1558086250'],
+       'KOMPANIYA'  => $crm_object['UF_CRM_1540895685'],
+       'ID_OBEKTA'  => sprintf("<a href='/crm/deal/details/%d/'>%d</a>",$ID, $ID),
+       'ID_OBEKTA_TSIFRA' => $ID,
+       'TIP_OBEKTA' => DealCategory::getName($crm_object['CATEGORY_ID']),
+       'NOMER_DOMA' => $crm_object['UF_CRM_1540202908'],
+       'PLOSHCHAD'  => $crm_object['UF_CRM_1540384944'],
+       'ULITSA'     => $crm_object['UF_CRM_1540202900'],
+       'STOIMOST'   => SaleFormatCurrency($crm_object['CATEGORY_ID'] == 0 ? $crm_object['UF_CRM_1540456417'] : $crm_object['UF_CRM_1541072013901'],'RUB'),
+       'TIP_ULITSY' => enumValue($crm_object['UF_CRM_1540202889'], $ID, 'UF_CRM_1540202889'),
+       'UDALEN' => $deleted
+
+     ]
+    ];
+
+    $logger->info($arObject);
+
+    $arSelect = Array("ID", "IBLOCK_ID", "PROPERTY_ID_OBEKTA_TSIFRA");
+    $arFilter = Array("IBLOCK_ID"=>\OBJECT_LIST_ID, "PROPERTY_ID_OBEKTA_TSIFRA"=>$ID); //
+    $res = CIBlockElement::GetList(Array("SORT"=>"ASC"), $arFilter, false, false, $arSelect);
+    while($ar_fields = $res->GetNext())
+    {
+      $logger->info($ar_fields['ID']);
+
+      if(!$list->Update($ar_fields['ID'],$arObject)) {
+
+        $logger->error([$ID, $list->LAST_ERROR,  $arObject]);
+
+      }
+
+    }
+
+  }
+
+}
+
+
+
+/**
+ * UF_CRM_1568100006 - старое направление
+ * CATEGORY_ID - новое направление
+ *
+*/
+function setSemantic(&$arFields) {
+
+  $semanticMap = [
+
+    '0' => 'UF_CRM_1540974006',
+    '1' => 'UF_CRM_1544172451',
+    '2' => 'UF_CRM_1544172560'
+ 
+  ];
+
+  $deal = \Bitrix\Crm\DealTable::getList(['filter' => ['ID' => $arFields['ID']] ,'select' => 
+  ['CATEGORY_ID','TITLE','UF_CRM_1540974006','UF_CRM_1544172451','UF_CRM_1544172560','UF_CRM_1568100006']])->fetch();
+
+  if($deal['CATEGORY_ID'] != $deal['UF_CRM_1568100006']) {
+
+    $uf = new CUserTypeManager();
+
+    $fields = [
+  
+     'UF_CRM_1568100006' => $deal['CATEGORY_ID']
+  
+    ];
+
+    $uf->Update('CRM_DEAL', $arFields['ID'], $fields);
+
+    $semanticNew = $semanticMap[$deal['CATEGORY_ID']];
+
+    $semanticLast = $semanticMap[$deal['UF_CRM_1568100006']];
+  
+    $arSemantic = [];
+
+    foreach($deal[$semanticLast] as $valueId) {
+    
+      $enumId = enumID(enumValue($valueId, $semanticLast), $semanticNew);
+    
+      if($enumId != -1) {
+
+          $arSemantic[] = $enumId;
+       
+      }
+
+    }
+
+    if(count($arFields[ $semanticNew ]) <= 0 && $arSemantic) {
+
+      $arFields[ $semanticNew ] = $arSemantic;
+
+    }
+
+   /* $logger = \Log\Logger::instance();
+    $logger->setPath("/local/logs/semantic.txt");
+
+    $logger->info([$semanticNew,$semanticLast, $arSemantic, $deal[$semanticLast],  $arFields] );*/
+   
+   /* $logger->info([$arFields, $deal]);
+    $logger->info([$semanticNew, $semanticLast]);*/
+
+  }
+
+}
 
 function ObligatoryFieldFill(&$arFields) {
 
@@ -136,8 +592,8 @@ function tiketSave(&$arFields) {
 
  if($deal_id > 0) {
 
-  $commonFields = ['UF_CRM_1540384944','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667','UF_CRM_1540203111','UF_CRM_1543406565','UF_CRM_1540203015',
-  'UF_CRM_1545649289833','UF_CRM_1541072013901','UF_CRM_1540456417','UF_CRM_1540554743072','UF_CRM_1541072151310','UF_CRM_1541055727999','UF_CRM_1544431330','UF_CRM_1541055405','UF_CRM_1541055672','UF_CRM_1541055237379','UF_CRM_1541055274251']; 
+  $commonFields = ['UF_CRM_1540384944','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667','UF_CRM_1540203111','UF_CRM_1543406565','UF_CRM_1540203015', 'UF_CRM_1540202889',
+  'UF_CRM_1545649289833','UF_CRM_1541072013901','UF_CRM_1540456417','UF_CRM_1540554743072','UF_CRM_1541072151310','UF_CRM_1541055727999','UF_CRM_1544431330','UF_CRM_1541055405','UF_CRM_1541055672','UF_CRM_1541055237379','UF_CRM_1541055274251','UF_CRM_1566542004']; 
   
   $mapFields = [
 
@@ -190,6 +646,8 @@ function tiketSave(&$arFields) {
   // UF_CRM_1541055274251 - иное название арендатора в объектах, UF_CRM_1547632526938 - иное название в заявках
   // UF_CRM_1540203015 - расстояние до метро объекты, UF_CRM_1547117427 - расстояние до метро заявки
 
+  $street_type = enumValue($object['UF_CRM_1540202889'],'UF_CRM_1540202889');
+
   $rastmetro_value = enumValue($object['UF_CRM_1540203015'],'UF_CRM_1540203015'); // находим значение поля расстояние до метро в объектах
   $rastmetro = enumID($rastmetro_value, 'UF_CRM_1547117427', 'CRM_LEAD');  // находим id по значению расстояние до метро в заявках
 
@@ -207,6 +665,8 @@ function tiketSave(&$arFields) {
   $area = enumID($area_value, 'UF_CRM_1566212549228', 'CRM_LEAD');  // находим id по значению Округ в заявках
 
   $userTypeManager = new CUserTypeManager();
+
+  $arLeadFields['UF_CRM_1567070139034'] =  $object['UF_CRM_1540202900'] . " " . $street_type . " " . $object['UF_CRM_1540202908'];  //адрес для заявок по объекту
 
   $arLeadFields['UF_CRM_1545390144'] = $listTypeMap['UF_CRM_1540202667'][$object['UF_CRM_1540202667']];
   $arLeadFields['UF_CRM_1565850328'] = [$object['UF_CRM_1543406565']];
@@ -227,7 +687,7 @@ function tiketSave(&$arFields) {
 
   $arLeadFields['UF_CRM_1547629103665'] = $object['UF_CRM_1541055727999']; // мап
 
-  $arLeadFields['UF_CRM_1547628348754'] = $object['UF_CRM_1544431330']; // окупаемость  
+  $arLeadFields['UF_CRM_1547628348754'] = $object['UF_CRM_1566542004']; // окупаемость  
   $arLeadFields['UF_CRM_1547632637130'] = $firsttip; // 1 тип  
   $arLeadFields['UF_CRM_1547632842691'] = $secondtip; // 2 тип
   $arLeadFields['UF_CRM_1566804181754'] = $arendstandart; // стандартное название арендатора
@@ -272,21 +732,29 @@ function setActuality(&$arFields)  {
 
 function setLocation(&$arFields)  {
 
-  $logger = \Log\Logger::instance();
+//$logger = \Log\Logger::instance();
+//$logger->setPath("/local/logs/location_update.txt");
 
-  $logger->setPath("/local/logs/location.txt");
 
-  $logger->info($arFields); 
 
-// $select = ['ID','UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667'];
+
+  $select = ['ID','UF_CRM_1540202889','UF_CRM_1540202900','UF_CRM_1540202908','UF_CRM_1540202817','UF_CRM_1540202667'];
+
+  $filter = ['ID' => $arFields['ID']];
+
+  $object = \CCrmDeal::GetList(['ID'=>"DESC"], $filter, $select)->Fetch();
+
+//  $logger->info($object); 
+
 $ID_loc = $arFields['ID'];
-$typestreet_loc = $arFields['UF_CRM_1540202889'];
-$street_loc = $arFields['UF_CRM_1540202900'];
-$house_loc = $arFields['UF_CRM_1540202908'];
-$city_loc = $arFields['UF_CRM_1540202817'];
-$region_loc = $arFields['UF_CRM_1540202667'];
+$typestreet_loc = $object['UF_CRM_1540202889'];
+$street_loc = $object['UF_CRM_1540202900'];
+$house_loc = $object['UF_CRM_1540202908'];
+$city_loc = $object['UF_CRM_1540202817'];
+$region_loc = $object['UF_CRM_1540202667'];
 
   $adress = str_replace([" ",","],"+",sprintf("Россия+%s+%s+%s+%s", getCity($city_loc), enumValue($typestreet_loc,'UF_CRM_1540202889'), $street_loc, $house_loc));
+
 
   $http = new HttpClient();
 
@@ -299,11 +767,11 @@ $region_loc = $arFields['UF_CRM_1540202667'];
 
     $userField = new CUserTypeManager();
 
-    $arFields = [
+    $arLocation = [
       'UF_CRM_1565253760' => sprintf("%s,%s", $loc2['lat'],  $loc2['lng'])
     ];
 
-    $userField->Update('CRM_DEAL',$ID_loc,  $arFields);
+    $userField->Update('CRM_DEAL',$ID_loc, $arLocation);
 
   }
 
@@ -339,6 +807,12 @@ function setAutotext(&$arFields)  {
   foreach($object as $code=>&$value) {
 
     if($code == 'UF_CRM_1540456417' && \CCrmDeal::GetCategoryID($ID) == 2) {
+
+      continue;
+
+    }
+
+    if($code == 'UF_CRM_1540456417' && \CCrmDeal::GetCategoryID($ID) == 1) {
 
       continue;
 
@@ -941,6 +1415,22 @@ if (!function_exists('mb_ucfirst'))
     {
         return mb_strtoupper(mb_substr($value, 0, 1)) . mb_substr($value, 1);
     }
+}
+
+if(!function_exists('_SaleFormatCurrency')) {
+
+  function _SaleFormatCurrency(?float $number) : string {
+
+    if(!$number) {
+  
+      return '';
+  
+    }
+  
+    return number_format($number, 0, '', ' ').html_entity_decode("&#8381;");
+   
+  }
+
 }
 
 

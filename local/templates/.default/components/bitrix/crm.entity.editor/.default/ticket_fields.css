@@ -9,7 +9,6 @@ div[data-cid="UF_CRM_1547218859"],
 div[data-cid="UF_CRM_1547551577246"],
 div[data-cid="UF_CRM_1547628374048"],
 div[data-cid="UF_CRM_1547628348754"],
-
 div[data-cid="UF_CRM_1547218455352"],
 div[data-cid="UF_CRM_1547218493343"],
 div[data-cid="UF_CRM_1547218667182"],
@@ -24,7 +23,10 @@ div[data-cid="UF_CRM_1547218608920"],
 div[data-cid="UF_CRM_1547121130737"],
 div[data-cid="UF_CRM_1547631768634"],
 div[data-cid="UF_CRM_1565276254256"],
-div[data-cid="UF_CRM_1566212549228"],
+div[data-cid="UF_CRM_1565850691"],
+div[data-cid="UF_CRM_1565872302"],
+div[data-cid="UF_CRM_1566986090829"],
+div[data-cid="UF_CRM_1569396924"],
 .crm-section_arendator {
   display:none!important;
 }
@@ -39,7 +41,6 @@ div[data-cid="UF_CRM_1565853455"]  .field-item input {
 div[data-cid="UF_CRM_1547218667182"] :before,
 div[data-cid="UF_CRM_1547218684391"] :before,
 div[data-cid="UF_CRM_1547628374048"] :before,
-div[data-cid="UF_CRM_1547628348754"] :before,
 div[data-cid="UF_CRM_1547218667182"] :before,
 div[data-cid="UF_CRM_1565853455"] :before, 
 .only-read :before { 

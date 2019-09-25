@@ -14,6 +14,8 @@ class SimilarTicket {
     '364' => 2
   ];
 
+  private const OBJECT_ACTIVE = 357;
+
   private function __construct() {}
 
   public static function search(int $id) : Result {
@@ -27,7 +29,7 @@ class SimilarTicket {
    *  UF_CRM_1540202667 [enumeration] - Регион сделки
    *  UF_CRM_1545390183 [string]  - Район сделки
    *  UF_CRM_1540202766 [string]  - Район
-   *  UF_CRM_1545390372 [enumeration] - Округ
+   *  UF_CRM_1545390372 [enumeration] - Округ  - UF_CRM_1565850691 множественное
    *  UF_CRM_1540203111 [enumeration] - Округ сделки
    *  UF_CRM_1547120946759 [string] - Площадь
    *  UF_CRM_1565250252 [string] - Площадь До
@@ -36,11 +38,12 @@ class SimilarTicket {
    *  UF_CRM_1541076330647 [string] - Площадь Сделки
    *  UF_CRM_1545649289833 [string] - Реальная цена Сделки
    *  UF_CRM_1541072013901 [double] - Стоимсть объекта Сделки
-   *  
+   *  UF_CRM_1545199624 [enumeration] - Статус объекта / Актив 357 - Да
   */
     $select = ['UF_CRM_1545390144','UF_CRM_1545390372','UF_CRM_1540202766','UF_CRM_1545389958',
-    'UF_CRM_1547551210','UF_CRM_1547120946759','UF_CRM_1565250601','UF_CRM_1565250252','UF_CRM_1565850691'];
+    'UF_CRM_1547551210','UF_CRM_1547120946759','UF_CRM_1565250601','UF_CRM_1565250252','UF_CRM_1565850691','UF_CRM_1547628348754','UF_CRM_1565250284'];
     
+
     $current = \CCrmLead::GetList($sort, $filter, $select);
     $arResult = $current->Fetch();
 
@@ -101,12 +104,49 @@ class SimilarTicket {
     }
 
     $type = self::CATEGORY_MAP[$arResult['UF_CRM_1545389958']];
+
+    $logger = \Log\Logger::instance();
+    $logger->setPath('/local/logs/similatticket_log.txt');
+    $logger->info( ['area_value_multi' => $area_value_multi, 'area_multi' => $area_multi, $type, $arResult['UF_CRM_1545390144'], $square_from, $square_to, $price_from, $price_to,$okupaemost,$okupaemost_from, $okupaemost_to]);
+
+// для АБ добавляем поле окупаемость в поиск
+
+    if($type == '2' and $okupaemost != 0) {
+
+       if(in_array($arResult['UF_CRM_1545390144'], self::MOSKOW_REGION)) {
+    
+         $object = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
+         where('CATEGORY_ID','=', $type)->
+         where('UF_CRM_1540202667', '=',  $region)->
+         where('UF_CRM_1545199624', '=',  self::OBJECT_ACTIVE)->       // только Актив
+         whereIn('UF_CRM_1540203111', $area_multi)->
+         whereBetween("UF_CRM_1566542004", $okupaemost_from, $okupaemost_to)->   //окупаемость
+         whereBetween("UF_CRM_1541076330647", $square_from, $square_to)->
+         whereBetween("UF_CRM_1541072013901", $price_from, $price_to)->exec();
+    
+       } else {
+    
+         $object = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
+         where('CATEGORY_ID','=', $type)->
+         where('UF_CRM_1540202667', '=',  $region)->
+         where('UF_CRM_1545199624', '=',  self::OBJECT_ACTIVE)->       // только Актив
+         where('UF_CRM_1545390183', '=',  $arResult['UF_CRM_1540202766'])->
+         whereBetween("UF_CRM_1566542004", $okupaemost_from, $okupaemost_to)->   //окупаемость
+         whereBetween("UF_CRM_1541076330647", $square_from, $square_to)->
+         whereBetween("UF_CRM_1545649289833", $price_from, $price_to)->exec();
+    
+       }
+    
+     return $object;
+
+    }
     
     if(in_array($arResult['UF_CRM_1545390144'], self::MOSKOW_REGION)) {
     
        $object = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
        where('CATEGORY_ID','=', $type)->
        where('UF_CRM_1540202667', '=',  $region)->
+       where('UF_CRM_1545199624', '=',  self::OBJECT_ACTIVE)->       // только Актив
        whereIn('UF_CRM_1540203111', $area_multi)->
        whereBetween("UF_CRM_1541076330647", $square_from, $square_to)->
        whereBetween("UF_CRM_1541072013901", $price_from, $price_to)->exec();
@@ -116,8 +156,8 @@ class SimilarTicket {
       $object = DealTable::query()->addSelect("TITLE")->addSelect("ID")->
       where('CATEGORY_ID','=', $type)->
       where('UF_CRM_1540202667', '=',  $region)->
+      where('UF_CRM_1545199624', '=',  self::OBJECT_ACTIVE)->       // только Актив
       where('UF_CRM_1545390183', '=',  $arResult['UF_CRM_1540202766'])->
-      whereIn('UF_CRM_1540203111', $area_multi)->
       whereBetween("UF_CRM_1541076330647", $square_from, $square_to)->
       whereBetween("UF_CRM_1545649289833", $price_from, $price_to)->exec();
     

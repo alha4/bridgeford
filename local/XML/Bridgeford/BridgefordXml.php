@@ -3,7 +3,7 @@ namespace XML\Bridgeford;
 
 use XML\ExportBase;
 
-final class BridgefordXml extends ExportBase {
+class BridgefordXml extends ExportBase {
 
   protected $fileName = '/bridgeford_commerc.xml';
 
@@ -75,7 +75,7 @@ final class BridgefordXml extends ExportBase {
                "UF_CRM_1540974006","UF_CRM_1544172451","UF_CRM_1544172560","UF_CRM_1552294499136",
                "UF_CRM_1555070914","UF_CRM_1552493240038","UF_CRM_1540371802","UF_CRM_1560505660340",
                "UF_CRM_1540371455","UF_CRM_1545649289833","UF_CRM_1556017573094","UF_CRM_1540532459",
-               "UF_CRM_1540202807","UF_CRM_1563276840","UF_CRM_1542955977","UF_CRM_1565253760","UF_CRM_1541055727999"];
+               "UF_CRM_1540202807","UF_CRM_1563276840","UF_CRM_1542955977","UF_CRM_1565253760","UF_CRM_1541055727999","UF_CRM_1556020811397","UF_CRM_1540371938"];
     
     $object = \CCrmDeal::GetList($sort, $filter, $select);
 
@@ -166,7 +166,7 @@ final class BridgefordXml extends ExportBase {
       $xml_string.= sprintf('<is-basement>%s</is-basement>', $row['UF_CRM_1540384916112'] ? 'YES' : 'NO');
       $xml_string.= sprintf('<is-mansion>%s</is-mansion>',   $row['UF_CRM_1540371938'] ? 'YES' : 'NO');
       $xml_string.= sprintf('<whole-building>%s</whole-building>',   $row['UF_CRM_1556020811397'] ? 'YES' : 'NO');
-		  $xml_string.= sprintf('<description>%s</description>', nl2br($this->escapeEntities($row['UF_CRM_1540471409'])));   // Описание объекта в UF_CRM_1540471409  было UF_CRM_1556017573094
+	  $xml_string.= sprintf('<description>%s</description>', nl2br($this->escapeEntities($row['UF_CRM_1540471409'])));   // Описание объекта в UF_CRM_1540471409  было UF_CRM_1556017573094
       $xml_string.= sprintf('<photo>%s</photo>', $this->getPhotos((array)$row['UF_CRM_1540532330']));
       $xml_string.= sprintf('<photo-scheme>%s</photo-scheme>',  $this->getPhotos((array)$row['UF_CRM_1540532459']));
       

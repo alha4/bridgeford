@@ -23,7 +23,7 @@ final class AvitoXml extends ExportBase {
 
                 '0' => 'Сдам',
                 '1' => 'Продам',
-                '2' => 'Сдам'
+                '2' => 'Продам'
 
                ];
 
@@ -153,7 +153,7 @@ final class AvitoXml extends ExportBase {
 
       if($category_id == self::TYPE_DEAL['RENT_BUSSINES']) {
 
-          $xml_string.= sprintf('<Square>%s</Square>', $row['UF_CRM_1540381545640']);
+          $xml_string.= sprintf('<Square>%s</Square>', $row['UF_CRM_1540384944']);
 
 
       } else {
@@ -161,6 +161,12 @@ final class AvitoXml extends ExportBase {
          $xml_string.= sprintf('<Square>%s</Square>', $row['UF_CRM_1540384944']);
 
       }
+
+      if($category_id == self::TYPE_DEAL['RENT']) {
+
+          $xml_string.= '<LeaseDeposit>Без залога</LeaseDeposit>';
+
+	  }
 
 		//  $xml_string.= '<LeaseDeposit>Без залога</LeaseDeposit>';
 
@@ -181,7 +187,7 @@ final class AvitoXml extends ExportBase {
   private function getPhotos(array $data = []) : string {
 
     $xml_photo = '';
- 
+
     foreach($data as $file_id) {
  
        $file = \CFile::GetFileArray($file_id);
@@ -206,13 +212,13 @@ private function getTitle(array $row, int $category_id) : string {
 
       case self::RENT :
 
-      return strtoupper(sprintf("%s, %s %s",  self::TITLE_ALIAS_SYNONYM[$category_id],$region, $this->getMetre($square)));
+      return sprintf("%s, %s %s",  self::TITLE_ALIAS_SYNONYM[$category_id],$region, $this->getMetre($square));
 
       break;
 
       case self::SALE :
 
-      return strtoupper(sprintf("%s, %s %s",  self::TITLE_ALIAS_SYNONYM[$category_id], $region, $this->getMetre($square)));
+      return sprintf("%s, %s %s",  self::TITLE_ALIAS_SYNONYM[$category_id], $region, $this->getMetre($square));
 
       break;
 
@@ -220,11 +226,11 @@ private function getTitle(array $row, int $category_id) : string {
 
       if($row['UF_CRM_1545906357580']) {
 
-          return strtoupper(sprintf("%s, окупаемость - %s", self::TITLE_ALIAS[$category_id],  $row['UF_CRM_1544431330']));
+          return sprintf("%s, окупаемость - %s", self::TITLE_ALIAS[$category_id],  $row['UF_CRM_1544431330']);
 
       }
 
-      return strtoupper(sprintf("%s", self::TITLE_ALIAS[$category_id]));
+      return sprintf("%s", self::TITLE_ALIAS[$category_id]);
 
       break;
 

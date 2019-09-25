@@ -1113,9 +1113,23 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			
 			const priceSq2OnYear  = this.nodeInput('UF_CRM_1540554743072'),
 		      	priceOnYear     = this.nodeInput('UF_CRM_1544425067'),
-		      	priceRental     = parseFloat(this.nodeInput('UF_CRM_1540456417').value),
+		      	priceRental     = parseFloat(this.nodeInput('UF_CRM_1540456417').value);
+  
+		//      	squareValue     = parseInt(this.nodeInput('UF_CRM_1540384944').value) || 1;  // стояло поле 'UF_CRM_1541076330647' || 1; UF_CRM_1540384944
 
-		      	squareValue     = parseInt(this.nodeInput("UF_CRM_1541076330647").value) || 1;
+
+				if(this.nodeInput("UF_CRM_1540384944")) {
+					
+					squareValue = parseInt(this.nodeInput("UF_CRM_1540384944").value) || 1;
+
+				} else if(this.node('UF_CRM_1540384944')) {
+						 
+					squareValue = parseInt(this.getTextValue(this.node('UF_CRM_1540384944'))) || 1;
+
+				}
+
+
+
 
 		       	priceSq2OnYear.value  = BX.Currency.currencyFormat(Math.round(priceRental * 12 / squareValue), 'RUB', true);  
 			  
@@ -2476,6 +2490,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingEvent');
 			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingCianEvent');
 					this.registerEventListener(this._CATEGORY.TO_RENT,'showDescriptionFields');
+                                        this.registerEventListener(this._CATEGORY.TO_RENT,'initializeCompensationEvent');
 					
 					break;
 			
@@ -2494,6 +2509,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeDuplicationEvent');
 			  	this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
 					this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
+                                        this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCompensationEvent');
 					
 					break;
 
@@ -2544,6 +2560,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			      this.registerView(this._CATEGORY.TO_RENT, 'showVacationFields');
 						this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
 						this.registerView(this._CATEGORY.TO_RENT, 'numberToMoney'); 
+						this.registerView(this._CATEGORY.TO_RENT, 'showCompensationFields');
 						
 						break;
 	
@@ -2561,6 +2578,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 				  	this.registerView(this._CATEGORY.TO_SALE, 'showDuplication1Fields');
 						this.registerView(this._CATEGORY.TO_SALE, 'showDuplication2Fields'); 
 						this.registerView(this._CATEGORY.TO_SALE, 'numberToMoney'); 
+						this.registerView(this._CATEGORY.TO_SALE, 'showCompensationFields');
 						
 						case this._CATEGORY.TO_BUSSINES :
 
