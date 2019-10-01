@@ -938,8 +938,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 		showCompensationFields : function() {
 
 
-			this.compensationView(this.getTextValue(this.node('UF_CRM_1556182166156')));
-
+			this.compensationView(
+				this.nodeSelectValue(this._сompensation) ||
+				this.getTextValue(this.node('UF_CRM_1556182166156')));
 
 		},
 
@@ -2489,8 +2490,9 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeVacationRentalEvent');
 			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingEvent');
 			  	this.registerEventListener(this._CATEGORY.TO_RENT,'initializeAdvertisingCianEvent');
-					this.registerEventListener(this._CATEGORY.TO_RENT,'showDescriptionFields');
-                                        this.registerEventListener(this._CATEGORY.TO_RENT,'initializeCompensationEvent');
+				  this.registerEventListener(this._CATEGORY.TO_RENT,'showDescriptionFields');
+          this.registerEventListener(this._CATEGORY.TO_RENT,'initializeCompensationEvent');
+          this.registerEventListener(this._CATEGORY.TO_RENT,'showCompensationFields');
 					
 					break;
 			
@@ -2509,7 +2511,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 			  	this.registerEventListener(this._CATEGORY.TO_SALE,'initializeDuplicationEvent');
 			  	this.registerEventListener(this._CATEGORY.TO_SALE,'showDescriptionFields');
 					this.registerEventListener(this._CATEGORY.TO_SALE,'initializeReadyToMoveEvent');
-                                        this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCompensationEvent');
+          this.registerEventListener(this._CATEGORY.TO_SALE,'initializeCompensationEvent');
 					
 					break;
 
@@ -2561,6 +2563,7 @@ if(typeof BX.Crm.EntityEditor === "undefined")
 						this.registerView(this._CATEGORY.TO_RENT, 'showAdvertisingFields'); 
 						this.registerView(this._CATEGORY.TO_RENT, 'numberToMoney'); 
 						this.registerView(this._CATEGORY.TO_RENT, 'showCompensationFields');
+
 						
 						break;
 	
@@ -28164,12 +28167,13 @@ if(typeof BX.Crm.EntityEditorToolPanel === "undefined")
 	};
 	BX.Crm.EntityEditorToolPanel.prototype.addError = function(error)
 	{
+		
 		this._errorContainer.appendChild(
 			BX.create(
 				"DIV",
 				{
 					attrs: { className: "crm-entity-section-control-error-text" },
-					html: error
+					html: 'заполните хотя бы одно поле собственник' /* error */
 				}
 			)
 		);

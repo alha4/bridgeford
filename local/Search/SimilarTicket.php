@@ -1,11 +1,15 @@
 <?php
 namespace Search; 
+
 use \Bitrix\Main\Loader,
      Bitrix\Crm\LeadTable,
      Bitrix\Crm\DealTable,
      Bitrix\Main\ORM\Query\Result;
+
 Loader::IncludeModule("crm");
+
 class SimilarTicket {
+
   private const MOSKOW_REGION = [365];
 
   private const CATEGORY_MAP = [
@@ -15,6 +19,8 @@ class SimilarTicket {
   ];
 
   private const OBJECT_ACTIVE = 357;
+
+  private const REGION_ALL_MOSKOW = 876;
 
   private function __construct() {}
 
@@ -31,6 +37,7 @@ class SimilarTicket {
    *  UF_CRM_1540202766 [string]  - Район
    *  UF_CRM_1545390372 [enumeration] - Округ  - UF_CRM_1565850691 множественное
    *  UF_CRM_1540203111 [enumeration] - Округ сделки
+   *  UF_CRM_1569396924 [enumeration] - Тип поиска округа заявки
    *  UF_CRM_1547120946759 [string] - Площадь
    *  UF_CRM_1565250252 [string] - Площадь До
    *  UF_CRM_1547551210 [string] - Стоимость аренды
@@ -39,9 +46,11 @@ class SimilarTicket {
    *  UF_CRM_1545649289833 [string] - Реальная цена Сделки
    *  UF_CRM_1541072013901 [double] - Стоимсть объекта Сделки
    *  UF_CRM_1545199624 [enumeration] - Статус объекта / Актив 357 - Да
+   *  UF_CRM_1569396924 [enumeration] - Вся москва / выбор по округам
   */
-    $select = ['UF_CRM_1545390144','UF_CRM_1545390372','UF_CRM_1540202766','UF_CRM_1545389958',
-    'UF_CRM_1547551210','UF_CRM_1547120946759','UF_CRM_1565250601','UF_CRM_1565250252','UF_CRM_1565850691','UF_CRM_1547628348754','UF_CRM_1565250284'];
+    $select = ['UF_CRM_1545390144','UF_CRM_1545390372','UF_CRM_1569396924','UF_CRM_1540202766','UF_CRM_1545389958',
+    'UF_CRM_1547551210','UF_CRM_1547120946759','UF_CRM_1565250601','UF_CRM_1565250252','UF_CRM_1565850691',
+    'UF_CRM_1547628348754','UF_CRM_1565250284','UF_CRM_1569396924'];
     
 
     $current = \CCrmLead::GetList($sort, $filter, $select);
@@ -50,6 +59,10 @@ class SimilarTicket {
     $region_value = enumValue($arResult['UF_CRM_1545390144'],'UF_CRM_1545390144');
 
     $area_value  = enumValue($arResult['UF_CRM_1545390372'],'UF_CRM_1545390372');
+
+    $ifAllMoscow = enumValue($arResult['UF_CRM_1569396924'],'UF_CRM_1569396924');
+
+
     
     $region = enumID($region_value, 'UF_CRM_1540202667');
    
@@ -60,11 +73,18 @@ class SimilarTicket {
     $square     = (int)$arResult['UF_CRM_1547120946759'];
 
 
-    $area_value_multi = self::enumValuemulti($arResult['UF_CRM_1565850691']); // здесь множественное округ
+    if($arResult['UF_CRM_1569396924'] == self::REGION_ALL_MOSKOW) {
 
-    $area_multi = self::enumIDmulti($area_value_multi); 
+       $area_multi = self::getAllEnumID('UF_CRM_1540203111'); 
 
-   
+    } else {
+
+       $area_value_multi = self::enumValuemulti($arResult['UF_CRM_1565850691']); // здесь множественное округ
+
+       $area_multi = self::enumIDmulti($area_value_multi); 
+
+    }
+
     $okupaemost = $arResult['UF_CRM_1547628348754'];
     $okupaemost_to = $arResult['UF_CRM_1565250284'];
 
@@ -191,6 +211,23 @@ class SimilarTicket {
     }
 
     return $enums;
+
+  }
+
+  private static function getAllEnumID(string $code, string $type = 'CRM_DEAL') : array {
+
+    $entityResult = \CUserTypeEntity::GetList(array(), array("ENTITY_ID" => $type, "FIELD_NAME" => $code));
+    $entity = $entityResult->Fetch();
+    $enumResult = \CUserTypeEnum::GetList($entity);
+    $arResult = [];
+
+    while($enum = $enumResult->Fetch()) {
+
+      $arResult[] = $enum['ID'];
+
+    }
+
+    return $arResult;
 
   }
 }

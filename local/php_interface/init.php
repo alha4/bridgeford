@@ -96,15 +96,29 @@ $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setAutotext');
 $event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setMapLocation');
 $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setActuality');
 $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setLocation');
- $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setLocation');
+$event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'setLocation');
 $event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', 'setSemantic');
-
 $event->addEventHandler('crm', 'OnAfterCrmDealAdd', 'setObjectList');
 $event->addEventHandler('crm', 'OnAfterCrmDealUpdate', 'updateObjectList');
 $event->addEventHandler('crm', 'OnBeforeCrmDealDelete', 'deleteObjectList');
 $event->addEventHandler('crm', 'OnAfterCrmLeadAdd', 'setTicketList');
 $event->addEventHandler('crm', 'OnAfterCrmLeadUpdate', 'updateTicketList');
 $event->addEventHandler('crm', 'OnBeforeCrmLeadDelete', 'deleteTicketList');
+$event->addEventHandler('crm', 'OnBeforeCrmDealUpdate', "checkOwner");
+
+function checkOwner($arFields) {
+    
+  if(!$arFields['UF_CRM_1540895685'] && !$arFields['UF_CRM_1558086250']) {
+  
+    $arFields['RESULT_MESSAGE'] = "error";
+
+    return false;
+
+  }
+
+  return $arFields;
+
+}
 
 const OBJECT_LIST_ID  = 31;
 

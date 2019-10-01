@@ -31,20 +31,28 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeBuildingTypeEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeNeedGeoEvent');
-    this.registerEventListener(TicketModel.ON_SEARCH, 'initializeRegionSelectEvent');
+
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeOSZEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializePayCommisionEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeCalculateCostEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTiketRentPriceEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializeTicketNDSEvent');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializeCostDoEvent');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializeSpaceDoEvent');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializeMAPDoEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'showClientContactFields');
     this.registerEventListener(TicketModel.ON_SEARCH, 'showStatusTiketFields');
     this.registerEventListener(TicketModel.ON_SEARCH, 'initializePlannedRunEvent');
     this.registerEventListener(TicketModel.ON_SEARCH, 'showPlannedRunFields');
     this.registerEventListener(TicketModel.ON_SEARCH, 'showAllFields');
     this.registerEventListener(TicketModel.ON_SEARCH, 'showCommercFields');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'showTicketGeoFields');
+    this.registerEventListener(TicketModel.ON_SEARCH, 'initializeRegionSelectEvent');
 
 
+    this.registerEventListener(TicketModel.ON_PERMANENT, 'initializeCostDoEvent');
+    this.registerEventListener(TicketModel.ON_PERMANENT, 'initializeSpaceDoEvent');
+    this.registerEventListener(TicketModel.ON_PERMANENT, 'initializeMAPDoEvent');
     this.registerEventListener(TicketModel.ON_PERMANENT, 'initializeBuildingTypeEvent');
     this.registerEventListener(TicketModel.ON_PERMANENT, 'initializeNeedGeoEvent');
     this.registerEventListener(TicketModel.ON_PERMANENT, 'initializeOSZEvent');
@@ -58,6 +66,7 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
     this.registerEventListener(TicketModel.ON_PERMANENT, 'showPlannedRunFields');
     this.registerEventListener(TicketModel.ON_PERMANENT, 'showAllFields');
     this.registerEventListener(TicketModel.ON_PERMANENT, 'showCommercFields');
+    this.registerEventListener(TicketModel.ON_PERMANENT, 'showTicketGeoFields');
 
     if(!this._entityId) {
 
@@ -67,23 +76,33 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
     if(this._entityId > 0) {
 
+
       this.registerView(TicketModel.ON_SEARCH, 'showTicketGeoFields');
+      this.registerView(TicketModel.ON_SEARCH, 'showRegionSelectFields');
       this.registerView(TicketModel.ON_SEARCH, 'showOSZFields');
       this.registerView(TicketModel.ON_SEARCH, 'showClientContactFields');
       this.registerView(TicketModel.ON_SEARCH, 'showPlannedRunFields');
       this.registerView(TicketModel.ON_SEARCH, 'showCommercFields');
+      this.registerView(TicketModel.ON_SEARCH, 'showCostDoField');
+      this.registerView(TicketModel.ON_SEARCH, 'showSpaceDoField');
+      this.registerView(TicketModel.ON_SEARCH, 'showMAPDoField');
 
       this.registerView(TicketModel.ON_PERMANENT, 'showTicketGeoFields');
+      this.registerView(TicketModel.ON_PERMANENT, 'showRegionSelectFields');
       this.registerView(TicketModel.ON_PERMANENT, 'showOSZFields');
       this.registerView(TicketModel.ON_PERMANENT, 'showClientContactFields');
       this.registerView(TicketModel.ON_PERMANENT, 'showPlannedRunFields');
       this.registerView(TicketModel.ON_PERMANENT, 'showCommercFields');
+      this.registerView(TicketModel.ON_PERMANENT, 'showCostDoField');
+      this.registerView(TicketModel.ON_PERMANENT, 'showSpaceDoField');
+      this.registerView(TicketModel.ON_PERMANENT, 'showMAPDoField');
    
       setTimeout(() => {
  
+
         this.initializeViews(); 
         this.showSections();
-        this.showAllFields();
+  //      this.showAllFields();
         this.showCommercFields();
 
        }, 500);
@@ -433,6 +452,189 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
   },
 
+
+// отображение поля Стоимость ДО
+
+  initializeCostDoEvent : function() {
+
+
+    this._costDoSelect = this.nodeSelect("UF_CRM_1569479269");
+
+    this.bindEvent(this._costDoSelect, 'change', this.onCostDoChange);
+
+    this.showCostDoField();
+    
+  },
+
+  onCostDoChange : function() {
+
+    this.costDoView();
+
+  },
+
+  showCostDoField : function() {
+
+    this.costDoView();
+
+  },
+
+  costDoView : function() {
+
+    const costDoModel = this.prepareModel({
+
+      'edit' : {
+ 
+         SELECT_ZNACHENIE : { value : 878 },
+         SELECT_DIAPAZON : { value : 879 }
+ 
+      },
+ 
+      'view' : {
+ 
+        SELECT_ZNACHENIE : { value : 'точное значение'},
+        SELECT_DIAPAZON : { value : 'диапазон'}
+ 
+      }
+ 
+    }), 
+    
+    selectCostDoValue = this.nodeSelectValue(this._costDoSelect) || this.getTextValue(this.node('UF_CRM_1569479269'));
+
+    console.log(selectCostDoValue);
+
+    if(selectCostDoValue == costDoModel.SELECT_DIAPAZON) {
+
+       this.showField(this.node('UF_CRM_1565250601'));
+
+    } else {
+
+      this.hideField(this.node('UF_CRM_1565250601'));
+
+    }
+  },
+
+// отображение поля Площадь ДО
+
+  initializeSpaceDoEvent : function() {
+
+
+    this._spaceDoSelect = this.nodeSelect("UF_CRM_1569507041");
+
+    this.bindEvent(this._spaceDoSelect, 'change', this.onSpaceDoChange);
+
+    this.showSpaceDoField();
+    
+  },
+
+  onSpaceDoChange : function() {
+
+    this.spaceDoView();
+
+  },
+
+  showSpaceDoField : function() {
+
+    this.spaceDoView();
+
+  },
+
+  spaceDoView : function() {
+
+    const spaceDoModel = this.prepareModel({
+
+      'edit' : {
+ 
+         SELECT_SPACE_ZNACHENIE : { value : 880 },
+         SELECT_SPACE_DIAPAZON : { value : 881 }
+ 
+      },
+ 
+      'view' : {
+ 
+        SELECT_SPACE_ZNACHENIE : { value : 'точное значение'},
+        SELECT_SPACE_DIAPAZON : { value : 'диапазон'}
+ 
+      }
+ 
+    }), 
+    
+    selectSpaceDoValue = this.nodeSelectValue(this._spaceDoSelect) || this.getTextValue(this.node('UF_CRM_1569507041'));
+
+    console.log(selectSpaceDoValue);
+
+    if(selectSpaceDoValue == spaceDoModel.SELECT_SPACE_DIAPAZON) {
+
+       this.showField(this.node('UF_CRM_1565250252'));
+
+    } else {
+
+      this.hideField(this.node('UF_CRM_1565250252'));
+
+    }
+  },
+
+// отображение поля МАП ДО
+
+  initializeMAPDoEvent : function() {
+
+
+    this._mapDoSelect = this.nodeSelect("UF_CRM_1569507120");
+
+    this.bindEvent(this._mapDoSelect, 'change', this.onMAPDoChange);
+
+    this.showMAPDoField();
+    
+  },
+
+  onMAPDoChange : function() {
+
+    this.mapDoView();
+
+  },
+
+  showMAPDoField : function() {
+
+    this.mapDoView();
+
+  },
+
+  mapDoView : function() {
+
+    const mapDoModel = this.prepareModel({
+
+      'edit' : {
+ 
+         SELECT_MAP_ZNACHENIE : { value : 882 },
+         SELECT_MAP_DIAPAZON : { value : 883 }
+ 
+      },
+ 
+      'view' : {
+ 
+        SELECT_MAP_ZNACHENIE : { value : 'точное значение'},
+        SELECT_MAP_DIAPAZON : { value : 'диапазон'}
+ 
+      }
+ 
+    }), 
+    
+    selectMAPDoValue = this.nodeSelectValue(this._mapDoSelect) || this.getTextValue(this.node('UF_CRM_1569507120'));
+
+    console.log(selectMAPDoValue);
+
+    if(selectMAPDoValue == mapDoModel.SELECT_MAP_DIAPAZON) {
+
+       this.showField(this.node('UF_CRM_1565858762'));
+
+    } else {
+
+      this.hideField(this.node('UF_CRM_1565858762'));
+
+    }
+  },
+
+
+
   initializeRegionSelectEvent : function() {
 
 
@@ -440,6 +642,8 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
 
     this.bindEvent(this._regionSelect, 'change', this.onRegionSelectChange);
 
+    this.showRegionSelectFields();
+    
   },
 
   onRegionSelectChange : function() {
@@ -468,7 +672,9 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
  
     }), 
     
-    selectValue = this.nodeSelectValue(this._regionSelect);
+    selectValue = this.nodeSelectValue(this._regionSelect) || this.getTextValue(this.node('UF_CRM_1569396924'));
+
+    console.log(selectValue);
 
     if(selectValue == regionSelectModel.SELECT_REGION) {
 
@@ -479,6 +685,15 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
       this.hideField(this.node('UF_CRM_1565850691'));
 
     }
+  },
+
+
+
+
+  showRegionSelectFields : function() {
+
+    this.regionSelectView();
+
   },
 
   initializeNeedGeoEvent : function() {
@@ -518,8 +733,8 @@ Object.assign( BX.Crm.EntityEditor.prototype, {
     }),
 
     fieldsSubMoskow = ['UF_CRM_1545390183','UF_CRM_1545390196'],
-    fieldsMoskow    = ['UF_CRM_1545390443','UF_CRM_1569396924'], // округ указать UF_CRM_1565850691
-    fieldsNewMoskow = ['UF_CRM_1545390183','UF_CRM_1545390196','UF_CRM_1569396924'];
+    fieldsMoskow    = ['UF_CRM_1545390443','UF_CRM_1565850691','UF_CRM_1569396924'], // округ указать UF_CRM_1565850691
+    fieldsNewMoskow = ['UF_CRM_1545390183','UF_CRM_1565850691','UF_CRM_1545390196','UF_CRM_1569396924'];
 
     if(regionValue == regionModel.SUB_MOSKOW) {
 

@@ -745,4 +745,9 @@ if(!isAdmin &&
 
 }
 });
+
+BX.addCustomEvent("BX.Crm.EntityEditor:onSave", function(e) {
+	
+	 	
+});
 </script>
